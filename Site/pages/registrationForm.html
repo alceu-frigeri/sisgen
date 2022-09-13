@@ -1,0 +1,684 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <title>IFAC TAS 2016</title>
+</head>
+  <body>
+  <center>
+  <h1>4<sup>th</sup> IFAC Symposium on Telematics Applications</h1>
+  <h1>IFAC TAS 2016</h1>
+  November 6-9, 2016<br>
+  Porto Alegre, Brazil</strong>
+  <h2>Registration Form</h2>
+  </center>
+    <table bgcolor="#ffffff">
+      <tbody>
+        <tr>
+            <p align="center"><span class="style14"></span></p>
+            <table width="75%" border="1" align="center">
+              <tr>
+         
+                <td><p class="style9">Participation is open to everyone
+                interested in Telematics Applications.</p> <p class="style9">
+                According to the Conference Registration Policy, at least
+                one author of each accepted IFAC TAS 2016 paper must register
+                in Advance (until September, 12<sup>th</sup>) with a Full
+                registration (that means, discounted student registration
+                does not apply in this case).
+         
+                <p class="style9">Please provide us with the following
+                information:</p></td>
+              </tr>
+            </table>
+            
+<script language="javascript">
+
+function desabilitaAdicional() {
+        var campo;
+        
+        campo = document.getElementById("additionalPaperId");
+        campo.disabled = true;
+	campo.hidden = true;
+	campo.value = "No";
+		 
+	document.getElementById("additionalExtraPagesText").innerHTML = "";
+	 
+	document.getElementById("checkbox7").hidden = true;
+	document.getElementById("additionalExtraPage1").innerHTML = "";
+
+	document.getElementById("checkbox8").hidden = true;
+	document.getElementById("additionalExtraPage2").innerHTML = "";
+		 
+	document.getElementById("additionalPaperId").hidden = true;
+	document.getElementById("additionalPaperIdText").innerHTML = "";
+}
+
+function habilitaAdicional() {
+        var campo;
+        
+        campo = document.getElementById("additionalPaperId");
+        campo.disabled = false;
+	campo.hidden = false;
+	campo.value="";
+
+	document.getElementById("additionalExtraPagesText").innerHTML = "Extra pages for the additional Paper:";
+		
+	document.getElementById("checkbox7").hidden = false;
+	document.getElementById("additionalExtraPage1").innerHTML = "First extra page - EUR 100,00";
+
+	document.getElementById("checkbox8").hidden = false;
+	document.getElementById("additionalExtraPage2").innerHTML = "Second extra page - EUR 100,00";
+
+	document.getElementById("additionalPaperId").hidden = false;
+	document.getElementById("additionalPaperIdText").innerHTML = "Additional Paper ID";	 
+}
+
+
+
+function desabilita() {
+        var campo;
+        
+        campo = document.getElementById("textfield");
+        campo.disabled = true;
+	campo.hidden = true;
+	campo.value = "No";
+		 
+	document.getElementById("paperIdText").innerHTML = "";
+		 
+	document.getElementById("extraPagesText").innerHTML = "";
+		 
+	document.getElementById("checkbox").hidden = true;
+	document.getElementById("extraPage1").innerHTML = "";
+		 
+	document.getElementById("checkbox2").hidden = true;
+	document.getElementById("extraPage2").innerHTML = "";
+		 
+
+	document.getElementById("additionalPaperRadioNo").checked="checked";
+	
+	document.getElementById("additionalPaperText").innerHTML = "";
+	document.getElementById("additionalPaperRadioYes").hidden = true;
+	document.getElementById("additionalPaperYes").innerHTML = "";
+	document.getElementById("additionalPaperRadioNo").hidden = true;
+	document.getElementById("additionalPaperNo").innerHTML = "";
+
+	desabilitaAdicional();
+}
+
+function habilita() {
+        var campo;
+        
+        campo = document.getElementById("textfield");
+        campo.disabled = false;
+	campo.hidden = false;
+	campo.value="";
+		 
+	document.getElementById("paperIdText").innerHTML= "Paper ID: *Type the paper id number";
+		 
+	document.getElementById("extraPagesText").innerHTML = "Extra pages:";
+	 
+	document.getElementById("checkbox").hidden = false;
+	document.getElementById("extraPage1").innerHTML = "First extra page - EUR 100,00";
+		 
+	document.getElementById("checkbox2").hidden = false;
+	document.getElementById("extraPage2").innerHTML = "Second extra page - EUR 100,00";
+		 
+	document.getElementById("additionalPaperText").innerHTML = "Additional paper:";
+	document.getElementById("additionalPaperRadioYes").hidden = false;
+	document.getElementById("additionalPaperYes").innerHTML = "Yes";
+	document.getElementById("additionalPaperRadioNo").hidden = false;
+	document.getElementById("additionalPaperNo").innerHTML = "No";
+		 
+	habilitaAdicional();		 
+}
+
+</script>
+                                   
+            
+            <p align="center">&nbsp;</p>
+            <form id="form1" method="post" action="registrationForm2.php">
+              <table width="1050" border="0" align="center">
+                <tr>
+                  <td width="450" align="left">
+                    <span class="style14">
+                    <label for="textfield14">
+                    <input type="radio" name="paperIDradio" id="paperIDradio" value="paperIDradioYes" onclick="habilita();"
+                     />
+                    I want to attach this registration to a Paper ID<br />
+                    </label>
+                  
+                    <input type="radio" name="paperIDradio" id="paperIDradio" value="paperIDradioNo" onclick="desabilita();"
+                    checked />
+                    <label for="radio3">I do not want to attach this registration to a Paper ID</label>
+                  </span></td>
+                  <td width="490" align="left"><p class="style14"><label id="paperIdText">Paper ID: *Type the paper id number</label>
+                      <input type="text" name="paperId" id="textfield"  size="10"/>
+                  </p></td>
+                </tr>
+               
+                <tr>
+                  <td align="right"><span class="style14"><label id="extraPagesText">Extra pages:</label></span></td>
+                  <td><input type="checkbox" name="extraPage1" id="checkbox" value="extraPage1yes"
+                  disabled />
+                  <label id="extraPage1">First extra page - EUR 100,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="checkbox" name="extraPage2" id="checkbox2" value="extraPage2yes"
+                  disabled />
+                  <label id="extraPage2">Second Extra page - EUR 100,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+      
+                <tr>
+                  <td align="right"><span class="style14"><label id="additionalPaperText">Additional paper:</label></span></td>
+                  <td><input type="radio" name="additionalPaper" id="additionalPaperRadioYes" value="additionalPaperYes" onchange="habilitaAdicional();"
+                  disabled />
+                  <label id="additionalPaperYes">Yes</label>
+                  <input type="radio" name="additionalPaper" id="additionalPaperRadioNo" value="additionalPaperNo" checked="checked" onchange="desabilitaAdicional();"/>
+                  <label id="additionalPaperNo">No</label></td>
+                  
+                </tr>
+                               
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><label id="additionalPaperIdText">Additional Paper ID:</label>
+                  <input type="text" name="additionalPaperId" id="additionalPaperId"  size="10"/></td>
+                </tr>
+                
+                <tr>
+                   <td align="right"><span class="style14"><label id="additionalExtraPagesText">Extra pages for the additional Paper:</label></span></td>
+                  <td><input type="checkbox" name="additionalExtraPage1"
+                   id="checkbox7" value="additionalExtraPage1yes" disabled />
+                  <label id="additionalExtraPage1">First extra page - EUR 100,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="checkbox" name="additionalExtraPage2"
+                  id="checkbox8" value="additionalExtraPage2yes" disabled />
+                  <label id="additionalExtraPage2">Second extra page - EUR 100,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>                
+
+		
+		<script type="text/javascript">desabilita();</script>
+                
+                
+                <tr>
+                  <td align="right">
+                    <span class="style14">
+                    <label for="select2">Title:</label>
+                    </span></td>
+                  <td>
+                    <span class="style14">
+                    <select name="title" id="select" >
+                    <option value="" selected="selected">Select Title</option> 
+                      <option value="Prof.">Prof.</option>
+                      <option value="Dr.">Dr.</option>
+                      <option value="Mr.">Mr.</option>
+                      <option value="Mrs.">Mrs.</option>
+                      <option value="Ms.">Ms.</option>
+                    </select>
+                    </span></td>
+                </tr>
+                <tr>
+                  <td align="right">
+                    <span class="style14">
+                    <label for="textfield15">Full Name* (to appear on badge &amp; certificate):</label>
+                    </span></td>
+                  <td>                  <span class="style14">
+                  <input type="text" name="fullName" id="textfield3" size="50"/>                  
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right">
+                    <span class="style14">
+                    <label for="textfield16">Affiliation:* (to appear on badge &amp; certificate):</label>
+                    </span></td>
+                  <td>                  <span class="style14">
+                  <input type="text" name="affiliation" id="textfield4" size="50"/>                  
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right">
+                    <span class="style14">
+                    <label for="textfield17">Affiliation Country: (to appear on badge &amp; certificate):</label>
+                    </span></td>
+                  <td>                  <span class="style14">
+                  <input type="text" name="affiliationCountry" id="textfield5" />                  
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right">
+                    <span class="style14">
+                    <label for="textfield18">Name on Invoice: (if different from your name):</label>
+                    </span></td>
+                  <td>                  <span class="style14">
+                  <input type="text" name="nameOnInvoice" id="textfield6" size="50"/>                  
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">Address:</span></td>
+                  <td><input type="text" name="address" id="textfield13" size="50" /></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">City:</span></td>
+                  <td><span class="style14">
+                    <input type="text" name="city" id="textfield8" size="30"/>
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">
+                  <label for="textfield5">State/Province:</label>
+                  </span></td>
+                  <td><span class="style14">
+                    <input type="text" name="stateProvince" id="textfield9" size="40"/>
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">
+                  <label for="textfield4">Zip/Postal Code:</label>
+                  </span></td>
+                  <td><span class="style14">
+                    <input type="text" name="postalCode" id="textfield10" size="15"/>
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">Country:</span></td>
+                  <td><select name="country"> 
+<option value="" selected="selected">Select Country</option>  
+<option value="Afghanistan">Afghanistan</option> 
+<option value="Albania">Albania</option> 
+<option value="Algeria">Algeria</option> 
+<option value="American Samoa">American Samoa</option> 
+<option value="Andorra">Andorra</option> 
+<option value="Angola">Angola</option> 
+<option value="Anguilla">Anguilla</option> 
+<option value="Antarctica">Antarctica</option> 
+<option value="Antigua and Barbuda">Antigua and Barbuda</option> 
+<option value="Argentina">Argentina</option> 
+<option value="Armenia">Armenia</option> 
+<option value="Aruba">Aruba</option> 
+<option value="Australia">Australia</option> 
+<option value="Austria">Austria</option> 
+<option value="Azerbaijan">Azerbaijan</option> 
+<option value="Bahamas">Bahamas</option> 
+<option value="Bahrain">Bahrain</option> 
+<option value="Bangladesh">Bangladesh</option> 
+<option value="Barbados">Barbados</option> 
+<option value="Belarus">Belarus</option> 
+<option value="Belgium">Belgium</option> 
+<option value="Belize">Belize</option> 
+<option value="Benin">Benin</option> 
+<option value="Bermuda">Bermuda</option> 
+<option value="Bhutan">Bhutan</option> 
+<option value="Bolivia">Bolivia</option> 
+<option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option> 
+<option value="Botswana">Botswana</option> 
+<option value="Bouvet Island">Bouvet Island</option> 
+<option value="Brazil">Brazil</option> 
+<option value="British Indian Ocean Territory">British Indian Ocean Territory</option> 
+<option value="Brunei Darussalam">Brunei Darussalam</option> 
+<option value="Bulgaria">Bulgaria</option> 
+<option value="Burkina Faso">Burkina Faso</option> 
+<option value="Burundi">Burundi</option> 
+<option value="Cambodia">Cambodia</option> 
+<option value="Cameroon">Cameroon</option> 
+<option value="Canada">Canada</option> 
+<option value="Cape Verde">Cape Verde</option> 
+<option value="Cayman Islands">Cayman Islands</option> 
+<option value="Central African Republic">Central African Republic</option> 
+<option value="Chad">Chad</option> 
+<option value="Chile">Chile</option> 
+<option value="China">China</option> 
+<option value="Christmas Island">Christmas Island</option> 
+<option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option> 
+<option value="Colombia">Colombia</option> 
+<option value="Comoros">Comoros</option> 
+<option value="Congo">Congo</option> 
+<option value="Congo, The Democratic Republic of The">Congo, The Democratic Republic of The</option> 
+<option value="Cook Islands">Cook Islands</option> 
+<option value="Costa Rica">Costa Rica</option> 
+<option value="Cote D'ivoire">Cote D'ivoire</option> 
+<option value="Croatia">Croatia</option> 
+<option value="Cuba">Cuba</option> 
+<option value="Cyprus">Cyprus</option> 
+<option value="Czech Republic">Czech Republic</option> 
+<option value="Denmark">Denmark</option> 
+<option value="Djibouti">Djibouti</option> 
+<option value="Dominica">Dominica</option> 
+<option value="Dominican Republic">Dominican Republic</option> 
+<option value="Ecuador">Ecuador</option> 
+<option value="Egypt">Egypt</option> 
+<option value="El Salvador">El Salvador</option> 
+<option value="Equatorial Guinea">Equatorial Guinea</option> 
+<option value="Eritrea">Eritrea</option> 
+<option value="Estonia">Estonia</option> 
+<option value="Ethiopia">Ethiopia</option> 
+<option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option> 
+<option value="Faroe Islands">Faroe Islands</option> 
+<option value="Fiji">Fiji</option> 
+<option value="Finland">Finland</option> 
+<option value="France">France</option> 
+<option value="French Guiana">French Guiana</option> 
+<option value="French Polynesia">French Polynesia</option> 
+<option value="French Southern Territories">French Southern Territories</option> 
+<option value="Gabon">Gabon</option> 
+<option value="Gambia">Gambia</option> 
+<option value="Georgia">Georgia</option> 
+<option value="Germany">Germany</option> 
+<option value="Ghana">Ghana</option> 
+<option value="Gibraltar">Gibraltar</option> 
+<option value="Greece">Greece</option> 
+<option value="Greenland">Greenland</option> 
+<option value="Grenada">Grenada</option> 
+<option value="Guadeloupe">Guadeloupe</option> 
+<option value="Guam">Guam</option> 
+<option value="Guatemala">Guatemala</option> 
+<option value="Guinea">Guinea</option> 
+<option value="Guinea-bissau">Guinea-bissau</option> 
+<option value="Guyana">Guyana</option> 
+<option value="Haiti">Haiti</option> 
+<option value="Heard Island and Mcdonald Islands">Heard Island and Mcdonald Islands</option> 
+<option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option> 
+<option value="Honduras">Honduras</option> 
+<option value="Hong Kong">Hong Kong</option> 
+<option value="Hungary">Hungary</option> 
+<option value="Iceland">Iceland</option> 
+<option value="India">India</option> 
+<option value="Indonesia">Indonesia</option> 
+<option value="Iran, Islamic Republic of">Iran, Islamic Republic of</option> 
+<option value="Iraq">Iraq</option> 
+<option value="Ireland">Ireland</option> 
+<option value="Israel">Israel</option> 
+<option value="Italy">Italy</option> 
+<option value="Jamaica">Jamaica</option> 
+<option value="Japan">Japan</option> 
+<option value="Jordan">Jordan</option> 
+<option value="Kazakhstan">Kazakhstan</option> 
+<option value="Kenya">Kenya</option> 
+<option value="Kiribati">Kiribati</option> 
+<option value="Korea, Democratic People's Republic of">Korea, Democratic People's Republic of</option> 
+<option value="Korea, Republic of">Korea, Republic of</option> 
+<option value="Kuwait">Kuwait</option> 
+<option value="Kyrgyzstan">Kyrgyzstan</option> 
+<option value="Lao People's Democratic Republic">Lao People's Democratic Republic</option> 
+<option value="Latvia">Latvia</option> 
+<option value="Lebanon">Lebanon</option> 
+<option value="Lesotho">Lesotho</option> 
+<option value="Liberia">Liberia</option> 
+<option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option> 
+<option value="Liechtenstein">Liechtenstein</option> 
+<option value="Lithuania">Lithuania</option> 
+<option value="Luxembourg">Luxembourg</option> 
+<option value="Macao">Macao</option> 
+<option value="Macedonia, The Former Yugoslav Republic of">Macedonia, The Former Yugoslav Republic of</option> 
+<option value="Madagascar">Madagascar</option> 
+<option value="Malawi">Malawi</option> 
+<option value="Malaysia">Malaysia</option> 
+<option value="Maldives">Maldives</option> 
+<option value="Mali">Mali</option> 
+<option value="Malta">Malta</option> 
+<option value="Marshall Islands">Marshall Islands</option> 
+<option value="Martinique">Martinique</option> 
+<option value="Mauritania">Mauritania</option> 
+<option value="Mauritius">Mauritius</option> 
+<option value="Mayotte">Mayotte</option> 
+<option value="Mexico">Mexico</option> 
+<option value="Micronesia, Federated States of">Micronesia, Federated States of</option> 
+<option value="Moldova, Republic of">Moldova, Republic of</option> 
+<option value="Monaco">Monaco</option> 
+<option value="Mongolia">Mongolia</option> 
+<option value="Montserrat">Montserrat</option> 
+<option value="Morocco">Morocco</option> 
+<option value="Mozambique">Mozambique</option> 
+<option value="Myanmar">Myanmar</option> 
+<option value="Namibia">Namibia</option> 
+<option value="Nauru">Nauru</option> 
+<option value="Nepal">Nepal</option> 
+<option value="Netherlands">Netherlands</option> 
+<option value="Netherlands Antilles">Netherlands Antilles</option> 
+<option value="New Caledonia">New Caledonia</option> 
+<option value="New Zealand">New Zealand</option> 
+<option value="Nicaragua">Nicaragua</option> 
+<option value="Niger">Niger</option> 
+<option value="Nigeria">Nigeria</option> 
+<option value="Niue">Niue</option> 
+<option value="Norfolk Island">Norfolk Island</option> 
+<option value="Northern Mariana Islands">Northern Mariana Islands</option> 
+<option value="Norway">Norway</option> 
+<option value="Oman">Oman</option> 
+<option value="Pakistan">Pakistan</option> 
+<option value="Palau">Palau</option> 
+<option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option> 
+<option value="Panama">Panama</option> 
+<option value="Papua New Guinea">Papua New Guinea</option> 
+<option value="Paraguay">Paraguay</option> 
+<option value="Peru">Peru</option> 
+<option value="Philippines">Philippines</option> 
+<option value="Pitcairn">Pitcairn</option> 
+<option value="Poland">Poland</option> 
+<option value="Portugal">Portugal</option> 
+<option value="Puerto Rico">Puerto Rico</option> 
+<option value="Qatar">Qatar</option> 
+<option value="Reunion">Reunion</option> 
+<option value="Romania">Romania</option> 
+<option value="Russian Federation">Russian Federation</option> 
+<option value="Rwanda">Rwanda</option> 
+<option value="Saint Helena">Saint Helena</option> 
+<option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option> 
+<option value="Saint Lucia">Saint Lucia</option> 
+<option value="Saint Pierre and Miquelon">Saint Pierre and Miquelon</option> 
+<option value="Saint Vincent and The Grenadines">Saint Vincent and The Grenadines</option> 
+<option value="Samoa">Samoa</option> 
+<option value="San Marino">San Marino</option> 
+<option value="Sao Tome and Principe">Sao Tome and Principe</option> 
+<option value="Saudi Arabia">Saudi Arabia</option> 
+<option value="Senegal">Senegal</option> 
+<option value="Serbia and Montenegro">Serbia and Montenegro</option> 
+<option value="Seychelles">Seychelles</option> 
+<option value="Sierra Leone">Sierra Leone</option> 
+<option value="Singapore">Singapore</option> 
+<option value="Slovakia">Slovakia</option> 
+<option value="Slovenia">Slovenia</option> 
+<option value="Solomon Islands">Solomon Islands</option> 
+<option value="Somalia">Somalia</option> 
+<option value="South Africa">South Africa</option> 
+<option value="South Georgia and The South Sandwich Islands">South Georgia and The South Sandwich Islands</option> 
+<option value="Spain">Spain</option> 
+<option value="Sri Lanka">Sri Lanka</option> 
+<option value="Sudan">Sudan</option> 
+<option value="Suriname">Suriname</option> 
+<option value="Svalbard and Jan Mayen">Svalbard and Jan Mayen</option> 
+<option value="Swaziland">Swaziland</option> 
+<option value="Sweden">Sweden</option> 
+<option value="Switzerland">Switzerland</option> 
+<option value="Syrian Arab Republic">Syrian Arab Republic</option> 
+<option value="Taiwan, Province of China">Taiwan, Province of China</option> 
+<option value="Tajikistan">Tajikistan</option> 
+<option value="Tanzania, United Republic of">Tanzania, United Republic of</option> 
+<option value="Thailand">Thailand</option> 
+<option value="Timor-leste">Timor-leste</option> 
+<option value="Togo">Togo</option> 
+<option value="Tokelau">Tokelau</option> 
+<option value="Tonga">Tonga</option> 
+<option value="Trinidad and Tobago">Trinidad and Tobago</option> 
+<option value="Tunisia">Tunisia</option> 
+<option value="Turkey">Turkey</option> 
+<option value="Turkmenistan">Turkmenistan</option> 
+<option value="Turks and Caicos Islands">Turks and Caicos Islands</option> 
+<option value="Tuvalu">Tuvalu</option> 
+<option value="Uganda">Uganda</option> 
+<option value="Ukraine">Ukraine</option> 
+<option value="United Arab Emirates">United Arab Emirates</option> 
+<option value="United Kingdom">United Kingdom</option> 
+<option value="United States">United States</option> 
+<option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option> 
+<option value="Uruguay">Uruguay</option> 
+<option value="Uzbekistan">Uzbekistan</option> 
+<option value="Vanuatu">Vanuatu</option> 
+<option value="Venezuela">Venezuela</option> 
+<option value="Viet Nam">Viet Nam</option> 
+<option value="Virgin Islands, British">Virgin Islands, British</option> 
+<option value="Virgin Islands, U.S.">Virgin Islands, U.S.</option> 
+<option value="Wallis and Futuna">Wallis and Futuna</option> 
+<option value="Western Sahara">Western Sahara</option> 
+<option value="Yemen">Yemen</option> 
+<option value="Zambia">Zambia</option> 
+<option value="Zimbabwe">Zimbabwe</option>
+</select></td>
+                </tr>
+                <tr>
+                  <td align="right"><span class="style14">
+                  <label for="textfield3">Phone:</label>
+                  </span></td>
+                  <td><span class="style14">
+                    <input type="text" name="phone" id="textfield12" size="30"/>
+                  </span></td>
+                </tr>
+<!--                
+                <tr>
+                  <td align="right"><span class="style14">
+                  <label for="textfield2">Fax:</label>
+                  </span></td>
+                  <td><span class="style14">
+                    <input type="text" name="fax" id="textfield7" size="30" />
+                  </span></td>
+                </tr>
+-->
+                <tr>
+                  <td align="right"><span class="style14">Email
+                      <label for="textfield23">Address:*</label>
+                  </span></td>
+                  <td><span class="style14">
+                    <input type="text" name="email" id="textfield2" size="50"/>
+                  </span></td>
+                </tr>
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+
+                <tr>
+                  <td align="right"><span class="style14">Select the registration type:</span></td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Full Early Registration - EUR 475,00" disabled />
+                  <label for="radio">Full Early Registration -  EUR 475,00</label></td>
+                </tr>
+
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Full Regular Registration - EUR 575,00" />
+                  <label for="radio2">Full Regular Registration - EUR 575,00</label></td>
+                </tr>
+<!--
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Student Early Registration - EUR 175,00" disabled />
+                  <label for="radio2">Student Early Registration - EUR 175,00</label></td>
+                </tr>
+-->                
+                                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Student Registration - EUR 175,00" />
+                  <label for="radio2">Student Registration - EUR 175,00</label></td>
+                </tr>
+
+<!--                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Accompanying Person Early Registration - EUR 100,00"
+                  disabled />
+                  <label for="radio2">Accompanying Person Early Registration - EUR 100,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="radio" name="registrationType" id="radio"
+                  value="Accompanying Person Regular Registration - EUR 120,00" />
+                  <label for="radio2">Accompanying Person Regular Registration - EUR 120,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                
+                <tr>
+                  <td align="right"><span class="style14">Extra Banquet Ticket:</span></td>
+                  <td><input type="checkbox" name="extraBanquet"
+                  id="checkbox5" value="extraBanquetEarly" disabled />
+                  <label id="extraBanquetEarly">Early - EUR 70,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="checkbox" name="extraBanquet"
+                  id="checkbox6" value="extraBanquetRegular" />
+                  <label id="extraBanquetRegular">Regular - EUR 80,00</label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                
+
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                
+                <tr>
+                  <td align="right"><span class="style14">Tutorials:</span></td>
+                  <td><input type="checkbox" name="tutorials" id="checkbox4" value="tutorialsYes" />
+                  <label for="checkbox4">Tutorials registration - EUR 50,00 </label></td>
+                </tr>
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+
+-->
+                
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+
+                <tr>
+                  <td align="right">&nbsp;</td>
+                  <td><input type="submit" name="submit" id="submit" value="   Next step   "  /></td>
+                </tr>
+              </table>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+            </form>
+            <p align="center"><span class="style9"><br />
+              </span><br />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
