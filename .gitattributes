@@ -32,12 +32,15 @@ README text
 
 # binaries and others
 *.pdf binary
-*.eot
-*.svg
-*.ttf
-*.woff
-*.woff2
+*.eot binary
+*.svg binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.jpg binary
 
+
+ 
 *.tex diff=tex
 *.sty diff=tex
 *.def diff=tex
