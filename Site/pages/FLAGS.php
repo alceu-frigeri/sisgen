@@ -25,9 +25,9 @@ $ADMINMAXPAPERS=11;
 $MAXSIZE=1000000;
 $NRECORDS=40;
 $regpage='Register';
-$uploaddir='/export/var/www/sbai17/uploads/';
-$receiptdir='/export/var/www/sbai17/recibos/';
-$baseurl='https://www.ufrgs.br/sbai17/';
+$uploaddir='/export/var/www/sisgen/uploads/';
+$receiptdir='/export/var/www/sisgen/recibos/';
+$baseurl='https://www.ufrgs.br/sisgen/test-index.php';
 $uploadurl="${baseurl}uploads/";
 $receipturl="${baseurl}recibos/";
 $debug=false;
@@ -45,7 +45,6 @@ If($timestamp > $paperstime) {
 echo "<script type='text/javascript'>
         var MAXPAPERS = ${MAXPAPERS};
         var MAXSIZE = ${MAXSIZE};
-        var EARLY = $early;
 ";
 
 if ($nopapers) {

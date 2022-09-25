@@ -4,7 +4,7 @@
 // Account Register functions
 //
 
-function reg_confirm($gethash) {
+function regacc_validate($gethash) {
     global $mysqli;
     global $regpage;
     
@@ -25,42 +25,76 @@ function reg_confirm($gethash) {
     }
 }
 
-function mymail($email,$subject,$msg) {
-    $msg .= "\n\nAtt.\n sisgen\nhttps://www.ufrgs.br/sisgen";
-	$mailheaders  = 'MIME-Version: 1.0' . "\r\n";
-	$mailheaders .= 'Content-Type: text/plain; charset=utf-8' . "\r\n";
-	$mailheaders .= 'Content-Transfer-Encoding: base64' . "\r\n";
-	$mailheaders .= "From: sisgen@ufrgs.br" . "\r\n";
-	$mailsubject .= '=?UTF-8?B?' . base64_encode("sisgen - $subject") . '?=';
-    mail("$email",$mailsubject,base64_encode($msg),$mailheaders);
-}
 
 
 
-function reg_forgot() {
-    $accdt = getemailaccdata($_POST['emailA']);
-    if ($accdt && $accdt['activ']) {
-	mymail($accdt['email'],"Senha de Acesso","Prezado(a)\n Sua senha é: $accdt[password]");
-    }
-}
 
-function reg_resend() {
+function reg_subscribe() {
+    global $mysqli;
+    global $regpage;
     global $baseurl;
-    $accdt = getemailaccdata($_POST['emailA']);
-    if ($accdt && !$accdt['activ']) {
-	$msg = "
-Obrigado por criar uma conta.
-Por favor, acesse o link abaixo para ativar a mesma
+    global $microstamp;
+    
+    //    echo "<h2>Sistema de Inscrição</h2><hr>\n";
+    //    echo "Dados submetidos:<br>\n";
 
-      ${baseurl}?q=${regpage}&h=$accdt[valhash]
+    $email=$_POST['emailA'];
+    $passwd=$_POST['passA'];
+    $emailhash=md5($email);
+    $hashadmin=md5("$email-$microstamp");
+    $today = date('Y-m-d');
+    //    echo "email: $email<br>\n";
+    //    echo "password: $passwd<br>\n";
+    //    echo "md5(email):$emailhash<br>\n";
 
-Att.
-sisgen";
-	mymail($email,"Confirmação de Email",$msg);
+    $email = $mysqli->real_escape_string($email);
+    $passwd = $mysqli->real_escape_string($passwd);
+
+
+    
+    if (!($stmt = $mysqli->prepare("SELECT email,password,activ FROM `account` WHERE `email` = ?;"))) {
+	echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
+    if (!$stmt->bind_param('s',$email)) {
+	echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+    };
+    $result  = $stmt->execute();
+    $stmt->bind_result($mail2,$pass2,$activ2);
+
+    if ($stmt->fetch()) {
+	if($activ2) {
+	    echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>\n";
+	    mymail($mail2,"Senha de Acesso","Prezado(a)\n Sua senha é: $pass2");
+	} else {
+	    echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>\n";
+	    $msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
+   		   "${baseurl}?q=${regpage}&h=$emailhash\n\nAtt. Secretaria sisgen";
+	    mymail($email,"Confirmação de Email",$msg);
+	}
+	
+	
+	$stmt->close();
+    } else {
+	$stmt->close();
+	$type = T_CONG;
+
+
+	$sql = "INSERT INTO `account` (`email`, `password`, `valhash`, `hashdate`) VALUES ('$email','$passwd','$emailhash','$today');";
+	if (!($result=$mysqli->query($sql))) {
+	    printf("<br>Error: %s<br>\n", $mysqli->error);
+	}
+
+	//     $mysqli->commit();
+	echo "<h4>Obrigado por criar uma conta.</h4><br>
+Você estará recebendo, em breve, um Email com instruções para ativar a sua conta.<br>";
+
+
+	$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
+   	       "${baseurl}?q=${regpage}&h=$emailhash\n\nAtt. sisgen";
+	mymail($email,"Confirmação de Email",$msg);
+
+    } 
 }
-
-
 
 
 
