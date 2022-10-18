@@ -1,0 +1,65 @@
+Campus Centro - Escola de Engenhar - Depto Eng; Elétrica.- DELET- DELAE- PPGEE-11106 - 
+**centro##Eletro$$ 
+Campus Centro - Escola de Engenharia - Depto de Engenharia Mecânica -DEMEC - 11107 - 
+**centro##Mecânica$$ 
+
+Campus Centro - Escola de Engenharia - Prédio Centenário - 11101 - 
+**centro##Centenário$$ @@
+Campus Centro - Escola de Engenharia Nova - 11105 - 
+**centro##Eng. nova$$ @@
+Campus Centro - Faculdade de Arquitetura - 12103 - 
+**centro##Arquitetura$$ @@
+Campus Centro - Salas de Aula Campus Centro - 11209 - 
+**centro##Prédio Branco$$ 
+Campus Vale - 
+**vale##Vale$$ @@
+Campus Saúde - 
+**saude##Saúde$$ @@
+
+
+
+**centro##Eletro$$ PAVIMENTO 01 - 110 - LMEAE - Laboratório Aula de Graduação e Pós do DELET/LMEAE
+
+**centro##Eletro$$ PAVIMENTO 02 - 200 - Laboratório de Ensino de Graduação
+**centro##Eletro$$ PAVIMENTO 02 - 201 - Laboratório de Ensino de Graduação
+**centro##Eletro$$ PAVIMENTO 02 - 202 - Laboratório de Ensino de Graduação
+**centro##Eletro$$ PAVIMENTO 03 - Sala 301 - Laboratório de Informática
+**centro##Eletro$$ PAVIMENTO 03 - Sala 303 do(a) Escola de Engenharia (Eletrotécnico)
+**centro##Eletro$$ PAVIMENTO 03 - Sala 304 do(a) Escola de Engenharia (Eletrotécnico)
+**centro##Eletro$$ PAVIMENTO 03 - Sala 305 - Laboratório Sinergia - Graduação
+**centro##Eletro$$ PAVIMENTO 03 - Sala 306 do(a) Escola de Engenharia (Eletrotécnico)
+**centro##Eletro$$ PAVIMENTO 03 - Sala 304 do(a) Escola de Engenharia (Eletrotécnico)
+
+**centro##Mecânica$$ MEZANINO 01 - Laboratório de Ensino GMAp
+MEZ 01
+**centro##Mecânica$$ PAVIMENTO 02 - Laboratório de Aplicações em Energia e Fenômenos de Transporte (LAEFT)
+LAEFT
+**centro##Mecânica$$ PAVIMENTO 03 - Laboratório de Sistemas Hidráulicos e Pneumáticos (LSHP)
+LSHP
+**centro##Mecânica$$ PAVIMENTO 03 - Sala 302 do Prédio da Engenharia Mecânica
+**centro##Mecânica$$ PAVIMENTO 03 - Sala 303 do Prédio da Engenharia Mecânica
+**centro##Mecânica$$ PAVIMENTO 03 - Sala 304 do Prédio da Engenharia Mecânica
+**centro##Mecânica$$ PAVIMENTO 03 - Sala 307 do Prédio da Engenharia Mecânica
+
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 02 - sala de aula 0021
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 02 - sala de aula 0022
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 03 - sala de aula 033
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 04 - sala de aula 041
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 05 - sala de aula 052
+Campus Centro - Salas de Aula Campus Centro - 11209 - PAVIMENTO 06 - sala de aula 063
+
+
+
+Campus Saúde - Anexo I Saúde
+  Saúde
+Campus Centro - Instituto de Ciências Básicas
+  icbs
+Campus Centro - Faculdade de Ciências Econômicas
+ Economia
+Campus Centro - Faculdade de Educação
+ faced
+
+
+
+
+

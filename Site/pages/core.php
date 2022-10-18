@@ -1,6 +1,21 @@
-<?php include "FLAGS.php" ?>
-
 <?php
+date_default_timezone_set('America/Sao_Paulo');
+
+$domainurl='https://www.ufrgs.br';
+$baseurl=$domainurl.'/sisgen';
+$basepage='/sisgen/';
+$debug=false;
+
+$sisgensetup=true; //to enable/disable 'initial' import/fix pages (admin)
+
+// some handy/aux values
+	$commentcolor='teal';
+	$commentpattern='[a-zA-Z0-9 \?\!\.\-]+';
+	$discpattern='[a-zA-Z0-8à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \-]+';
+	$namepattern='[a-zA-Z0-8à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \-\.@]+';
+	$passwdpattern='(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
+	
+
 include "dbconnect.php";
 
 $mysqli = myconnect();
@@ -16,7 +31,7 @@ list($microstamp,$sec) = explode(' ',microtime(false));
 list($nothing,$microstamp) = explode('.',$microstamp);
 
 function mymail($email,$subject,$msg) {
-    $msg .= "\n\nAtt.\n sisgen\nhttps://www.ufrgs.br/sisgen";
+    $msg .= "\n\nAtt.\n sisgen\n$baseurl";
 	$mailheaders  = 'MIME-Version: 1.0' . "\r\n";
 	$mailheaders .= 'Content-Type: text/plain; charset=utf-8' . "\r\n";
 	$mailheaders .= 'Content-Transfer-Encoding: base64' . "\r\n";
@@ -26,32 +41,18 @@ function mymail($email,$subject,$msg) {
 }
 
 
-
-
-
-
-function eventlog($level,$action,$usrid,$logstr,$logxtra) {
-    global $DBVALS;
-    global $mysqli;
-    global $debug;
-    
-    $level='LOG_'.$level;
-
-    $trace=debug_backtrace();
-    $caller=$trace[1];  // who called us (0 is us)
-      
-    if (!($stmt = $mysqli->prepare("INSERT INTO `log` (loglevel_id,user_id,browserIP,browseragent,callersfunction,action,logline,logxtra) VALUES (?,?,?,?,?,?,?,?);"))) {
-	echo "LOG Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-    if (!$stmt->bind_param('iissssss',$DBVALS[$level],$usrid,$_SERVER['REMOTE_ADDR'],$_SERVER['HTTP_USER_AGENT'],$caller['function'],$action,$logstr,$logxtra)) {
-	echo "LOG Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
-    };
-    if (!$stmt->execute()) {
-	echo "LOG execute failed: (" . $stmt->errno . ") " . $stmt->error;
-    };
-    $mysqli->commit();
+function writeLogFile($msg) { 
+     if (!$handle = @fopen("log.txt", "a")) {
+          echo "<br>ERR opening LOG file !!!</br>\n";
+          exit;
+     } else {
+          if (@fwrite($handle,"$msg\r\n") === FALSE) {
+			echo "<br>ERR writing to LOG file !!!</br>\n";
+            exit;
+          }
+          @fclose($handle);
+     }
 }
-
 
 
 
@@ -67,7 +68,6 @@ function regacc_create() {
     $email=$_POST['emailA'];
     $passwd=$_POST['passA'];
     $emailhash=md5($email);
-    $hashadmin=md5("$email-$microstamp");
     $today = date('Y-m-d');
     //    echo "email: $email<br>\n";
     //    echo "password: $passwd<br>\n";
@@ -75,49 +75,41 @@ function regacc_create() {
 
     $email = $mysqli->real_escape_string($email);
     $passwd = $mysqli->real_escape_string($passwd);
-
+    list($usrname,$usrdomain) = explode('@',$email,2);
 
     
     if (!($stmt = $mysqli->prepare("SELECT email,password,activ FROM `account` WHERE `email` = ?;"))) {
-	echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+		echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     if (!$stmt->bind_param('s',$email)) {
-	echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+		echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
     };
     $result  = $stmt->execute();
     $stmt->bind_result($mail2,$pass2,$activ2);
 
     if ($stmt->fetch()) {
-	if($activ2) {
-	    echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>\n";
-	    mymail($mail2,"Senha de Acesso","Prezado(a)\n Sua senha é: $pass2");
-	} else {
-	    echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>\n";
-	    $msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
-   		   "${baseurl}?st=validate&h=$emailhash\n\n";
-	    mymail($email,"Confirmação de Email",$msg);
-	}
-	
-	
-	$stmt->close();
+		if($activ2) {
+			echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>\n";
+			mymail($mail2,"Senha de Acesso","Prezado(a)\n Sua senha é: $pass2");
+		} else {
+			echo "<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>\n";
+			$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
+				"${baseurl}?st=validate&h=$emailhash\n\n";
+			mymail($email,"Confirmação de Email",$msg);
+		}
+		$stmt->close();
     } else {
-	$stmt->close();
-	$type = T_CONG;
+		$stmt->close();
 
+		$sql = "INSERT INTO `account` (`email`, `password`, `name` , `displayname` , `valhash`) VALUES ('$email','$passwd','$email','$usrname','$emailhash');";
+		$result=$mysqli->dbquery($sql);
 
-	$sql = "INSERT INTO `account` (`email`, `password`, `valhash`, `hashdate`) VALUES ('$email','$passwd','$emailhash','$today');";
-	if (!($result=$mysqli->query($sql))) {
-	    printf("<br>Error: %s<br>\n", $mysqli->error);
-	}
-
-	//     $mysqli->commit();
-	echo "<h4>Obrigado por criar uma conta.</h4><br>
+		echo "<h4>Obrigado por criar uma conta.</h4><br>
 Você estará recebendo, em breve, um Email com instruções para ativar a sua conta.<br>";
 
-
-	$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
+		$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
    	       "${baseurl}?st=validate&h=$emailhash\n\nAtt. sisgen";
-	mymail($email,"Confirmação de Email",$msg);
+		mymail($email,"Confirmação de Email",$msg);
 
     } 
 }
@@ -129,28 +121,25 @@ function regacc_validate($gethash) {
     
     echo "<h2>Confirmação de Email</h2><hr>\n";
     $sql = "SELECT * FROM `account` WHERE `account`.`valhash` = '$gethash'";
-    if(!($result = $mysqli->query($sql))) {
-	printf("Error: %s<br>\n", $mysqli->error);
-    }
+	$result = $mysqli->dbquery($sql);
     if ($result->num_rows) {
-	echo "Obrigado por confirmar seu Email<br>\n";
-	$sql ="UPDATE `sisgen`.`account` SET `activ` = '1' WHERE `account`.`valhash` = '$gethash'";
-	$result = $mysqli->query($sql);
-	if (!$result) {printf("Error: %s<br>\n", $mysqli->error);};
-	echo "Agora você já pode se logar no sistema !<br>\n";
-    } else {
-	echo "<font color='red'><b>Link Inválido ou Expirado</b></font><br>\n";
-    }
+		echo "Obrigado por confirmar seu Email<br>\n";
+		$sql ="UPDATE `sisgen`.`account` SET `activ` = '1' WHERE `account`.`valhash` = '$gethash'";
+		$result = $mysqli->dbquery($sql);
+		echo "Agora você já pode se logar no sistema !<br>\n";
+	} else {
+		echo "<font color='red'><b>Link Inválido ou Expirado</b></font><br>\n";
+	}
 }
 
 
 function getacc_byemail($email) {
     global $mysqli;
-
-    if (!($result = $mysqli->query("SELECT * FROM `account` WHERE account.email = '${email}'"))) {
-	$err= "Query failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	eventlog('DBERROR','',"($email) $err") ;
-	return NULL;
+	
+    $email = $mysqli->real_escape_string($email);
+	$q = "SELECT * FROM `account` WHERE account.email = '".$email."'";
+	if(!($result = $mysqli->dbquery($q))) {
+		return NULL;
     }
     return $result->fetch_assoc();
 }
@@ -160,7 +149,7 @@ function getacc_byemail($email) {
 function regacc_passrecovery() {
     $accdt = getacc_byemail($_POST['emailA']);
     if ($accdt && $accdt['activ']) {
-	mymail($accdt['email'],"Senha de Acesso","Prezado(a)\n Sua senha é: $accdt[password]");
+		mymail($accdt['email'],"Senha de Acesso","Prezado(a)\n Sua senha é: $accdt[password]");
     }
 }
 
@@ -182,130 +171,212 @@ sisgen";
 }
 
 
-//eventlog($level,$action,$usrid,$logstr,$logxtra)
 
-function set_sessionvalues($userid,$userhash) {
+
+
+function duplicatesem($currsemid,$newsemname) {
 	global $mysqli;
-	$_SESSION['userid'] = $userid;
-	$_SESSION['sessionhash'] = $userhash;
 	
-	if (!($result = $mysqli->query("SELECT rr.* , cd.acronym, cd.code, cd.iscourse, cd.isdept FROM role rr, unit cd , accrole accr , account acc  WHERE rr.unit_id = cd.id AND rr.id = accr.role_id AND acc.id = accr.account_id AND acc.id = $userid;"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
+	$newsem = $mysqli->real_escape_string($newsemname);
+	$q = "SELECT * FROM semester WHERE `name` = '" . $newsem . "';";
+	$result = $mysqli->dbquery($q);
+	if ($sqlrow = $result->fetch_assoc()) {
+		echo "ERR: semestre já existente ! </br>";
+	} else {
+		$q = "INSERT INTO `semester` (`name`) VALUES ('" . $newsem . "');";
+		$mysqli->dbquery($q);
+		$newsemid = $mysqli->insert_id;
+
+
+		$qnewclass = "INSERT INTO `class` (`name`,`agreg`,`partof`,`sem_id`,`discipline_id`) SELECT `cl`.`name`, `cl`.`agreg` , `cl`.`partof`, '".$newsemid."' , `cl`.`discipline_id` FROM `class` AS `cl` WHERE  `cl`.`sem_id` = '".$currsemid."';";
+		//echo "<br> $qnewclass";
+		$mysqli->dbquery($qnewclass);
+
+		$qsegment = "INSERT INTO `classsegment` (`class_id`,`day`,`start`,`length`,`room_id`,`prof_id`) SELECT `new`.`id` , `cs`.`day` , `cs`.`start` , `cs`.`length` , `cs`.`room_id` , `cs`.`prof_id` " . 
+		"FROM `class` AS `org`, `class` AS `new` , `classsegment` AS `cs` " . 
+		"WHERE `cs`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
+		//echo "<br> $qsegment";
+		$mysqli->dbquery($qsegment);
+
+
+		$qvacancy = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) SELECT `new`.`id` , `vc`.`course_id` , `vc`.`askednum` , `vc`.`givennum`  " .
+		"FROM `class` AS `org`, `class` AS `new` , `vacancies` AS `vc` " . 
+		"WHERE `vc`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
+		//echo "<br> $qvacancy";
+		$mysqli->dbquery($qvacancy);
+
+	
 	}
-	$kinds = array('isadmin','isdept','iscourse');
-	$boolkeys  = array('can_edit','can_dupsem','chg_vacancies','chg_class','can_viewlog','chg_disciplines','chg_coursedisciplines');
-	$txtkeys = array('rolename','description');
+	
+}
+
+
+
+
+
+
+
+///// other 'help' functions
+
+
+
+function dbweekmatrix($q,$courseid=null) {
+	global $mysqli;
+	
+	  $colors = array(
+				"#CF0000",
+				"#00CF00",
+				"#0000CF",
+				"#9F0000",
+				"#009F00",
+				"#00009F",
+				"#9F9F00",
+				"#009F9F",
+				"#9F009F",
+				"#9F9F4F",
+				"#4F9F9F",
+				"#9F4F9F");
+
+	$result = $mysqli->dbquery($q);
 	while ($sqlrow = $result->fetch_assoc()) {
-		foreach ($kinds as $kind) {
-			if($sqlrow[$kind]) {
-				if ($_SESSION[$kind][$sqlrow['unit_id']]) {
-					foreach ($boolkeys as $key) {
-						$_SESSION[$kind][$sqlrow['unit_id']][$key] = $_SESSION[$kind][$sqlrow['unit_id']][$key] || $sqlrow[$key];
-					}
-					foreach ($txtkeys as $key) {
-						$_SESSION[$kind][$sqlrow['unit_id']][$key] = $_SESSION[$kind][$sqlrow['unit_id']][$key] . ' / ' . $sqlrow[$key];
-					}
-				} else {
-					$_SESSION[$kind][$sqlrow['unit_id']] = $sqlrow;
-				}
+		$disccodes[$sqlrow['code']] = $sqlrow['code'];
+		$disc[$sqlrow['code']] = $sqlrow['discname'];
+		if (!$vac[$sqlrow['code'] . " - " . $sqlrow['name']]) {
+			if($courseid) {
+				$q = "SELECT `askednum`  AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
+			} else {
+				$q = "SELECT SUM(givennum) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
+			}
+			$vacresult = $mysqli->dbquery($q);
+			$vacrow = $vacresult->fetch_assoc();
+			$vac[$sqlrow['code'] . " - " . $sqlrow['name']] = $vacrow['total'];
+		}
+		if ($vac[$sqlrow['code'] . " - " . $sqlrow['name']]) {
+			for ($i=0; $i < $sqlrow['length']; $i++) {
+				$start=$sqlrow['start'];
+				$day=$sqlrow['day'];
+				$d = $sqlrow['code'] . " - " . $sqlrow['name'] . ' (' . $vac[$sqlrow['code'] . " - " . $sqlrow['name']] . ')';
+				$week[$day][$start+$i][] = $d; 
+				$seg[$d] = $sqlrow['code'];
 			}
 		}
 	}
-	$result->close();
-	if (!($result = $mysqli->query("SELECT *  FROM unit;"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
+	$i=0;
+	foreach ($disccodes as $d) {
+		$disccolor[$d] = $colors[$i];
+		$i++;
 	}
-	while ($sqlrow = $result->fetch_assoc()) {
-		$_SESSION['unitbycode'][$sqlrow['code']] = $sqlrow;
-		$_SESSION['unitbyacronym'][$sqlrow['acronym']] = $sqlrow;
+
+	echo "<table>";
+	echo "<tr style=\"border-bottom:1px solid black\"><td>Hora</td>";
+	for ($i=2; $i <8; $i++) {
+		echo "<td> " . $_SESSION['weekday'][$i] . "&nbsp;</td>";
 	}
-	$result->close();
-	if (!($result = $mysqli->query("SELECT *  FROM disciplinekind;"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	while ($sqlrow = $result->fetch_assoc()) {
-		$_SESSION['disckindbycode'][$sqlrow['code']] = $sqlrow;
-	}
-	$result->close();
-	if (!($result = $mysqli->query("SELECT *  FROM term;"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	while ($sqlrow = $result->fetch_assoc()) {
-		$_SESSION['termbycode'][$sqlrow['code']] = $sqlrow;
-	}
-	$result->close();
-	if (!($result = $mysqli->query("SELECT *  FROM building;"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	while ($sqlrow = $result->fetch_assoc()) {
-		$_SESSION['buildingbyacronym'][$sqlrow['acronym']] = $sqlrow;
-		if (!($roomquery = $mysqli->query("SELECT room.*  FROM room , building WHERE room.building_id = building.id;"))) {
-			echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
+	echo "</tr>";
+	for ($j=7;$j<22;$j++) {
+		echo "<tr style=\"border-bottom:1px solid black\"><td>" . $j . ":30&nbsp;</td>";
+		for ($i=2;$i<8;$i++) {
+			echo "<td>";
+			$b='';
+			foreach ($week[$i][$j] as $d) {
+				echo $b . "<span style=\"color: " . $disccolor[$seg[$d]] . "\">" . $d . "</span>";
+				$b='<br>';
+			}
+			echo "&nbsp;</td>";
 		}
-		while ($sqlroom = $roomquery->fetch_assoc()) {
-			$_SESSION['buildingbyacronym'][$sqlrow['acronym']]['roombyacronym'][$sqlroom['acronym']] = $sqlroom;
+		echo "</tr>";
+	}
+	echo "</table>";
+	foreach ($disccodes as $d) {
+		echo "<span style=\"color: " . $disccolor[$d] . "\">" . $d . " - " . $disc[$d] . "</span></br>";
+	}
+}
+
+
+
+
+	function spanformat($style,$text) {
+		return '<span style="'.$style.'">' . $text . '</span>';
+	}
+	
+	function pagereload($page) {
+		return "<script type=\"text/javascript\">
+			setInterval('location.replace(\"".$page."\")', 100);
+			</script>";
+	}
+
+	function formpost($action) {
+		return "<form method='post' enctype='multipart/form-data' action='" . $action . "'>";
+	}
+
+	function formpatterninput($max,$size,$pattern,$title,$fieldname,$fieldval) {
+		return "<input type='text' maxlength='".$max."' size='".$size."' pattern='".$pattern."' title='".$title."' name='".$fieldname."' value='".$fieldval."'\>";
+	}
+
+	function formhiddenval($field,$val) {
+		return "<input type='hidden' name='$field' id='$field' value='$val' />\n";
+	}
+
+	function formsubmit($field,$val) {
+		return "<input type='submit' name='$field' value='$val' />\n";
+	}
+
+
+	function displaysqlitem($str,$sqltable,$sqlid,$sqlitem,$sqlitemB=null) {
+		global $mysqli;
+		if($sqlitemB) {$b=' , `'.$sqlitemB.'`';} else {$b='';};
+		$q = "SELECT `".$sqlitem."`$b FROM `".$sqltable."` WHERE `id` = '" . $sqlid . "';";
+		$result = $mysqli->dbquery($q);
+		$sqlrow = $result->fetch_assoc();
+		if($sqlitemB) {
+			return $str . $sqlrow[$sqlitem] . ' -- ' . $sqlrow[$sqlitemB] ."   ";
+		} else {
+			return $str . $sqlrow[$sqlitem] . "   ";
 		}
-		$roomquery->close();
-	}
-	$result->close();
-	$q = "select * from weekdays;";
-	if (!($result = $mysqli->query($q))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	while ($sqlrow = $result->fetch_assoc()){
-		$_SESSION['weekday'][$sqlrow['name']] = $sqlrow;
 	}
 	
-	
-	
-}
 
-
-function regacc_maillogincheck($email,$passwd) {
-    global $mysqli;
-    global $microstamp;
-    
-    if (!($result = $mysqli->query("SELECT * FROM `account` WHERE `email` = '$email';"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-    if (($sqlrow=$result->fetch_assoc())) {
-	//	echo "hash ORG: $sqlrow[valhash]<br>\n";
-	if (($passwd == $sqlrow['password'] && $sqlrow['activ'])) {
-	    $newhash=md5("$email - $microstamp");
-		set_sessionvalues($sqlrow['id'],$newhash);
-	    $result->close();
-	    if (!($mysqli->query("UPDATE  `account` SET `sessionhash` = '$newhash' WHERE `email` = '$email';"))) {
-		$err = "Query failed: (" . $mysqli->errno . ") " . $mysqli->error;
-		eventlog('DBERROR','login(binding)',NULL,$err,'core.php') ;
-	    }
-	    //            return array($newhash,$sqlrow['can_edit'],$sqlrow['type_id']);
-	    $sqlrow['valhash']=$newhash;
-	    //	    echo "hash NEW: $sqlrow[valhash]<br>\n";
-	    eventlog('LOGIN','login',$sqlrow['id'],"user $sqlrow[email] login","core.php") ;
-	    return TRUE;
+	function formselectsessionX($selectname,$sessionkey,$refval,$nulloption=false) {
+		echo "<select name='$selectname'>";
+		if($nulloption) { echo "<option value='0'>--</option>";	}
+		foreach ($_SESSION[$sessionkey] as $id => $val) {
+			if ($id == $refval) {
+				$selected = ' selected="selected"';
+			} else {
+				$selected = '';
+			}
+			echo "<option value='$id'$selected>".$val."</option>";
+		}	
+		echo "</select>";
 	}
-    }
-    $result->close();
-    //    return array(false,false,false);
-    return FALSE;
-}
 
-function regacc_hashcheck() {
-    global $mysqli;
-    global $microstamp;
-    
-    if (!($result = $mysqli->query("SELECT * FROM `account` WHERE `sessionhash` = '$_SESSION[sessionhash]' AND `id` = '$_SESSION[userid]';"))) {
-        echo "Prepare query: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-    if (($sqlrow=$result->fetch_assoc())) {
-		return TRUE;
-    } else {
-	    eventlog('WARNING','session check',$_SESSION['userid'],"hashcheck failed !","core.php") ;
+
+	function formselectsqlX(&$any,$q,$selectname,$refval,$idkey,$valAkey,$valBkey=null) {
+		global $mysqli;
+		
+		$result = $mysqli->dbquery($q);
+		echo "<select name='".$selectname."'>";
+		echo "<option value='0'>---</option>";
+		$any=0;
+		while ($sqlrow = $result->fetch_assoc()) {
+			$any=1;
+			if ($sqlrow[$idkey] == $refval) {
+				$selected = ' selected="selected"';
+			} else {
+				$selected = '';
+			}
+			if($valBkey) {
+				$val = $sqlrow[$valAkey]. " - ".$sqlrow[$valBkey];
+			} else {
+				$val = $sqlrow[$valAkey];
+			}
+			echo "<option value='".$sqlrow[$idkey]."'$selected>".$val."</option>";
+		}
+		echo "</select>";
 	}
-    $result->close();
-    //    return array(false,false,false);
-    return FALSE;
-}
+	
+
+
 
 
 ?>

@@ -23,9 +23,9 @@ body {
 /* Header Image Background - Change the URL below to your image path (example: ../images/background.jpg) */
 
 .business-header {
-    height: 400px;
+    height: 150px;
     /*background: url('http://placehold.it/1920x400') center center no-repeat scroll;*/
-    background: url('../images/banner-sbai17.jpg') center center no-repeat scroll;
+    background: url('../images/BannerPredioHistorico.jpg') center center no-repeat scroll;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -99,12 +99,14 @@ hr {
     font-weight: bold;
 }
 
+
 .banner {
     width: 100%;
     #background-color: #4da4f6;
-    background: url('../images/fundo-banner2.png') center center no-repeat scroll;
-    height: 273px;
+/*    background: url('../images/fundo-banner2.png') center center no-repeat scroll;*/
+    height: 160px;
 }
+
 .logo {
     width: 226px;
     padding: 20px;    
@@ -117,7 +119,8 @@ hr {
 }
 
 .logo-congresso{
-    width: 350px;
+    /*width: 350px;*/
+	max-height: 105px;
     padding: 20px;    
 }
 
@@ -375,3 +378,15 @@ footer {
      50% { opacity: 0.0; }
      100% { opacity: 1.0; }
 }
+
+.navbar-fixed-top .navbar-collapse,
+.navbar-fixed-bottom .navbar-collapse {
+  max-height: 200px;
+}
+
+
+.navbar {
+  min-height: 30px;
+  margin-bottom: 10px;
+}
+
