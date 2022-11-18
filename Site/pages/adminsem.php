@@ -9,6 +9,7 @@
 <?php 
 
 
+	$mysqli->postsanitize();
 
 
 
@@ -16,8 +17,10 @@
 	if($_SESSION['role']['isadmin']) {
 		switch($_POST['act']) {
 			case 'Submit':
-				$q = "UPDATE `semester` SET `readonly` = '".$_POST['readonly']."' WHERE `id` = '".$_POST['semid']."';";
-				$mysqli->dbquery($q);
+				if (fieldscompare('',array('readonly'))) {
+					$q = "UPDATE `semester` SET `readonly` = '".$_POST['readonly']."' WHERE `id` = '".$_POST['semid']."';";
+					$mysqli->dbquery($q);
+				}
 				break;
 			case 'Delete':
 				if($_POST['act'] == 'Delete') {
@@ -38,10 +41,10 @@
 			echo formpost($thisform) . formhiddenval('semid',$semrow['id']);
 			if (($_POST['semid'] == $semrow['id']) & (($_POST['act'] == 'Edit'))) {
 				echo $semrow['name'] . '&nbsp;&nbsp;&nbsp;&nbsp;readonly:';
-				formselectsessionX('readonly','bool',$semrow['readonly']);
+				formselectsession('readonly','bool',$semrow['readonly']);
 				echo formsubmit('act','Submit');
 				echo '  Delete? ';
-				formselectsessionX('delete','bool',0);
+				formselectsession('delete','bool',0);
 				echo formsubmit('act','Delete');
 				echo '</form>';
 				echo formpost($thisform) . formhiddenval('semid',$semrow['id']);

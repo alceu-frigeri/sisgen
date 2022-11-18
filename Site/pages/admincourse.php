@@ -7,12 +7,16 @@
 		<br>
 
 <?php 
+	$mysqli->postsanitize();
+
 
 	if ($_SESSION['role']['isadmin']) {
 		switch($_POST['act']) {
 			case 'Submit':
-				$q = "UPDATE `unit` SET `acronym` = '" . $_POST['acronym'] . "' , `code` = '" . $_POST['code'] . "' , `name` = '" . $_POST['name']   .  "'  WHERE `id` = '" . $_POST['courseid'] . "'";
-				$mysqli->dbquery($q);
+				if(fieldscompare('',array('acronym','code','name'))) {
+					$q = "UPDATE `unit` SET `acronym` = '" . $_POST['acronym'] . "' , `code` = '" . $_POST['code'] . "' , `name` = '" . $_POST['name']   .  "'  WHERE `id` = '" . $_POST['courseid'] . "'";
+					$mysqli->dbquery($q);
+				}
 				break;
 			case 'Delete':
 				if ($_POST['coursedelete']) {
@@ -21,11 +25,7 @@
 				}
 				break;
 			case 'Duplicate as':
-				$q = "INSERT INTO `unit` (`acronym`,`code`,`name`,`iscourse`,`isdept`) VALUES ('".$_POST['newacronym']."','".$_POST['newcode']."','".$_POST['newname']."','1','1')";
-				$result = $mysqli->dbquery($q);
-				$newid = $mysqli->insert_id;
-				$q = "INSERT INTO `coursedisciplines` (`course_id`,`term_id`,`discipline_id`,`disciplinekind_id`) SELECT '".$newid."' , `cd`.`term_id` , `cd`.`discipline_id`  , `cd`.`disciplinekind_id` FROM `coursedisciplines` AS `cd` WHERE `course_id` = '".$_POST['courseid']."'";
-				$mysqli->dbquery($q);
+				duplicatecourse($_POST['courseid'],$_POST['newacronym'],$_POST['newcode'],$_POST['newname'],'dup. from '.$_POST['oldcourseacro']);
 			break;
 		}
 
@@ -44,11 +44,12 @@
 			  formpatterninput(32,16,$namepattern,'nome','name',$sqlrow['name']);
 			  echo formsubmit('act','Submit');
 			  echo '&nbsp;&nbsp;&nbsp;Deletar:';
-			  formselectsessionX('coursedelete','bool',0);
+			  formselectsession('coursedelete','bool',0);
 			  echo formsubmit('act','Delete') . '<br>';
 			  echo '</form>';
 			  echo formpost($thisform);
 			  echo formhiddenval('courseid',$sqlrow['id']);
+			  echo formhiddenval('oldcourseacro',$sqlrow['acronym']);
 			  echo formpatterninput(10,3,'[A-Z]+','acronym','newacronym','!') .
 			  formpatterninput(5,5,'[A-Z][A-Z][A-Z][0-9][0-9]','code, e.g. CCA99','newcode','!') .
 			  formpatterninput(32,16,$namepattern,'nome','newname','!');

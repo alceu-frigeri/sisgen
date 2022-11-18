@@ -136,7 +136,7 @@ CREATE TABLE `vacancies` (
 
 CREATE TABLE `role` (
   `id` integer unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `rolename` varchar(32) COMMENT 'admin comgrad depto',
+  `rolename` varchar(32) UNIQUE COMMENT 'admin comgrad depto',
   `description` varchar(128) DEFAULT null,
   `isadmin` tinyint(1) DEFAULT "0" COMMENT 'is an admin?',
   `can_edit` tinyint(1) DEFAULT "0" COMMENT 'can edit data?',
@@ -160,8 +160,8 @@ CREATE TABLE `account` (
   `valhash` varchar(64) NOT NULL DEFAULT 0 COMMENT 'validation hash',
   `sessionhash` varchar(64) NOT NULL DEFAULT 0,
   `activ` tinyint(1) NOT NULL DEFAULT "0" COMMENT 'activ account',
-  `name` varchar(128) UNIQUE,
-  `displayname` varchar(16) UNIQUE
+  `name` varchar(128) DEFAULT null COMMENT 'should be unique, but..',
+  `displayname` varchar(16) DEFAULT null COMMENT 'should be unique, but..'
 );
 
 CREATE TABLE `accrole` (
@@ -231,7 +231,7 @@ ALTER TABLE `class` ADD FOREIGN KEY (`sem_id`) REFERENCES `semester` (`id`) ON D
 
 ALTER TABLE `class` ADD FOREIGN KEY (`discipline_id`) REFERENCES `discipline` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `class` ADD FOREIGN KEY (`partof`) REFERENCES `class` (`id`) ON DELETE CASCADE;
+ALTER TABLE `class` ADD FOREIGN KEY (`partof`) REFERENCES `class` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE `class` ADD FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE RESTRICT;
 

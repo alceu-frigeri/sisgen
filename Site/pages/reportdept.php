@@ -6,9 +6,11 @@
         <hr>
 
 <?php	
+	$mysqli->postsanitize();
+
 	echo formpost($thisform);
-	formselectsqlX($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
-	formselectsqlX($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
+	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
 	echo formsubmit('act','Refresh');
 	echo '</form>';
 
@@ -16,21 +18,33 @@
 
 	$discsql = $mysqli->dbquery($q);
 	while ($discrow = $discsql->fetch_assoc()) {
-		echo '<br><b>'. spanformat('color:darkblue;',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
+		echo '<br><b>'. spanformat('','darkblue',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
 		$q = "SELECT class.*  FROM  `class`  WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .  
 		"`class`.`sem_id` = '" . $_POST['semid'] . "';";
 		$classsql = $mysqli->dbquery($q);
 		while($classrow = $classsql->fetch_assoc()) {
-			 echo 'Turma: ' . $classrow['name'] .'<br>';
+			 echo 'Turma: ' . $classrow['name'];
+			 if ($classrow['agreg']) {
+				 echo spanformat('','darkorange',' (agregadora)');
+			 } else {
+				 if($classrow['partof']) {
+					 $q="SELECT `name` FROM `class` WHERE `id` = '".$classrow['partof']."'";
+					 $partsql=$mysqli->dbquery($q);
+					 $partrow=$partsql->fetch_assoc();
+					 echo spanformat('','darkorange',' (agregada à '.$partrow['name'].')');
+				 }
+			 }
+			 
+			 echo '<br>';
 			 $q = "SELECT `seg`.* , `building`.`acronym` AS `buildingname` , `room`.`acronym` AS `roomname` , `room`.`capacity` AS `capacity` , `prof`.`nickname` , `prof`.`name`  FROM `classsegment` AS `seg` , `room` , `building`, `prof` WHERE " .
 				"`seg`.`room_id` = `room`.`id` AND `room`.`building_id` = `building`.`id`  AND `seg`.`prof_id` = `prof`.`id` AND  `seg`.`class_id` = '" . $classrow['id'] . "';";
 			 $segsql = $mysqli->dbquery($q);
 			 while ($segrow = $segsql->fetch_assoc()) {
 				 if ($segrow['length']>1) { $p='s'; } else { $p=''; };
 				 echo '&nbsp;&nbsp;&nbsp;' . 
-					spanformat('color:gray;',$_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora'.$p.'-Aula') . 
+					spanformat('','gray',$_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora'.$p.'-Aula') . 
 					', ' . $segrow['name'] . ',  ' . 
-					spanformat('color:gray;','Sala: ' . $segrow['roomname'] . ' (' . $segrow['buildingname'] . ')');
+					spanformat('','gray','Sala: ' . $segrow['roomname'] . ' (' . $segrow['buildingname'] . ')');
 					if ($segrow['capacity']) {
 						echo ' (cap.: ' . $segrow['capacity'] . ')';
 					}

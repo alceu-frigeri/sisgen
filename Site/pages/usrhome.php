@@ -5,12 +5,12 @@
 
 function usrdata() {
 	echo "<div id='currentdata'><h3>Dados Atuais</h3><hr>" .
-		"Nome: " . $_SESSION['userdisplayname'] . "<br>" .
-		"Nome Completo: " . $_SESSION['username'] . "<br></div>";
+		'Nome: ' . $_SESSION['userdisplayname'] . '<br>' .
+		'Nome Completo: ' . $_SESSION['username'] . '<br></div>';
 	echo formpost($thisform);
 	echo formsubmit('act','Mudar Senha');
 	echo formsubmit('act','Editar Dados');
-	echo "</form>";
+	echo '</form>';
 }
 
 ?>
@@ -40,14 +40,14 @@ function usrdata() {
 				if ($mysqli->hashpasswdcheck($passwd)) {
 				  $q = "UPDATE `account` SET `chgpasswd` = '0' ,  `password` =  '".$newpasswd."' WHERE `id` = '" . $_SESSION['userid'] . "';";
 				  $mysqli->dbquery($q);
-				  echo "Senha Atualizada.<br>";
+				  echo 'Senha Atualizada.<br>';
 				  if ($_SESSION['userchgpasswd']) {
 					$_SESSION['userchgpasswd'] = 0;
 					echo pagereload($basepage);
 				  }
 				  
 				} else {
-				  echo "Senha Inválida<br>";
+				  echo 'Senha Inválida<br>';
 				}
 				if ($_SESSION['userchgpasswd']) {
 					include 'pages/usrpasswd.php';
@@ -57,17 +57,17 @@ function usrdata() {
 				break;
 			case 'Editar Dados':
 				echo formpost($thisform);
-				echo "<table>";
-				echo "<tr><td>Nome: </td><td>" . formpatterninput(16,16,$namepattern,'Nome Abreviado','usrdisplayname',$_SESSION['userdisplayname']) . "</td></tr>";
-				echo "<tr><td>Nome Completo: </td><td>" . formpatterninput(128,48,$namepattern,'Nome Completo','usrname',$_SESSION['username']) . "</td></tr>";
-				echo "<tr><td></td><td>" .formsubmit('act','Atualizar Dados') . "</td></tr>";
-				echo "</table>";
-				echo "</form>";
+				echo '<table>';
+				echo '<tr><td>Nome: </td><td>' . formpatterninput(16,16,$namepattern,'Nome Abreviado','usrdisplayname',$_SESSION['userdisplayname']) . '</td></tr>';
+				echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128,48,$namepattern,'Nome Completo','usrname',$_SESSION['username']) . '</td></tr>';
+				echo '<tr><td></td><td>' .formsubmit('act','Atualizar Dados') . '</td></tr>';
+				echo '</table>';
+				echo '</form>';
 			    break;
 			case 'Atualizar Dados':
-				$_SESSION['username'] = $username = $mysqli->real_escape_string($_POST['usrname']);
-				$_SESSION['userdisplayname'] = $userdisplayname = $mysqli->real_escape_string($_POST['usrdisplayname']);
-				$q = "UPDATE `account` SET `name` =  '".$username."' , `displayname` =  '".$userdisplayname."' WHERE `id` = '" . $_SESSION['userid'] . "';";
+				$_SESSION['username'] = $_POST['usrname']; 
+				$_SESSION['userdisplayname'] = $_POST['usrdisplayname']; 
+				$q = "UPDATE `account` SET `name` =  '" . $mysqli->real_escape_string($_POST['usrname'])  ."' , `displayname` =  '" . $mysqli->real_escape_string($_POST['usrdisplayname'])  . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
 				$mysqli->dbquery($q);
 				usrdata();
 				break;

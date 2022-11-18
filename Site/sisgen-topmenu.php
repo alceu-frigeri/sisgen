@@ -101,5 +101,5 @@
     </div>
 
 </header>
-<span class="title4 bottom"><font color=white>SISGEN - Sistema de Apoio a Gerência de Encargos e Turmas</font><br></span>
+<span class="title4 bottom"><font color=white>SISGEN - Sistema de Apoio à Gerência de Turmas e Encargos</font><br></span>
 

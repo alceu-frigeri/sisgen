@@ -11,6 +11,8 @@
 	$can_coursedisciplines = ($_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST[courseid]] & $_SESSION['role'][$_POST[courseid]]['can_coursedisciplines']));
 	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert') | ($_POST['act'] == 'Reload'));
 	
+	$mysqli->postsanitize();
+	
 	echo formpost($thisform);
 	
 	if(!($_SESSION['disckind'])) {
@@ -38,14 +40,18 @@
 		break;
 		case 'Submit':
 			if ($can_coursedisciplines) {
-				$q = "UPDATE `coursedisciplines` SET `term_id` = '" . $_POST['newterm'] . "' , `disciplinekind_id` = '" . $_POST['newkind'] . "' WHERE `id` = '" . $_POST['coursediscid'] . "'";
-				$mysqli->dbquery($q);
+				if(fieldscompare(array('newterm','newkind'))) {
+					$q = "UPDATE `coursedisciplines` SET `term_id` = '" . $_POST['newterm'] . "' , `disciplinekind_id` = '" . $_POST['newkind'] . "' WHERE `id` = '" . $_POST['coursediscid'] . "'";
+					$mysqli->dbquery($q);
+				}
 				$_POST['coursediscid'] = null;
 			}
 		break;
 		case 'Delete':
 			if ($can_coursedisciplines & $_POST['discdelete']) {
 				$q = "DELETE FROM `coursedisciplines` WHERE `id` = '" . $_POST['coursediscid'] . "';";
+				$mysqli->dbquery($q);
+				$q = "DELETE FROM `vacancies` WHERE `vacancies`.`course_id` = '".$_POST['courseid']."' AND `vacancies`.`class_id` IN (SELECT `class`.`id` FROM `class` , `discipline` AS `disc` WHERE `class`.`discipline_id` = `disc`.`id` AND `disc`.`id` = '".$_POST['coursediscid']."');";
 				$mysqli->dbquery($q);
 			}
 		break;
@@ -59,10 +65,10 @@
 		echo formhiddenval('termid',$_POST['termid']);
 		echo displaysqlitem('-- ','term',$_POST['termid'],'name');
 		echo formsubmit('act','Cancel');
-		echo "</form>";
+		echo '</form>';
 	} else {
-		formselectsqlX($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
-		formselectsqlX($anytmp,"SELECT * FROM term ORDER BY term.name;",'termid',$_POST['termid'],'id','name');
+		formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
+		formselectsql($anytmp,"SELECT * FROM term ORDER BY term.name;",'termid',$_POST['termid'],'id','name');
 	}
 	
 	
@@ -93,48 +99,48 @@
 		echo formhiddenval('termid',$_POST['termid']);
 		echo formhiddenval('coursediscid',$sqlrow['id']);
 		if ($_POST['coursediscid'] == $sqlrow['id']) {
-			echo $sqlrow['code']." -- ".$sqlrow['name']."  ";
-			formselectsessionX('newterm','term',$_POST['termid']);
-			formselectsessionX('newkind','disckind',$sqlrow['disckindid']);
-			echo formsubmit('act','Submit') . "</form>";
+			echo $sqlrow['code'].' -- '.$sqlrow['name'].'  ';
+			formselectsession('newterm','term',$_POST['termid']);
+			formselectsession('newkind','disckind',$sqlrow['disckindid']);
+			echo formsubmit('act','Submit') . '</form>';
 			echo formpost($thisform);
-			echo "  &nbsp;&nbsp;&nbsp;remover: ";
-			formselectsessionX('discdelete','bool',0);
+			echo '  &nbsp;&nbsp;&nbsp;remover: ';
+			formselectsession('discdelete','bool',0);
 			echo formhiddenval('courseid',$_POST['courseid']);
 			echo formhiddenval('termid',$_POST['termid']);
 			echo formhiddenval('coursediscid',$sqlrow['id']);
-			echo formsubmit('act','Delete') . "<br>";
+			echo formsubmit('act','Delete') . '<br>';
 		} else {
 			echo formsubmit('act','Edit');
-			echo $sqlrow['code']." -- ".$sqlrow['name']. " (".$sqlrow['disckindcode'].")<br>";
+			echo $sqlrow['code'].' -- '.$sqlrow['name']. ' ('.$sqlrow['disckindcode'].')<br>';
 		}
-		echo "</form>";
+		echo '</form>';
 	  }
-	  echo "<br>";
-	  echo "<i>inserção</i>";
+	  echo '<br>';
+	  echo '<i>inserção</i>';
 	  echo formpost($thisform);
 		echo formhiddenval('courseid',$_POST['courseid']);
 		echo formhiddenval('termid',$_POST['termid']);
 		echo formhiddenval('coursediscid',$sqlrow['id']);
 
 		$q = "SELECT * FROM `unit` ORDER BY `acronym`";
-		formselectsqlX($anytmp,$q,'unitid',$_POST['unitid'],'id','acronym');
+		formselectsql($anytmp,$q,'unitid',$_POST['unitid'],'id','acronym');
 
 		$q = "SELECT * FROM `discipline` WHERE `dept_id` = '" . $_POST['unitid'] . "' ORDER BY `name`";
-		formselectsqlX($anyone,$q,'discid',$_POST['discid'],'id','code','name');
+		formselectsql($anyone,$q,'discid',$_POST['discid'],'id','code','name');
 		
-		formselectsessionX('newdisckind','disckind',1);
+		formselectsession('newdisckind','disckind',1);
 		echo formsubmit('act','Reload');
 		if ($anyone) {
 			echo formsubmit('act','Insert');
 		}
-	  echo "</form>";
+	  echo '</form>';
 	  
 
   } else {
 	  while ($sqlrow=$result->fetch_assoc()) {
 		  $anyone = 1;
-		  echo $sqlrow['code']."  ".$sqlrow['name']. " (".$sqlrow['disckindcode'].")<br>";
+		  echo $sqlrow['code'].'  '.$sqlrow['name']. ' ('.$sqlrow['disckindcode'].')<br>';
 	  }
   }
 
@@ -148,7 +154,7 @@
 	echo formsubmit('act','Refresh');
 	}
 
-	echo "</form>";
+	echo '</form>';
 	
 
  ?>

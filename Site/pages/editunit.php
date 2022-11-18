@@ -11,6 +11,8 @@
 	$can_edit = $_SESSION['role']['isadmin'] || ($_SESSION['usercanedit']);
 	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
 
+	$mysqli->postsanitize();
+
 	echo formpost($thisform);
 	
 	
@@ -82,7 +84,7 @@
   }
   echo '</table>';
 
-	echo "</form>";
+	echo '</form>';
 	
 
  ?>

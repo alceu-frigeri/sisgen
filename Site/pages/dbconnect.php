@@ -18,7 +18,7 @@ class DBclass extends mysqli {
             die('Connect Error (' . mysqli_connect_errno() . ') '
                     . mysqli_connect_error());
         }
-		$this->set_charset("utf8");
+		$this->set_charset('utf8');
     }
 
 
@@ -28,13 +28,18 @@ class DBclass extends mysqli {
 				$this->eventlog($logOK);
 			}
 		} else {
-			$err = "Query <" . $q . "> failed: (" . $this->errno . ") " . $this->error;
-			echo '<br><b>Query&nbsp;&nbsp;</b><span style="font-size:smaller;">' . htmlspecialchars($q,ENT_QUOTES) . '</span><b>&nbsp;&nbsp;&nbsp;FAILED <span style="color:red;">' . htmlspecialchars($this->error,ENT_QUOTES) . '</span></b></p>';
+			$err = 'Query <' . $q . '> failed: (' . $this->errno . ') ' . $this->error;
+			echo '<br><b>Query&nbsp;&nbsp;</b>' . spanformat('smaller','', htmlspecialchars($q,ENT_QUOTES)) .'<b>&nbsp;&nbsp;&nbsp;FAILED' . spanformat('','red',  htmlspecialchars($this->error,ENT_QUOTES)) . '</b></p>';
 			$this->eventlog(array('level'=>'DBERROR',	'action'=> $logOK['action'].'(dbquery)', 'str' => $err, 'xtra' => 'dbconnect.php'));
 		}
 		return $result;
 	}
 
+	public function postsanitize(){
+		foreach ($_POST as &$val) {
+			$val = $this->real_escape_string($val);
+		}
+	}
 
 //LOG array
 //$log['level'] INFO/LOGIN/...
@@ -48,22 +53,22 @@ class DBclass extends mysqli {
 		$callerC=$trace[3]['function'];  // who called us (we are 0)
       
 	    // just in case something fails...
-		$logline = "LOG:".$logdata['level']." :: userID:".$_SESSION['userid'] . "(". $_SESSION['useremail'] .") remote:".$_SERVER['REMOTE_ADDR']." ".$_SERVER['HTTP_USER_AGENT']. "Callers: <".
-			$callerA['function']."><".$callerB['function']."><".$callerC['function'].">  action:".$logdata['action']."==>".$logdata['str']."(".$logdata['xtra'].")";
+		$logline = 'LOG:'.$logdata['level'].' :: userID:'.$_SESSION['userid'] . '('. $_SESSION['useremail'] .') remote:'.$_SERVER['REMOTE_ADDR'].' '.$_SERVER['HTTP_USER_AGENT']. 'Callers: <'.
+			$callerA['function'].'><'.$callerB['function'].'><'.$callerC['function'].'>  action:'.$logdata['action'].'==>'.$logdata['str'].'('.$logdata['xtra'].')';
 		//
 		if (!($stmt = $this->prepare("INSERT INTO `log` (loglevel_id,user_id,browserIP,browseragent,callerA,callerB,callerC,action,logline,logxtra) VALUES (?,?,?,?,?,?,?,?,?,?);"))) {
-			$str = "<br>LOG Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+			$str = '<br>LOG Prepare failed: (' . $mysqli->errno . ') ' . $mysqli->error;
 			echo $str;
 			writeLogFile("$str \n $logline \n"); // last resort !!!
 		}
 		if (!$stmt->bind_param('iissssssss',$_SESSION['log'][$logdata['level']],$_SESSION['userid'],$_SERVER['REMOTE_ADDR'],$_SERVER['HTTP_USER_AGENT'],
 		    $callerA,$callerB,$callerC,$logdata['action'],$logdata['str'],$logdata['xtra'])) {
-			$str = "<br>LOG Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+			$str = '<br>LOG Binding parameters failed: (' . $stmt->errno . ') ' . $stmt->error;
 			echo $str;
 			writeLogFile("$str \n $logline \n"); // last resort !!!		
 		};
 		if (!$stmt->execute()) {
-			$str = "<br>LOG execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			$str = '<br>LOG execute failed: (' . $stmt->errno . ') ' . $stmt->error;
 			echo $str;
 			writeLogFile("$str \n $logline \n"); // last resort !!!		
 		};
@@ -98,7 +103,7 @@ class DBclass extends mysqli {
 		if (($sqlrow=$result->fetch_assoc())) {
 			return TRUE;
 		} else {
-			$log=array('level'=>'WARNING','action'=>'session check','str'=>"hashcheck failed !",'xtra'=>'core.php');
+			$log=array('level'=>'WARNING','action'=>'session check','str'=>'hashcheck failed !','xtra'=>'core.php');
 			$this->eventlog($log) ;
 		}
 		$result->close();
@@ -112,7 +117,7 @@ class DBclass extends mysqli {
 		if (($sqlrow=$result->fetch_assoc())) {
 			return TRUE;
 		} else {
-			$log=array('level'=>'WARNING','action'=>'passwd check','str'=>"hash/passwd check failed !",'xtra'=>'core.php');
+			$log=array('level'=>'WARNING','action'=>'passwd check','str'=>'hash/passwd check failed !','xtra'=>'core.php');
 			$this->eventlog($log) ;
 		}
 		$result->close();
@@ -223,35 +228,7 @@ class DBclass extends mysqli {
 /////
 /////
 
-
-function myconnect() {
-	$mysqli = new DBclass('bdlivre.ufrgs.br', 'sisgen', 'SKRqgFBASnUS', 'sisgen');
-	
-    $mysqli->autocommit(TRUE);
-
-	//$mysqli->set_charset('utf8mb4');
-	//$mysqli->query("SET NAMES utf8mb4 COLLATE unicode_520_ci");
-
-    echo "<script type='text/javascript'>\n";
-
-//    if (!($result = $mysqli->query("SELECT * FROM `types`"))) {
-//	echo "Query failed: (" . $mysqli->errno . ") " . $mysqli->error;
-//	return NULL;
- //   }
-//    while (($sqlrow=$result->fetch_assoc())) {
-//    	$var = 'DB_'.strtoupper(utf8_decode($sqlrow['type_str']));
-//	echo "  var $var = $sqlrow[type_id];\n";
-//	$DBVALS[$var] = $sqlrow[type_id];
- //   }
-
-    
-    echo "</script>\n";
-
-    
-    return $mysqli;
-
-}
-
+include 'pages/coreconnect.php';
 
 // 'replicating' some DB tables into SESSION 
 // to reduce the number of DB calls (inside a SESSION)

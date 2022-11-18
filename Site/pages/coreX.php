@@ -15,6 +15,48 @@ $GblVacIDs = array();
 	 }
 
 
+	function fixvacancies(){
+		global $mysqli;
+		
+		$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) " .
+		"SELECT `class`.`id` , `cdisc`.`course_id`, '0' , '0'  FROM `coursedisciplines` AS `cdisc`,`class` " . 
+			"where `cdisc`.`discipline_id` = `class`.`discipline_id` AND " .
+				"NOT EXISTS (SELECT * FROM `vacancies` AS `vac` WHERE `vac`.`class_id` = `class`.`id` AND `vac`.`course_id` = `cdisc`.`course_id`); ";
+		$mysqli->dbquery($q);
+	}
+
+
+
+
+	function ftablerestore($fname,$table) {
+		global $mysqli;
+		
+		$fhandler = fopen('csv/'.$fname,'r');
+		while ($line = fgetcsv($fhandler,512,',','"','"')) {
+			foreach ($line as &$val) {
+				$val = $mysqli->real_escape_string($val);
+			}
+			$q = "REPLACE INTO `".$table."` VALUES ('" . implode("','",$line) . "');";
+			//echo $q.'<br>';
+			$mysqli->dbquery($q);			
+		}
+		fclose($fhandler);		
+	}
+
+	function ftabledump($fname,$q) {
+		global $mysqli;
+		
+		$fhandler = fopen('csv/'.$fname,'w');
+		$sqlresult = $mysqli->dbquery($q);
+		while ($sqlrow = $sqlresult->fetch_assoc()) {
+			fputcsv($fhandler,$sqlrow,',','"','"');
+		}
+		fclose($fhandler);		
+	}
+
+
+
+
 $dbcntA = 0;
 function DBinsertgrade($Course,$Term,$DiscCode,$DiscName,$DiscCred,$DiscKind) {
 
@@ -137,14 +179,61 @@ function DBinsertdept($grpAcro,$sem,$DiscCode,$DiscName,$DiscCred,$Class,$ClassV
 }	
 	
 	
-	function roomset($roomtypeid,$roomcap,$buildingid,$roomacronym) {
-		global $mysqli;
-		$q = "UPDATE `room` SET `roomtype_id` = '".$roomtypeid."' , `capacity` = '".$roomcap."' WHERE `building_id` = '".$buildingid."' AND `acronym` = '".$roomacronym."' ";
-		$mysqli->dbquery($q);
+function roomset($roomtypeid,$roomcap,$buildingid,$roomacronym) {
+	global $mysqli;
+	$q = "UPDATE `room` SET `roomtype_id` = '".$roomtypeid."' , `capacity` = '".$roomcap."' WHERE `building_id` = '".$buildingid."' AND `acronym` = '".$roomacronym."' ";
+	$mysqli->dbquery($q);
+}
+
+
+
+$dbcntC = 0;
+function courseupdt($coursecode,$disccode,$kindcode,$termcode) {
+	global $mysqli;
+	global $dbcntC;
+	
+    $dbcntC +=1;
+	echo "Ccnt:$dbcntC (".$disccode.")&nbsp;&nbsp;&nbsp;\n";
+
+	$q = "SELECT `cd`.`id` FROM `coursedisciplines` AS `cd`, `discipline` AS `disc` WHERE `cd`.`discipline_id` = `disc`.`id` and `cd`.`course_id` = '".$_SESSION['unitbycode'][$coursecode]['id']."' and `disc`.`code` = '".$disccode."'";
+	$result = $mysqli->dbquery($q);
+	$cdrow = $result->fetch_assoc();
+	if ($kindcode) {
+		if ($termcode) {
+			$q = "UPDATE `coursedisciplines` SET `term_id` = '".$_SESSION['termbycode'][$termcode]['id']."' , `disciplinekind_id` = '".$_SESSION['disckindbycode'][$kindcode]['id']."' WHERE `id` = '".$cdrow['id']."';";
+		} else {
+			$q = "UPDATE `coursedisciplines` SET  `disciplinekind_id` = '".$_SESSION['disckindbycode'][$kindcode]['id']."' WHERE `id` = '".$cdrow['id']."';";
+		}
+	} else {
+		$q = "UPDATE `coursedisciplines` SET `term_id` = '".$_SESSION['termbycode'][$termcode]['id']."' WHERE `id` = '".$cdrow['id']."';";
 	}
+	$mysqli->dbquery($q);
+}
 
+$dbcntD = 0;
+function disccourserem($disclist,$courseid) {
+	global $mysqli;
+	global $dbcntD;
+	
+    $dbcntD +=1;
+	echo "Dcnt:$dbcntD rem(".$disccode.")&nbsp;&nbsp;&nbsp;\n";
+	
+	foreach ($disclist as $code) {
+		$dbcntD +=1;
+		echo "Dcnt:$dbcntD (".$code.")&nbsp;&nbsp;&nbsp;\n";
+		$q = "SELECT `id` FROM `discipline` WHERE `code` = '".$code."'";
+		$result = $mysqli->dbquery($q);
+		$discrow = $result->fetch_assoc();
+		$q = "DELETE FROM `coursedisciplines` WHERE `course_id` = '".$courseid."' AND `discipline_id` = '".$discrow['id']."';";
+		$mysqli->dbquery($q);
+		$q = "DELETE FROM `vacancies` WHERE `vacancies`.`course_id` = '".$courseid."' AND `vacancies`.`class_id` IN (SELECT `class`.`id` FROM `class` , `discipline` AS `disc` WHERE `class`.`discipline_id` = `disc`.`id` AND `disc`.`id` = '".$discrow['id']."');";
+		$mysqli->dbquery($q);
+		
+	}
+}
 
-
-?>
+// 07041 -> 33
+// 857 995 1056 2835
+?> 
 
 

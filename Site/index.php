@@ -16,6 +16,8 @@
 
 
     <?php
+	
+	
 	if(isset($_SESSION['sessionhash'])){
 		 if (($_GET['st'] == 'logout') | ($_GET['q'] == 'logout')) {
 			 session_destroy();

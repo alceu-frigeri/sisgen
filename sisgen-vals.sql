@@ -13,7 +13,8 @@ insert into `status` (`id`,`status`,`desc`,`color`) values
   ('4','attention','needs Attention!!','red'),
   ('5','ERR','Error !!','red'),
   ('6','OK','OK','green'),
-  ('7','checked','verified/done','blue');
+  ('7','checked','verified/done','blue'),
+  ('8','dup','duplicated','teal');
 
 insert into `building` (`id`,`acronym`,`name`,`location`,`mark`) values 
   ('1','undef','não definido','não definido','0'),
@@ -80,7 +81,8 @@ insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) val
   ('31','DQI','QUI01','Departamento de Química Inorgânica',0,1,0),
   ('32','CGQUI','QUI99','Comissão de Graduação de Química',0,1,0),
   ('33','DDET','DIR04','Departamento de Direito Econômico e do Trabalho',0,1,0),
-  ('34','DEA','FIS02','Departamento de Astronomia',0,1,0);
+  ('34','DEA','FIS02','Departamento de Astronomia',0,1,0),
+  ('35','DH','HUM03','Departamento de História',0,1,0);
   
   
 insert into `coursedept` (`course_id`,`dept_id`) values
@@ -104,23 +106,23 @@ insert into `term` (`id`,`code`,`name`) values
   ('4','Etp.04','Etapa 04'),('5','Etp.05','Etapa 05'),('6','Etp.06','Etapa 06'),
   ('7','Etp.07','Etapa 07'),('8','Etp.08','Etapa 08'),('9','Etp.09','Etapa 09'),
   ('10','Etp.10','Etapa 10'),('33','EL','Eletivas');
-insert into `role` (`rolename`,`description`,`isadmin`,`can_edit`,`can_dupsem`,`can_class`,`can_addclass`,`can_vacancies`,`can_disciplines`,`can_coursedisciplines`,`can_viewlog`,`unit_id`)
+insert into `role` (`rolename`,`description`,`isadmin`,`can_edit`,`can_dupsem`,`can_class`,`can_addclass`,`can_vacancies`,`can_disciplines`,`can_coursedisciplines`,`can_prof`,`can_room`,`can_viewlog`,`unit_id`)
  values
-       ('admin','Administrator account','1','1','1','1','1','1','1','1','1','1'), 
-('delae-f','Dept. account DELAE (full)','0','1','0','1','1','1','1','0','0','3'), 
-         ('delae','Dept. account DELAE','0','1','0','1','0','1','0','0','0','3'), 
-('demec-f','Dept. account DEMEC (full)','0','1','0','1','1','1','1','0','0','4'), 
-         ('demec','Dept. account DEMEC','0','1','0','1','0','1','0','0','0','4'), 
-('dequi-f','Dept. account DEQUI (full)','0','1','0','1','1','1','1','0','0','5'), 
-         ('dequi','Dept. account DEQUI','0','1','0','1','0','1','0','0','0','5'), 
-  ('cca-f','COMGRAD account CCA (full)','0','1','0','1','1','1','1','1','0','6'), 
-           ('cca','COMGRAD account CCA','0','1','0','1','0','1','0','0','0','6'), 
-  ('ene-f','COMGRAD account ENE (full)','0','1','0','1','1','1','1','1','0','7'), 
-           ('ene','COMGRAD account ENE','0','1','0','1','0','1','0','0','0','7'), 
-  ('ecp-f','COMGRAD account ECP (full)','0','1','0','1','1','1','1','1','0','8'), 
-           ('ecp','COMGRAD account ECP','0','1','0','1','0','1','0','0','0','8'), 
- ('prof(a)','Prof. account (view only)','0','0','0','0','0','0','0','0','0','2'), 
-   ('sec(a)','Sec. account (view only)','0','0','0','0','0','0','0','0','0','2'); 
+       ('admin','Administrator account','1','1','1','1','1','1','1','1','1','1','1','1'), 
+('delae-f','Dept. account DELAE (full)','0','1','0','1','1','1','1','0','1','1','0','3'), 
+         ('delae','Dept. account DELAE','0','1','0','1','0','1','0','0','0','0','0','3'), 
+('demec-f','Dept. account DEMEC (full)','0','1','0','1','1','1','1','0','1','1','0','4'), 
+         ('demec','Dept. account DEMEC','0','1','0','1','0','1','0','0','0','0','0','4'), 
+('dequi-f','Dept. account DEQUI (full)','0','1','0','1','1','1','1','0','1','1','0','5'), 
+         ('dequi','Dept. account DEQUI','0','1','0','1','0','1','0','0','0','0','0','5'), 
+  ('cca-f','COMGRAD account CCA (full)','0','1','0','1','1','1','1','1','0','0','0','6'), 
+           ('cca','COMGRAD account CCA','0','1','0','1','0','1','0','0','0','0','0','6'), 
+  ('ene-f','COMGRAD account ENE (full)','0','1','0','1','1','1','1','1','0','0','0','7'), 
+           ('ene','COMGRAD account ENE','0','1','0','1','0','1','0','0','0','0','0','7'), 
+  ('ecp-f','COMGRAD account ECP (full)','0','1','0','1','1','1','1','1','0','0','0','8'), 
+           ('ecp','COMGRAD account ECP','0','1','0','1','0','1','0','0','0','0','0','8'), 
+ ('prof(a)','Prof. account (view only)','0','0','0','0','0','0','0','0','0','0','0','2'), 
+   ('sec(a)','Sec. account (view only)','0','0','0','0','0','0','0','0','0','0','0','2'); 
     
   
 insert into `loglevel` (`level`,`str`,`description`) VALUES
@@ -133,11 +135,11 @@ insert into `loglevel` (`level`,`str`,`description`) VALUES
   ('LOGIN','user login','info level');
   
   
-insert into `disciplinekind` (`code`,`name`) VALUES
-  ('OB','obrigatória'),
-  ('EL','eletiva'),
-  ('AL','obrigatória alternativa'),
-  ('AD','adicional');
+insert into `disciplinekind` (`id`,`code`,`name`) VALUES
+  ('1','OB','obrigatória'),
+  ('2','EL','eletiva'),
+  ('3','AL','obrigatória alternativa'),
+  ('4','AD','adicional');
   
   
 insert into `account` (`id`,`email`,`password`,`activ`,`name`) VALUES

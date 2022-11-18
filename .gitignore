@@ -29,6 +29,10 @@
 
 ## Deprecated directory
 Deprecated/
+alteracoes/
+
+##password sensitive information
+Site/pages/coreconnect.php
 
 ## Generated if empty string is given at "Please type another file name for output:"
 .pdf

@@ -11,6 +11,8 @@
 	$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_room']);
 	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
 
+	$mysqli->postsanitize();
+
 	echo formpost($thisform);
 	
 	if (!($_SESSION['roomtype'])) {
@@ -44,9 +46,9 @@
 		// displaysqlitem($str,$sqltable,$sqlid,$sqlitem,$sqlitemB=null)
 		echo displaysqlitem('','building',$_POST['buildingid'],'acronym','name');
 		echo formsubmit('act','Cancel');
-		echo "</form>";
+		echo '</form>';
 	} else {
-		formselectsqlX($anytmp,"SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
+		formselectsql($anytmp,"SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
 	}
 		
 	?>
@@ -70,28 +72,28 @@
 		echo formhiddenval('buildingid',$_POST['buildingid']);
 		if ($_POST['roomid'] == $sqlrow['id']) {
 			echo formhiddenval('roomid',$sqlrow['id']);
-			echo "&nbsp;&nbsp; " . $sqlrow['name'];
-			formselectsessionX('roomtype','roomtype',$sqlrow['roomtype_id']);
+			echo '&nbsp;&nbsp; ' . $sqlrow['name'];
+			formselectsession('roomtype','roomtype',$sqlrow['roomtype_id']);
 			echo '  Capacidade:  ' . formpatterninput(3,1,'[0-9]+','Capacidade','capacity',$sqlrow['capacity']);
 			echo formsubmit('act','Submit');
 		} else {
 			echo formsubmit('act','Edit');
 			echo formhiddenval('roomid',$sqlrow['id']);
-			echo $sqlrow['name']."&nbsp;&nbsp;".$_SESSION['roomtype'][$sqlrow['roomtype_id']]."&nbsp;&nbsp;";
+			echo $sqlrow['name'].'&nbsp;&nbsp;'.$_SESSION['roomtype'][$sqlrow['roomtype_id']].'&nbsp;&nbsp;';
 			if ($sqlrow['capacity']) {
 				echo ' (cap.:'.$sqlrow['capacity'].')';
 			}
 			echo '<br>';			
 		}
-		echo "</form>";
+		echo '</form>';
 	  }
-	  echo "<br>";
+	  echo '<br>';
  
 
   } else {
 	  while ($sqlrow=$result->fetch_assoc()) {
 		  $anyone = 1;
-		  echo $sqlrow['name']. "&nbsp;&nbsp;".$_SESSION['roomtype'][$sqlrow['roomtype_id']]."&nbsp;&nbsp;";
+		  echo $sqlrow['name']. '&nbsp;&nbsp;'.$_SESSION['roomtype'][$sqlrow['roomtype_id']].'&nbsp;&nbsp;';
 			if ($sqlrow['capacity']) {
 				echo ' (cap.:'.$sqlrow['capacity'].')';
 			}
@@ -108,7 +110,7 @@
 	echo formsubmit('act','Refresh');
   }
 
-	echo "</form>";
+	echo '</form>';
 	
 
  ?>

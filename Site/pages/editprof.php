@@ -11,6 +11,8 @@
     $can_prof = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_prof']) ;
 	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert'));
 
+	$mysqli->postsanitize();
+
 	echo formpost($thisform);
 	
 	if (!($_SESSION['profkind'])) {
@@ -45,9 +47,9 @@
 		echo formhiddenval('unitid',$_POST['unitid']);
 		echo displaysqlitem('','unit',$_POST['unitid'],'acronym','name');
 		echo formsubmit('act','Cancel');
-		echo "</form>";
+		echo '</form>';
 	} else {
-		formselectsqlX($anytmp,"SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit.acronym;",'unitid',$_POST['unitid'],'id','acronym');
+		formselectsql($anytmp,"SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit.acronym;",'unitid',$_POST['unitid'],'id','acronym');
 	}
 	
 	
@@ -67,48 +69,47 @@
 
   $result=$mysqli->dbquery($q);
   $anyone = 0;
-  //$namepattern='[a-zA-Z0-8à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ ]+';
   if ($postedit & $can_prof) {
 	  while ($sqlrow=$result->fetch_assoc()) {
 	  	echo formpost($thisform);
 		echo formhiddenval('unitid',$_POST['unitid']);
 		if ($_POST['profid'] == $sqlrow['id']) {
 			echo formhiddenval('profid',$sqlrow['id']);
-			formselectsessionX('profkind','profkind',$sqlrow['profkind_id']);
+			formselectsession('profkind','profkind',$sqlrow['profkind_id']);
             echo formpatterninput(120,64,$namepattern,'Nome completo','profname',$sqlrow['name']);
-			echo "&nbsp;&nbsp; " . formpatterninput(64,32,$namepattern,'Nome abreviado','profnickname',$sqlrow['nickname']);
+			echo '&nbsp;&nbsp; ' . formpatterninput(64,32,$namepattern,'Nome abreviado','profnickname',$sqlrow['nickname']);
 			echo formsubmit('act','Submit');
-			echo "</form>";
+			echo '</form>';
 			echo formpost($thisform);
 			echo formhiddenval('unitid',$_POST['unitid']);
 			echo formhiddenval('profid',$sqlrow['id']);
-			echo "  &nbsp;&nbsp;&nbsp;remover: ";
-			formselectsessionX('profdelete','bool',0);
+			echo '  &nbsp;&nbsp;&nbsp;remover: ';
+			formselectsession('profdelete','bool',0);
 			echo formsubmit('act','Delete');
 		} else {
 			echo formsubmit('act','Edit');
 			echo formhiddenval('profid',$sqlrow['id']);
-			echo $_SESSION['profkind'][$sqlrow['profkind_id']]."&nbsp;&nbsp;".$sqlrow['name']."&nbsp;&nbsp; (".$sqlrow['nickname'].")<br>";
+			echo $_SESSION['profkind'][$sqlrow['profkind_id']].'&nbsp;&nbsp;'.$sqlrow['name'].'&nbsp;&nbsp; ('.$sqlrow['nickname'].')<br>';
 		}
-		echo "</form>";
+		echo '</form>';
 	  }
-	  echo "<br>";
-	  echo "<i>inserção</i>";
+	  echo '<br>';
+	  echo '<i>inserção</i>';
 
 
 	  	echo formpost($thisform);
 		echo formhiddenval('unitid',$_POST['unitid']);
-		formselectsessionX('profkind','profkind',1);
+		formselectsession('profkind','profkind',1);
         echo formpatterninput(120,64,$namepattern,'Nome completo','profname','-');
-		echo "&nbsp;&nbsp; " . formpatterninput(64,32,$namepattern,'Nome abreviado','profnickname','-');
+		echo '&nbsp;&nbsp; ' . formpatterninput(64,32,$namepattern,'Nome abreviado','profnickname','-');
 		echo formsubmit('act','Insert') ;
-		echo "</form>";
+		echo '</form>';
 	  
 
   } else {
 	  while ($sqlrow=$result->fetch_assoc()) {
 		  $anyone = 1;
-		  echo $_SESSION['profkind'][$sqlrow['profkind_id']]."&nbsp;&nbsp;".$sqlrow['name']."&nbsp;&nbsp; (".$sqlrow['nickname'].")<br>";
+		  echo $_SESSION['profkind'][$sqlrow['profkind_id']].'&nbsp;&nbsp;'.$sqlrow['name'].'&nbsp;&nbsp; ('.$sqlrow['nickname'].')<br>';
 	  }
   }
 
@@ -122,7 +123,7 @@
 	echo formsubmit('act','Refresh');
   }
 
-	echo "</form>";
+	echo '</form>';
 	
 
  ?>

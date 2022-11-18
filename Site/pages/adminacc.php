@@ -1,14 +1,16 @@
 
-<?php $thisform=$basepage.'?q=admin&sq=adminacc'; ?>
+<?php 
 
-<?php
-	if(!($_SESSION['roleslist'])) {
+	$thisform=$basepage.'?q=admin&sq=adminacc'; 
+
+	$mysqli->postsanitize();
+
+	unset($_SESSION['rolelist']);
 		$q = "SELECT * FROM `role`;";
 		$result = $mysqli->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
 			$_SESSION['roleslist'][$sqlrow['id']] = $sqlrow['rolename'] .'  /  '.$sqlrow['description'];
 		}
-	}
 	
 	if($_SESSION['role']['isadmin']) {
 		switch ($_POST['act']) {
@@ -18,8 +20,8 @@
 				} else {
 					$pass='';
 				}
-				$q = "UPDATE `account` SET `activ` = '" . $_POST['activ'] . "' $pass WHERE `id` = '" . $_POST['usrid'] . "';";
-				$mysqli->dbquery($q);
+					$q = "UPDATE `account` SET `activ` = '" . $_POST['activ'] . "' $pass WHERE `id` = '" . $_POST['usrid'] . "';";
+					$mysqli->dbquery($q);
 			break;
 			case 'Delete User':
 				if ($_POST['userdelete']) {
@@ -36,8 +38,10 @@
 				$_POST['accroleid'] = null;
 			break;
 			case 'Change Role':
-				$q = "UPDATE `accrole` SET `role_id` = '" . $_POST['newroleid'] . "' WHERE `id` = '" . $_POST['accroleid'] . "';";
-				$mysqli->dbquery($q);
+				if(fieldscompare('',array('newroleid'))){
+					$q = "UPDATE `accrole` SET `role_id` = '" . $_POST['newroleid'] . "' WHERE `id` = '" . $_POST['accroleid'] . "';";
+					$mysqli->dbquery($q);
+				}
 				$_POST['accroleid'] = null;
 			break;
 			case 'Add Role':
@@ -62,47 +66,47 @@
 	while ($usrrow = $sqlusers->fetch_assoc()) {
 		echo formpost($thisform);
 		echo formhiddenval('usrid',$usrrow['id']);
-		echo spanformat('color:darkblue;',"User: <b>" . $usrrow['name'] . ' / ' . $usrrow['email'] . '</b>');
-		echo "&nbsp;&nbsp;&nbsp;&nbsp; Reset passwd?";
-		formselectsessionX('resetpasswd','bool',0);
-		echo "chgpasswd:";
+		echo spanformat('','darkblue','User: <b>' . $usrrow['name'] . ' / ' . $usrrow['email'] . '</b>');
+		echo '&nbsp;&nbsp;&nbsp;&nbsp; Reset passwd?';
+		formselectsession('resetpasswd','bool',0);
+		echo 'chgpasswd:';
 		if ($usrrow['chgpasswd']) {
-					echo spanformat('color:red;',':T ');
+					echo spanformat('','red',':T ');
 				} else {
-					echo spanformat('color:blue;',':F ');
+					echo spanformat('','blue',':F ');
 				}
-		echo "&nbsp;&nbsp;&nbsp;&nbsp; Activ?";
-		formselectsessionX('activ','bool',$usrrow['activ']);	
+		echo '&nbsp;&nbsp;&nbsp;&nbsp; Activ?';
+		formselectsession('activ','bool',$usrrow['activ']);	
 		echo formsubmit('act','Submit') . '<br>';
-		echo "</form>";
+		echo '</form>';
 		echo formpost($thisform);
 		echo formhiddenval('usrid',$usrrow['id']);
 		echo ' &nbsp;&nbsp;Delete?';
-		formselectsessionX('userdelete','bool',0);
+		formselectsession('userdelete','bool',0);
 		echo formsubmit('act','Delete User') . '<br>';
-		echo "</form>";
+		echo '</form>';
 		$q = "SELECT `role`.* , `accrole`.`id` AS `accroleid` FROM `accrole`,`role` WHERE `accrole`.`role_id` = `role`.`id` AND `accrole`.`account_id` = '" . $usrrow['id'] . "' ;";
 		$sqlrole = $mysqli->dbquery($q);
 		while ($rolerow = $sqlrole->fetch_assoc()) {
 			echo formpost($thisform);
 			echo formhiddenval('accroleid',$rolerow['accroleid']);
 			if ($rolerow['accroleid'] == $_POST['accroleid']) {
-				formselectsessionX('newroleid','roleslist',$rolerow['id']);
+				formselectsession('newroleid','roleslist',$rolerow['id']);
 				echo formsubmit('act','Change Role');
 			} else {
 				echo formsubmit('act','Edit Role');
-				echo "&nbsp;&nbsp;&nbsp;&nbsp; " . $rolerow['rolename'] . ' / ' . $rolerow['description'];
+				echo '&nbsp;&nbsp;&nbsp;&nbsp; ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
 				echo ' &nbsp;&nbsp;Delete?';
-				formselectsessionX('roledelete','bool',0);
+				formselectsession('roledelete','bool',0);
 				echo formsubmit('act','Delete Role') .'<br>';
 			}
-			echo "</form>";
+			echo '</form>';
 		}
 		echo formpost($thisform);
 		echo formhiddenval('usrid',$usrrow['id']);
-		formselectsessionX('newroleid','roleslist',15);
+		formselectsession('newroleid','roleslist',15);
 		echo formsubmit('act','Add Role');
-		echo "</form><p><p><hr>";
+		echo '</form><p><p><hr>';
 	}
   }
 	

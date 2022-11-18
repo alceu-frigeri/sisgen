@@ -6,10 +6,12 @@
         <hr>
 
 <?php 
+	$mysqli->postsanitize();
+
 	echo formpost($thisform);
-	formselectsqlX($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
-	formselectsqlX($anytmp,"SELECT * FROM building WHERE mark = 1 ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
-	formselectsqlX($anytmp,"SELECT room.* FROM room,building WHERE room.building_id = building.id AND building.id = '".$_POST['buildingid']."' ORDER BY room.acronym;",'roomid',$_POST['roomid'],'id','acronym');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM building WHERE mark = 1 ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
+	formselectsql($anytmp,"SELECT room.* FROM room,building WHERE room.building_id = building.id AND building.id = '".$_POST['buildingid']."' ORDER BY room.acronym;",'roomid',$_POST['roomid'],'id','acronym');
 	echo formsubmit('act','Refresh');
 	echo '</form>';
    
@@ -20,19 +22,23 @@
 	  $result = $mysqli->dbquery($q);
 	  $sqlrow = $result->fetch_assoc();
 	  
-	  echo "<br>".$sqlrow['buildingname'] . ' - ' . $sqlrow['name'] . ' : ' . $sqlrow['type'];
+	  echo '<br>'.$sqlrow['buildingname'] . ' - ' . $sqlrow['name'] . ' : ' . $sqlrow['type'];
 	  if ($sqlrow['capacity']) {
-	  echo ' (cap.: '. $sqlrow['capacity'] ." vagas)";
+	  echo ' (cap.: '. $sqlrow['capacity'] .' vagas)';
 	  }
 	  echo '<p>';
 	  
-    $q = "SELECT `discipline`.`name` AS `discname`, `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* FROM `classsegment` , `class`, `semester`,`discipline`,`room`,`building` WHERE  " .  
+    $q = "SELECT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid`, `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid` " . 
+	  "FROM `classsegment` , `class`, `semester`,`discipline`,`room`,`building`, `unit` AS `discdept` WHERE  " .  
 	  "`class`.`discipline_id` = `discipline`.`id` AND `class`.`sem_id` = `semester`.`id` AND " . 
+	  "`discipline`.`dept_id` = `discdept`.`id` AND " .
 	  "`classsegment`.`class_id` = `class`.`id` AND `classsegment`.`room_id` = `room`.`id` AND `room`.`building_id` = `building`.`id` AND " . 
 	  "`semester`.`id` = '".$_POST['semid']."' AND " . 
 	  "`room`.`id` = '".$_POST['roomid']."' AND `building`.`id` = '".$_POST['buildingid']."';";
 
 
+ //vardebug($q);
+ 
    dbweekmatrix($q);
   }
 
