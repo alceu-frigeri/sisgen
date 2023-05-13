@@ -1,0 +1,392 @@
+/*!
+ * Start Bootstrap - Business Frontpage HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+@media (min-width: 1920px) {
+  .container {
+    width: 1820px;
+  }
+}
+@media (min-width: 1360px) {
+  .container {
+    width: 1290px;
+  }
+}
+
+
+body {
+    padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+
+/* Header Image Background - Change the URL below to your image path (example: ../images/background.jpg) */
+
+.business-header {
+    height: 150px;
+    /*background: url('http://placehold.it/1920x400') center center no-repeat scroll;*/
+    background: url('../images/BannerPredioHistorico.jpg') center center no-repeat scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.navbar-inverse {
+    background-color: #204394;
+    border-color: #fbb03d;
+}
+
+hr {
+    border-top: 1px solid #fbb03d;
+}
+
+.banner-info {
+
+}
+
+.banner-title{ 
+    text-align: center;
+    margin-top: 24px;    
+}
+.banner-title-local{
+    float: right;
+    font-weight: bold;
+/*    color: #20b020;*/
+    color: #ffffff;
+}
+.title1{
+    font-weight: bold;
+    font-size: 24px;
+    color: #204394;
+}
+
+.title2{ 
+    font-size: 24px;
+    color: #204394;
+}
+
+.title3{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.title4{
+    font-weight: bold;
+    color: #204394;
+}
+.title5{
+    font-size: 20px; 
+}
+
+.bottom{
+    position: absolute;
+    margin-top: -18px;
+}
+
+.menu-active>a{ 
+/*    background: #fbb03d;*/
+    background: #4080ff;
+    color: #FFF !important;
+    font-weight: bold;
+}
+
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover{
+/*    background: #fbb03d;*/
+/*    background-color: #204394;*/
+    background: #4080ff;
+    color: #FFF !important;
+    font-weight: bold;
+}
+
+
+.banner {
+    width: 100%;
+    #background-color: #4da4f6;
+/*    background: url('../images/fundo-banner2.png') center center no-repeat scroll;*/
+    height: 160px;
+}
+
+.logo {
+    width: 226px;
+    padding: 20px;    
+}
+
+.maps {
+    width: 60%;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo-congresso{
+    /*width: 350px;*/
+	max-height: 105px;
+    padding: 20px;    
+}
+
+.logo-ifac-sba{
+    width: 226px;
+    padding: 20px;    
+    float: left;
+}
+.shadow{
+    box-shadow: 0px 2px 18px 0px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px) {
+    .bottom{
+        margin-top: -36px;
+    }
+}
+
+@media (max-width: 768px) {
+  .banner-title{
+    float: none; 
+}
+.banner {   
+    background: none;   
+}
+}
+
+/* Customize the text color and shadow color and to optimize text legibility. */
+
+.tagline {
+    text-shadow: 0 0 10px #000;
+    color: #fff;
+}
+
+.img-center {
+    margin: 0 auto;
+}
+
+footer {
+    margin: 50px 0;
+}
+.session{
+    color: #204394;
+    font-weight: bold;
+}
+.session-code{
+    color: red;
+}
+
+.morecontent span {
+    display: none;
+}
+.morelink {
+    display: block;
+}
+
+#registration {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#registration td {
+    vertical-align: center;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#registration tr {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+/*#registration tr:hover {background-color: #f5f5f5}*/
+
+#registration tr:nth-child(even) {background-color: #f2f2f2}
+
+#registration th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+
+#regform {
+    border-collapse: collapse;
+    width: 60%;
+}
+
+#regform td {
+    vertical-align: center;
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#regform tr {
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#regform th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+
+#proceedings {
+    border-collapse: collapse;
+    width: 60%;
+}
+
+#proceedings td {
+    vertical-align: center;
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedings tr {
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    background-color: #f2f2f2;
+}
+
+#proceedings th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedings tr:nth-child(even) {background-color: #ffffff}
+
+
+#proceedingsX {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#proceedingsX td {
+    vertical-align: center;
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedingsX tr {
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    background-color: #f2f2f2;
+}
+
+#proceedingsX th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedingsX tr:nth-child(even) {background-color: #ffffff}
+
+
+
+#proceedingsY {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#proceedingsY td {
+    vertical-align: text-top;
+    padding: 5px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedingsY tr {
+    padding: 5px;
+    text-align: left;
+    vertical-align: text-top;
+    border-bottom: 1px solid #ddd;
+}
+
+#proceedingsY th {
+    padding: 5px;
+    text-align: left;
+    vertical-align: text-top;
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+
+
+#regiform {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#regiform td {
+    vertical-align: center;
+    padding: 2px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#regiform tr {
+    padding: 2px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#regiform th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 2px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.blink_text {
+
+    animation:1s blinker linear infinite;
+    -webkit-animation:1s blinker linear infinite;
+    -moz-animation:1s blinker linear infinite;
+
+     color: red;
+}
+
+@-moz-keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+}
+
+@keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+}
+
+.navbar-fixed-top .navbar-collapse,
+.navbar-fixed-bottom .navbar-collapse {
+  max-height: 200px;
+}
+
+
+.navbar {
+  min-height: 30px;
+  margin-bottom: 10px;
+}
+
