@@ -62,6 +62,7 @@
 					roomset($roomL['id'],'18',$sqlrow['id'],'201');
 					roomset($roomL['id'],'18',$sqlrow['id'],'202');
 					roomset($roomI['id'],'20',$sqlrow['id'],'301');
+					roomset($roomT['id'],'20',$sqlrow['id'],'301a');
 					roomset($roomT['id'],'40',$sqlrow['id'],'303');
 					roomset($roomT['id'],'40',$sqlrow['id'],'304');
 					roomset($roomI['id'],'20',$sqlrow['id'],'305');
