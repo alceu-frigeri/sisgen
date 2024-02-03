@@ -42,10 +42,7 @@
 		 ;
 		
 	  echo '<br>';
-	  echo  formpost($basepage.'?q=reports&sq=room','roomhid'.$_POST['buildingid'].'-'.$roomrow['id'] , 'roomhid'.$_POST['buildingid'].'-'.$roomrow['id']) . // 'roomhid'.$_POST['buildingid'].'-'.$roomrow['id']
-		formhiddenval('semid',$_POST['semid']) . formhiddenval('buildingid',$_POST['buildingid']) . 
-		formhiddenval('roomid',$roomrow['id']) . formhiddenval('act',$_POST['Refresh']) . 
-		formsubmit('submit','go report') . spanformat('larger','',$roomrow['name']) . '</form>'  ;
+	  echo hiddenroomform($_POST['semid'],$_POST['buildingid'],$roomrow['id'],'') . formsubmit('submit','go report') . spanformat('larger','',$roomrow['name']) . '</form>'  ;
 
 	  
 	  $flag =  checkweek($q);

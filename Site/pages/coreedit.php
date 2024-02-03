@@ -10,13 +10,10 @@
 			$_SESSION['rooms'][$roomrow['id']]['txt'] = $roomrow['building'].' - '.$roomrow['room'] . $cap;
 			$_SESSION['rooms'][$roomrow['id']]['buildmark'] = $roomrow['mark'];
 			$_SESSION['rooms'][$roomrow['id']]['buildingid'] = $roomrow['buildingid'];
-			$_SESSION['rooms'][$roomrow['id']]['hidlnk'] = 'roomhid' . $roomrow['buildingid'] . '-' . $roomrow['id'];
-//			unset ($_SESSION['rooms'][$roomrow['id']]['hiddenform']);
 			if ($roomrow['mark']) {
-				$_SESSION['rooms'][$roomrow['id']]['txt'] = '<a href="javascript:document.forms['."'". $_SESSION['rooms'][$roomrow['id']]['hidlnk'] .  "'" . '].submit()">' .
-					$roomrow['building'].' - '.$roomrow['room'] .'</a>'. $cap;
+				$_SESSION['rooms'][$roomrow['id']]['txtlnk'] = hiddenformlnk(hiddenroomkey($_POST['semid'],$roomrow['buildingid'],$roomrow['id']) , $roomrow['building'].' - '.$roomrow['room']) . $cap;
 			} else {
-				$_SESSION['rooms'][$roomrow['id']]['txt'] = $roomrow['building'].' - '.$roomrow['room'] . $cap;
+				$_SESSION['rooms'][$roomrow['id']]['txtlnk'] = $roomrow['building'].' - '.$roomrow['room'] . $cap;
 			}
 		}
 		
@@ -59,18 +56,19 @@
 		echo formhiddenval('semid',$_POST['semid']);
 		echo formhiddenval('unitid',$_POST['unitid']);
 		echo formhiddenval('discid',$_POST['discid']);
+		echo formhiddenval('profnicks',$_POST['profnicks']);
+		echo formhiddenval('courseHL',$_POST['courseHL']);
 	}
 
 	function formsegmentdisplay($segrow) {
 		global $mysqli;
-		global $hiddenprofforms;
-		global $hiddenroomforms;
+		global $hiddenprofdeptid;
+		global $hiddenroombuildingid;
 		
-		$hiddenprofforms[$segrow['prof_id']] = 'profhid' . $_SESSION['deptIDprof'.$_POST['unitid']][$segrow['prof_id']] . '-' . $segrow['prof_id'];
-		$hiddenroomforms[$segrow['room_id']] = true;
-		echo $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 -- ' . $segrow['length'] . 'H -- ' . $_SESSION['rooms'][$segrow['room_id']]['txt'] . ' -- ' . 
-			'<a href="javascript:document.forms['."'". $hiddenprofforms[$segrow['prof_id']] . "'" . '].submit()">' . 
-			$_SESSION['deptprof'.$_POST['unitid']][$segrow['prof_id']] . '</a>' . 
+		$hiddenprofdeptid[$segrow['prof_id']] = $_SESSION['deptIDprof'.$_POST['unitid']][$segrow['prof_id']];
+		$hiddenroombuildingid[$segrow['room_id']] = $_SESSION['rooms'][$segrow['room_id']]['buildingid'];
+		echo $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 -- ' . $segrow['length'] . 'H -- ' . $_SESSION['rooms'][$segrow['room_id']]['txtlnk'] . ' -- ' . 
+			hiddenformlnk(hiddenprofkey($_POST['semid'],$_SESSION['deptIDprof'.$_POST['unitid']][$segrow['prof_id']],$segrow['prof_id']) , $_SESSION['deptprof'.$_POST['unitid']][$segrow['prof_id']]) .
 			'&nbsp;&nbsp;&nbsp;&nbsp;'. spanformat('', $_SESSION['statuscolor'][$segrow['status_id']]  ,  '(' .  $_SESSION['status'][$segrow['status_id']] . ')');
 	}
     
@@ -85,7 +83,7 @@
 		formselectrange($segformid.'day',2,8,$segrow['day'],'',$_SESSION['weekday']);
 		formselectrange($segformid.'start',7,21,$segrow['start'],':30');
 		formselectrange($segformid.'length',1,6,$segrow['length']);
-		formselectsession($segformid.'room','rooms',$segrow['room_id']);
+		formselectsession($segformid.'room','roomsID',$segrow['room_id']);
 		formselectsession($segformid.'prof','deptprof'.$_POST['unitid'],$segrow['prof_id']);
 		formselectsession($segformid.'status','status',$segrow['status_id']);
 		
@@ -108,6 +106,8 @@
 		$_SESSION['classes'][$classrow['id']] = $classkey;
 		
 		//echo 'Turma:<b>' . $classrow['name'] . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
+		//echo '<span style="color:#8000B0;">';
+		echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
 		echo 'Turma:<b>' . formpatterninput(3,1,$classpattern,' Turma',$classkey.'classname',$classrow['name']) . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 
 
@@ -155,27 +155,39 @@
 				while ($scentmprow = $scentmpsql->fetch_assoc()) {
 					$_SESSION['org']['sceneryclass'][$scentmprow['scenery_id']] = $scentmprow['id'];
 				}
+				echo '<table><tr>';
+				$cnt=0;
 				foreach ($_SESSION['scen.acc.edit'] as $id => $name) {
 					$_SESSION['org']['sceneryusr'][$id] = $_SESSION['org']['sceneryclass'][$id];
 					$checked='';
 					if ($_SESSION['org']['sceneryclass'][$id]) {
 						$checked=' checked';
 					};
-					echo '<input type="checkbox" name="' . $classkey. 'scenery' . $id . '" id="scenery' . $id .   '" value="'. $id .'"' .$checked. '> <label for="scenery'. $id .'">'. $name .'</label>&nbsp;&nbsp;';
+					$cnt++;
+					if ($cnt == 9) {
+						$cnt = 1;
+						echo '</tr><tr>';
+					}
+					echo '<th style="width:110px">' . '<input type="checkbox" name="' . $classkey. 'scenery' . $id . '" id="scenery' . $id .   '" value="'. $id .'"' .$checked. '> <label for="scenery'. $id .'">'. $name .'</label></th>';
 				}
+				echo '</tr></table>';
+
 				//vardebug($_SESSION['scen.acc.edit']);
 				//vardebug($_SESSION['org']['sceneryusr']);
 				//vardebug($_SESSION['org']['sceneryclass']);
 	//		}
 		}
 
-		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "';";
+		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
 		$vacsql = $mysqli->dbquery($q);
 		if($classrow['agreg']) {
 			formvacdisplay($vacsql);
 		} else {
 			formvacedit($vacsql);
 		}
+		
+		//echo '</span>';
+		echo '</td></tr></table>';
 	}
 	
 	function formclassdisplay ($classrow,$vacedit=false) {
@@ -184,7 +196,17 @@
 		global $can_addclass;
 		global $postedit;
 		global $commentcolor;
-
+		
+		$courseHL=false;
+		if ($_POST['courseHL']) {
+			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$classrow['id']."' AND `course_id` = '".$_POST['courseHL']."';";
+			$xresult = $mysqli->dbquery($q);
+			$xrow = $xresult->fetch_assoc();
+			if($xrow['total']) {
+				$courseHL=true;
+			}
+		}
+		
 		echo 'Turma:<b>' . $classrow['name'] . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 		echo $_SESSION['bool'][$classrow['agreg']];
 		if ($classrow['partof']) {
@@ -217,15 +239,27 @@
 			echo '<tr><td></td><td>Cenário:</td><td></td><td>Default</td></tr>';
 		}
 		echo '</table>';
+
+		if($courseHL){
+			echo '<table style="background-color:#FAFAF4;color:#4080A0;"><tr><td>';
+		}
 		
-		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "';";
+		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
 		$vacsql = $mysqli->dbquery($q);
 		if ($vacedit && !$classrow['agreg']) {
 			formvacedit($vacsql);
 		} else {
 			formvacdisplay($vacsql);
 		}
+		
+		if($courseHL){
+			echo '</td></tr></table>';
+		}
+
+	
+		
 	}
+	
 	
 	function formvacedit ($vacsql) {
 		global $mysqli;

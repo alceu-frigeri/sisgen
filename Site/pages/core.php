@@ -83,16 +83,11 @@ function regacc_create() {
     global $baseurl;
     global $microstamp;
     
-    //    echo '<h2>Sistema de Inscrição</h2><hr>\n';
-    //    echo 'Dados submetidos:<br>\n';
 
     $email=$_POST['emailA'];
     $passwd=$_POST['passA'];
     $emailhash=md5($email);
     $today = date('Y-m-d');
-    //    echo 'email: $email<br>\n';
-    //    echo 'password: $passwd<br>\n';
-    //    echo 'md5(email):$emailhash<br>\n';
 
     $email = $mysqli->real_escape_string($email);
     $passwd = $mysqli->real_escape_string($passwd);
@@ -303,7 +298,6 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 		$termsql = $mysqli->dbquery($q);
 		while ($termrow = $termsql->fetch_assoc()) {
 			if(!$discflag[$termrow['code']]) {$flag['ob']=1;};
-			//echo $termrow['code'].'&nbsp;&nbsp;';
 		}
 	}
 	for ($j=7;$j<22;$j++) {
@@ -324,8 +318,7 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 
 
 
-
-function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null) {
+function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$matrixonly=false,$courseHL=null) {
 	global $mysqli;
 	
 //	$basevals = array('DA','A0','68','40','00');
@@ -345,22 +338,24 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null) {
 	  }
 
 
+	$hiddenclasskeys=null;
+	$hiddenprofdeptid=null;
 	$result = $mysqli->dbquery($q);
 	while ($sqlrow = $result->fetch_assoc()) {
 		$disccodes[$sqlrow['code']] = $sqlrow['code'];
 		$disc[$sqlrow['code']] = $sqlrow['discname'];
 		$discid[$sqlrow['code']] = $sqlrow['discid'];
+		$discbgcolor[$sqlrow['code']] = 0x0;
+		$profnicks=0;
 
 		if (!isset($scen[$sqlrow['classid']])) {
 			if($sqlrow['scenery']) {
 				if(isset($qscen)) {
-					$qx = "SELECT `scenery_id` FROM `sceneryclass` WHERE `class_id` = '".$sqlrow['classid']."' AND `scenery_id` IN (".$qscen.");";
-					//vardebug($qx);
+					$qx = "SELECT `scen`.`id`, `scen`.`name` FROM `sceneryclass` AS `sc` , `scenery` AS `scen` WHERE `sc`.`class_id` = '".$sqlrow['classid']."' AND `sc`.`scenery_id` IN (".$qscen.") AND `sc`.`scenery_id` = `scen`.`id`;";
 					$qxresult = $mysqli->dbquery($qx);
 					while ($qxrow = $qxresult->fetch_assoc()) {
-						$scen[$sqlrow['classid']] .= ' *'.$qxrow['scenery_id'];
+						$scen[$sqlrow['classid']] .= $qxrow['name'];
 					}
-	//				vardebug($scen[$sqlrow['classid']]);
 				} else {
 					$scen[$sqlrow['classid']]='';					
 				}
@@ -368,8 +363,10 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null) {
 				$scen[$sqlrow['classid']]='';
 			}
 		}
+		
+		$classindex=$sqlrow['code'] . ' - ' . $sqlrow['name'];
 
-		if (!$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
+		if (!$vac[$classindex]) {
 			if($courseid) {
 				$q = "SELECT `askednum`  AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
 			} else {
@@ -377,30 +374,76 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null) {
 			}
 			$vacresult = $mysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
-			$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] = $vacrow['total'];
+			$vac[$classindex] = $vacrow['total'];	
 		}
-		if ($vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
-			for ($i=0; $i < $sqlrow['length']; $i++) {
+		if(!$vacHL[$classindex] && $courseHL) {
+			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseHL."';";
+			$vacresult = $mysqli->dbquery($q);
+			$vacrow = $vacresult->fetch_assoc();
+			$vacHL[$classindex] = $vacrow['total'];	
+		}
+		
+		if ($vac[$classindex]) {
 				if($sqlrow['disckind']) {$kind=' ('.$sqlrow['disckind'].') ';} else {$kind='';};
 				$start=$sqlrow['start'];
 				$day=$sqlrow['day'];
-				$d = $sqlrow['code'] . $kind . ' - ' . $sqlrow['name'] . ' (' . $vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] . ')<sub>'. spanformat('smaller',null,$scen[$sqlrow['classid']],null).'</sub>';
-				$week[$day][$start+$i][] = $d;
-				$discweek[$day][$start+$i][$sqlrow['code']] += 1;
+				
+				$classhiddenkey = hiddenclasskey($_POST['semid'],$sqlrow['discdeptid'],$sqlrow['discid'],$sqlrow['classid']) ;
+				$hiddenclasskeys[$sqlrow['discdeptid']][$sqlrow['discid']][$sqlrow['classid']] = $classhiddenkey;
+				
+				$d  = $sqlrow['code'] . $kind . ' - ' . hiddenformlnk($classhiddenkey,$sqlrow['name']) . ' (' . $vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] . ')';
+				if($vacHL[$classindex]) {
+					$d .= ' **';
+				}
+				
+				if ($sqlrow['profnick']) {
+					$profnicks=1;
+					$hiddenprofdeptid[$sqlrow['profid']]=$sqlrow['profdeptid'];
+					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%',null,$scen[$sqlrow['classid']],null);
+					$d .= hiddenformlnk(hiddenprofkey($_POST['semid'],$sqlrow['profdeptid'],$sqlrow['profid']) , spanformat('75%',red,'('.$sqlrow['profnick'].')')) . '</sup></p>'; 
+				} else {
+					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%',null,$scen[$sqlrow['classid']],null).'</sup></p>';
+				}
 				$seg[$d] = $sqlrow['code'];
 				$discflag[$sqlrow['code']] = 1;
+
+			for ($i=0; $i < $sqlrow['length']; $i++) {
+				$week[$day][$start+$i][] = $d;
+				$discweek[$day][$start+$i][$sqlrow['code']] += 1;
 			}
 		}
 		$discdept[$sqlrow['code']]=$sqlrow['discdeptid'];
 		$discid[$sqlrow['code']]=$sqlrow['discid'];
 	}
 	$i=0;
-	foreach ($disccodes as $d) {
-//		$disccolor[$d] = $colors[$i];
-//		$disccolor[$d] = $colors[($discid[$d] * 5 * 7 * 11) % $numcolors];
-		$disccolor[$d] = $colors[((((($discid[$d] * 13 ) % 97 ) * 1 ) % 83 ) * 3 ) % $numcolors];
-		$i++;
+	if($color) {
+		foreach ($disccodes as $d) {
+			$disccolor[$d] = $color;
+		}
+	} else {
+		foreach ($disccodes as $d) {
+			$disccolor[$d] = $colors[((((($discid[$d] * 13 ) % 97 ) * 1 ) % 83 ) * 3 ) % $numcolors];
+		}
 	}
+	
+	if($hiddenclasskeys){
+		foreach ($hiddenclasskeys as $Hdeptid => $HdeptX) {
+			foreach ($HdeptX as $Hdiscid => $HdiscX) {
+				foreach ($HdiscX as $Hclassid => $HclassX) {
+					echo hiddenclassform($_POST['semid'],$Hdeptid,$Hdiscid,$Hclassid,'name',$profnicks,$courseHL);
+				}
+			}
+		}
+		
+	}
+	
+
+	if($hiddenprofdeptid){
+		foreach ($hiddenprofdeptid as $Hprofid => $Hdeptid) {
+			echo hiddenprofform($_POST['semid'],$Hdeptid,$Hprofid);
+		}
+	}
+
 
 	echo '<table>';
 	echo '<tr style="border-bottom:1px solid black"><th>Hora</th>';
@@ -414,80 +457,97 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null) {
 			$td='<td>';
 			if (count($discweek[$i][$j]) > 1) {
 				$td='<td style="background:#FFF2F2;">';
+				foreach ($discweek[$i][$j] as $xID => $xcnt) {
+					$discbgcolor[$xID] |= 0xFF0000;
+				}
 			} else {
 				if(max($discweek[$i][$j]) > 1) {
 					$td='<td style="background:#F2FFF2;">';
+					foreach ($discweek[$i][$j] as $xID => $xcnt) {
+						$discbgcolor[$xID] |= 0x00FF00;
+					}
 				}
 			}
 			echo $td;
-			$b='';
 			foreach ($week[$i][$j] as $d) {
-				echo $b . spanformat(null,$disccolor[$seg[$d]], '<b>'.$d.'</b>');
-				$b='<br>';
+				echo '<p style="margin:0;border:0;">' . spanformat(null,$disccolor[$seg[$d]], '<b>'.$d.'</b>');
 			}
 			echo '</td>';
 		}
 		echo '</tr>';
 	}
 	echo '</table>';
-	$hiddenforms=null;
-	foreach ($disccodes as $d) {
-		if($courseid){
-			$q = "SELECT `kind`.`code` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` WHERE `cd`.`course_id` = '".$courseid."' AND `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`disciplinekind_id`= `kind`.`id`;";
-			$result = $mysqli->dbquery($q);
-			$sqlrow=$result->fetch_assoc();
-			$kind = '<sub>'.spanformat('smaller','',$sqlrow['code']).'</sub>';
-		} else {
-			$kind=null;
-			$q = "SELECT `kind`.`code` AS kcode , `course`.`acronym` AS acro, `course`.`id` AS courseid , `term`.`code`  AS tcode , `term`.`id`  AS termid ".
-				"FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `unit` AS `course` , term " . 
-				"WHERE  `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`course_id`= `course`.`id` AND `cd`.`term_id`= `term`.`id`  AND `cd`.`disciplinekind_id`= `kind`.`id`;";
-			$result = $mysqli->dbquery($q);
-			while ($sqlrow=$result->fetch_assoc()) {
-				$hiddenforms[$sqlrow['courseid']][$sqlrow['termid']] = 'coursehid' . $sqlrow['courseid'].'-'.$sqlrow['termid'];
-				if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor='#0000A0';} else {$bold=false;$tcolor=null;}
-				$kind .= '<a href="javascript:document.forms['."'". $hiddenforms[$sqlrow['courseid']][$sqlrow['termid']] . "'" . '].submit()">' . spanformat (null,$tcolor,' ' . $sqlrow['acro'] . ' - ' . $sqlrow['tcode'] . spanformat('smaller',null,'('.$sqlrow['kcode'] .')') . '&nbsp;&nbsp; ',null,$bold) . '</a>';
-			}
-			if ($kind) {
-				$kind = '<sub>'.spanformat('smaller','',$kind).'</sub>';
-			}
-		}
-	  echo  formpost($basepage.'?q=edits&sq=classes','dischid'.$discdept[$d].'-'.$discid[$d] , 'dischid'.$discdept[$d].'-'.$discid[$d]) . // 'dischid'.$discdept[$d].'-'.$discid[$d]
-		formhiddenval('semid',$_POST['semid']) . formhiddenval('unitid',$discdept[$d]) . 
-		formhiddenval('discid',$discid[$d]) . formhiddenval('act','Refresh') . 
-		formsubmit('submit','go edit') . spanformat('',$disccolor[$d], $d . ' - ' . $disc[$d] ,null,true) . $kind . '</form>'    ;
-		
-		//echo '</br>';
-	}
-	if ($hiddenforms) {
-		foreach ($hiddenforms as $cid => $acid) {
-			foreach ($acid as $tid => $atid) {
-				echo hiddencourseform($_POST['semid'],$cid,$tid);
-			}
-		}
-	}
-	if($termid) {
-		$q = "SELECT `disc`.`code` , `disc`.`name` , `disc`.`id` AS `discid` , `discdept`.`id` AS `discdeptid` , `kind`.`code` AS `kindcode`" .
-		    "FROM `discipline` AS `disc` ,`coursedisciplines` AS `cd` ,`disciplinekind` AS `kind`,`unit` AS `discdept`" .
-		    "WHERE `cd`.`course_id` = '".$courseid."' AND " . 
-			"`disc`.`dept_id` = `discdept`.`id` AND " .
-			"`cd`.`term_id` = '".$termid."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND " . 
-			"`cd`.`discipline_id` = `disc`.`id`; " ;
-			//"AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
-		$termsql = $mysqli->dbquery($q);
-		$title = '<h5><b>Disciplina(s) não ofertada(s)</b></h5>';
-		while ($termrow = $termsql->fetch_assoc()) {
-			if(!$discflag[$termrow['code']]) {
-				if($title) {
-					echo $title;
-					$title='';
+	
+	if($matrixonly) {}
+	else {
+		$hiddencoursekeys=null;
+		foreach ($disccodes as $d) {
+			if($courseid){
+				$q = "SELECT `kind`.`code` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` WHERE `cd`.`course_id` = '".$courseid."' AND `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`disciplinekind_id`= `kind`.`id`;";
+				$result = $mysqli->dbquery($q);
+				$sqlrow=$result->fetch_assoc();
+				$kind = '<sub>'.spanformat('smaller','',$sqlrow['code']).'</sub>';
+			} else {
+				$kind=null;
+				$q = "SELECT `kind`.`code` AS kcode , `course`.`acronym` AS acro, `course`.`id` AS courseid , `term`.`code`  AS tcode , `term`.`id`  AS termid ".
+					"FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `unit` AS `course` , term " . 
+					"WHERE  `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`course_id`= `course`.`id` AND `cd`.`term_id`= `term`.`id`  AND `cd`.`disciplinekind_id`= `kind`.`id`;";
+				$result = $mysqli->dbquery($q);
+				while ($sqlrow=$result->fetch_assoc()) {
+					$hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] = hiddencoursekey($_POST['semid'],$sqlrow['courseid'],$sqlrow['termid']);
+					if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor='#0000A0';} else {$bold=false;$tcolor=null;}
+					$kind .= hiddenformlnk($hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] , spanformat (null,$tcolor,' ' . $sqlrow['acro'] . ' - ' . $sqlrow['tcode'] . spanformat('smaller',null,'('.$sqlrow['kcode'] .')') . '&nbsp;&nbsp; ',null,$bold));
 				}
-				echo hiddendiscform($_POST['semid'],$termrow['discdeptid'],$termrow['discid'],null) . 
-					formsubmit('submit','go edit') . $termrow['code'].' - '.$termrow['name']  . '<sub>'.spanformat('smaller','',$termrow['kindcode']).'</sub>' . '</form>'  ;
+				if ($kind) {
+					$kind = '<sub>'.spanformat('smaller','',$kind).'</sub>';
+				}
+			}
+			if($discbgcolor[$d]) {
+				$bgcolor = '#' . dechex($discbgcolor[$d] | 0xECECE8);
+			} else {
+				$bgcolor = null;
 			};
+			//$bgcolor=null;
+
+			if ($edit) {
+				echo hiddendiscform($_POST['semid'],$discdept[$d],$discid[$d],'') . formsubmit('submit','go edit');			
+				echo	spanformat('',$disccolor[$d], $d . ' - ' . $disc[$d] ,$bgcolor,true) . $kind;
+				echo  '</form>'   ;
+			} else {
+				echo	spanformat('',$disccolor[$d], $d . ' - ' . $disc[$d] ,$bgcolor,true) . $kind . '<br>';
+			}
+			
+			//echo '</br>';
+		}
+		if ($hiddencoursekeys) {
+			foreach ($hiddencoursekeys as $cid => $acid) {
+				foreach ($acid as $tid => $atid) {
+					echo hiddencourseform($_POST['semid'],$cid,$tid);
+				}
+			}
+		}
+		if($termid) {
+			$q = "SELECT `disc`.`code` , `disc`.`name` , `disc`.`id` AS `discid` , `discdept`.`id` AS `discdeptid` , `kind`.`code` AS `kindcode`" .
+				"FROM `discipline` AS `disc` ,`coursedisciplines` AS `cd` ,`disciplinekind` AS `kind`,`unit` AS `discdept`" .
+				"WHERE `cd`.`course_id` = '".$courseid."' AND " . 
+				"`disc`.`dept_id` = `discdept`.`id` AND " .
+				"`cd`.`term_id` = '".$termid."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND " . 
+				"`cd`.`discipline_id` = `disc`.`id`; " ;
+				//"AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
+			$termsql = $mysqli->dbquery($q);
+			$title = '<h5><b>Disciplina(s) não ofertada(s)</b></h5>';
+			while ($termrow = $termsql->fetch_assoc()) {
+				if(!$discflag[$termrow['code']]) {
+					if($title) {
+						echo $title;
+						$title='';
+					}
+					echo hiddendiscform($_POST['semid'],$termrow['discdeptid'],$termrow['discid'],null) . 
+						formsubmit('submit','go edit') . $termrow['code'].' - '.$termrow['name']  . '<sub>'.spanformat('smaller','',$termrow['kindcode']).'</sub>' . '</form>'  ;
+				};
+			}
 		}
 	}
-
 }
 
 
@@ -519,18 +579,19 @@ function scenery_sql($inscenery) {
 		// return '<span style="'.$style.'">' . $text . '</span>';
 	// }
 
-	function spanformat($size,$color,$text,$bgcolor=null,$bold=null) {
+	function spanformat($size,$color,$text,$bgcolor=null,$bold=null,$height=null) {
 		$style='';
 		if($size) {$style .= 'font-size:'.$size.';';}
 		if($color) {$style .= 'color:'.$color.';';}
 		if($bgcolor) {$style .= 'background:'.$bgcolor.';';}
 		if($bold) {$style .= 'font-weight:bold;';}
+		if($height) {$style .= 'line-height:'.$height.';';}
 		return '<span style="'.$style.'">' . $text . '</span>';
 	}
 	
 	function pagereload($page) {
 		return "<script type=\"text/javascript\">
-			setInterval('location.replace(\"".$page."\")', 100);
+			setInterval('location.replace(\"".$page."\")', 250);
 			</script>";
 	}
 
@@ -541,37 +602,75 @@ function scenery_sql($inscenery) {
 	}
 	
 	
+	function hiddenformlnk($formkey,$textlink) {
+		return '<a href="javascript:document.forms['."'". $formkey .  "'" . '].submit()">' . $textlink .'</a>';
+	}
+	
 	function hiddenprofform($semid,$deptid,$profid,$closing='</form>') {
 		global $basepage;
-		$lnk = 'profhid'.$deptid.'-'.$profid;
+		$lnk = join('_',array('profhid',$semid,$deptid,$profid));
 		return formpost($basepage.'?q=reports&sq=prof', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('deptid',$deptid) . 
 			formhiddenval('profid',$profid) . formhiddenval('act','Refresh') . $closing;
 	}
+	function hiddenprofkey($semid,$deptid,$profid) {
+		return join('_',array('profhid',$semid,$deptid,$profid));
+	}
 	
 	function hiddenroomform($semid,$buildingid,$roomid,$closing='</form>') {
 		global $basepage;
-		$lnk = 'roomhid'.$buildingid.'-'.$roomid;
+		$lnk = join('_',array('roomhid',$semid,$buildingid,$roomid));
 		return formpost($basepage.'?q=reports&sq=room', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('buildingid',$buildingid) . 
 			formhiddenval('roomid',$roomid) . formhiddenval('act','Refresh') . $closing;
 	}
+	function hiddenroomkey($semid,$buildingid,$roomid) {
+		return join('_',array('roomhid',$semid,$buildingid,$roomid));
+	}
 
 	function hiddencourseform($semid,$courseid,$termid,$closing='</form>') {
 		global $basepage;
-		$lnk = 'coursehid'.$courseid.'-'.$termid;
+		$lnk = join('_',array('coursehid',$semid,$courseid,$termid));
 		return formpost($basepage.'?q=reports&sq=course', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('courseid',$courseid) . 
 			formhiddenval('termid',$termid) . formhiddenval('act','Refresh') . $closing;
 	}
-
+	function hiddencoursekey($semid,$courseid,$termid) {
+		return join('_',array('coursehid',$semid,$courseid,$termid));
+	}
+	
 	function hiddendiscform($semid,$deptid,$discid,$closing='</form>') {
 		global $basepage;
-		$lnk = 'dischid'.$deptid.'-'.$discid;
-		return formpost($basepage.'?q=edit&sq=classes', $lnk, $lnk ) . 
-			formhiddenval('semid',$semid) . formhiddenval('deptid',$deptid) . 
+//		$lnk = 'dischid'.$deptid.'_'.$discid;
+		$lnk = join('_',array('dischid',$semid,$deptid,$discid));
+		return formpost($basepage.'?q=edits&sq=classes', $lnk, $lnk ) . 
+			formhiddenval('semid',$semid) . formhiddenval('unitid',$deptid) . 
 			formhiddenval('discid',$discid) . formhiddenval('act','Refresh') . $closing;
+//			formhiddenval('discid',$discid) . $closing;
+		}
+	function hiddendisckey($semid,$deptid,$discid) {
+		//return 'dischid'.$deptid.'_'.$discid;
+		return join('_',array('dischid',$semid,$deptid,$discid));
 	}
+	
+	function hiddenclassform($semid,$deptid,$discid,$classid,$classname,$profnicks='0',$courseHL='',$closing='</form>') {
+		global $basepage;
+//		$lnk = 'classhid'.$deptid.'_'.$discid;
+		$lnk = join('_',array('classhid',$semid,$deptid,$discid));
+		return formpost($basepage.'?q=edits&sq=classes#class'.$classid.'div', $lnk, $lnk . '_'.$classid ) . 
+			formhiddenval('semid',$semid) . formhiddenval('unitid',$deptid) . 
+			formhiddenval('discid',$discid) . 
+			formhiddenval('classid',$classid) . formhiddenval('classname',$classname) . 
+			formhiddenval('profnicks',$profnicks) . 
+			formhiddenval('courseHL',$courseHL) . 
+			formhiddenval('act','Edit') . $closing;
+//			formhiddenval('discid',$discid) . $closing;
+		}
+	function hiddenclasskey($semid,$deptid,$discid,$classid) {
+//		return 'classhid'.$deptid.'_'.$discid.'_'.$classid;;
+		return join('_',array('classhid',$semid,$deptid,$discid,$classid));
+	}		
+		
 
 	function formpatterninput($max,$size,$pattern,$title,$fieldname,$fieldval) {
 		$_SESSION['org'][$fieldname]=$fieldval;
@@ -621,12 +720,41 @@ function scenery_sql($inscenery) {
 			
 		}
 		echo formhiddenval('sceneryselect','true');
+		
+		echo '<details>';
+		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> ';
+		displayscenerysession();
+		echo '</summary>';
+		$cnt = 0;
+		echo '<table><tr>';
 		foreach ($_SESSION[$scenlst] as $scenid => $scenname) {
 			$checked='';
+			$style='';
 			if ($_SESSION['sceneryselected'][$scenid]) {
 				$checked=' checked';
+				$style=';background-color: lightgray';
 			};
-			echo '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. '> <label for="scenselect'. $scenid .'">*' . $scenid . '&nbsp;&nbsp;' . $scenname .'</label>&nbsp;&nbsp;';
+			$cnt++;
+			if ($cnt == 9) {
+				$cnt = 1;
+				echo '</tr><tr>';
+			}
+//			echo '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. '> <label for="scenselect'. $scenid .'">*' . $scenid . '&nbsp;&nbsp;' . $scenname .'</label>&nbsp;&nbsp;';
+			echo '<th style="width:110px'.$style.'">' . '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. '> <label for="scenselect'. $scenid .'">'  . $scenname .'</label></th>';
+
+		}
+		echo '</tr></table>';
+		echo '</details>';
+		
+		
+	}
+	
+	function displayscenerysession(){
+		echo 'Cenário(s): ';
+		$comma='';
+		foreach ($_SESSION['sceneryselected'] as $scenid => $aux) {
+			echo $comma . '<b> ' . $_SESSION['scen.all'][$scenid] . '</b>';
+			$comma = ', ';
 		}
 	}
 	
@@ -687,6 +815,41 @@ function scenery_sql($inscenery) {
 		echo '</select>';
 	}
 	
+
+	function formjavaprint($title) {
+
+		echo 
+			"<script type=\"text/javascript\">
+				function printContent(id){
+					str=document.getElementById(id).innerHTML
+					newwin=window.open('','printwin','left=100,top=100,width=1100,height=1000')
+					newwin.document.write('<HTML><HEAD>')
+					newwin.document.write('<TITLE>" . $title . "</TITLE>')
+					newwin.document.write('<script>')
+					newwin.document.write('function chkstate(){')
+					newwin.document.write('if(document.readyState==\"complete\"){')
+					newwin.document.write('window.close()')
+					newwin.document.write('}')
+					newwin.document.write('else{')
+					newwin.document.write('setTimeout(\"chkstate()\",2000)')
+					newwin.document.write('}')
+					newwin.document.write('}')
+					newwin.document.write('function print_win(){')
+					newwin.document.write('window.print();')
+					newwin.document.write('chkstate();')
+					newwin.document.write('}')
+					newwin.document.write('<\/script>')
+					newwin.document.write('</HEAD>')
+					newwin.document.write('<BODY onload=\"print_win()\">')
+					newwin.document.write(str)
+					newwin.document.write('</BODY>')
+					newwin.document.write('</HTML>')
+					newwin.document.close()
+				}
+			</script>";
+	}
+
+
 
 
 

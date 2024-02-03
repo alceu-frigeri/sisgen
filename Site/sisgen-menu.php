@@ -13,6 +13,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 				'prof' => array('page'=> 'reportprof.php', 'label' => 'Professores'),
 				'room' => array('page'=> 'reportroom.php', 'label' => 'Salas'),
 				'dept' => array('page'=> 'reportdept.php', 'label' => 'Departamento'),
+				'assignment' => array('page'=> 'reportassignment.php', 'label' => 'Encargos'),				
 				'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad'),
 			)
 		);

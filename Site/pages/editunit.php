@@ -40,7 +40,7 @@
 
 
 // course, term
-  $q = "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `acronym` ASC;";
+  $q = "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `name` ASC;";
 
 	$result=$mysqli->dbquery($q);
 	$anyone = 0;

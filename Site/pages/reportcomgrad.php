@@ -131,11 +131,11 @@
 			echo '<hr>';
 			echo '&nbsp;from:' . formpatterninput(64,16,'[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+','from:','emailfrom',$courserow['contactemail']).'<br>';
 			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to:' . formpatterninput(64,16,'[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+','to:','emailto',$deptrow['contactemail']).'<br>';
-			echo 'subject:' . formpatterninput(128,64,'[a-zA-Z0-9\._- ]+','subject:','emailsubject','Demandas COMGRAD/'.$courserow['acronym'].' para o semestre '.$semrow['name']).'<br>';
+			echo 'subject:' . formpatterninput(128,64,'[a-zA-Z0-9\._- ]+','subject:','emailsubject','Demandas COMGRAD/'.$courserow['acronym'].' para o semestre '.$semrow['name'].' ('.$deptrow['acronym'].')').'<br>';
 			echo 'body:<textarea name="emailtext" rows="10" cols="64"> Prezado(a) ' . $deptrow['contactname'].",\n Seguem abaixo as nossas necessidades de turmas/vagas para o Semestre " . 
 					$semrow['name'] . '.' .
 					"\n\nColocamo-nos, desde já, a disposição para sanar quaisquer dúvidas." .
-					"\n\nAtenciosamente, \n". $courserow['contactname'] . "\n" . $courserow['name'] . "\n\n</textarea><br>";
+					"\n\nAtenciosamente, \n". $courserow['contactname'] . "\nCOMGRAD/" .$courserow['acronym'] ."\n". $courserow['name'] . "\n\n</textarea><br>";
 			echo 'Really Send it:'; 
 			formselectsession('trulysend','bool',0);
 			echo formsubmit('act','Send Email');

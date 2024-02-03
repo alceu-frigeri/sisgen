@@ -6,7 +6,7 @@ $GblClassIDs = array();
 $GblDiscIDs = array();
 $GblSegIDs = array();
 $GblVacIDs = array();
-
+$GblSemIDs = array();
 
 	 $q = "SELECT * FROM `discipline`;";
 	 $result = $mysqli->dbquery($q);
@@ -14,6 +14,17 @@ $GblVacIDs = array();
 		 $GblDiscIDs[$sqlrow['code']] = $sqlrow['id'];
 	 }
 
+	 $q = "SELECT * FROM `prof`;";
+	 $result = $mysqli->dbquery($q);
+	 while ($sqlrow=$result->fetch_assoc()) {
+		 $GblProfIDs[$sqlrow['name']] = $sqlrow['id'];
+	 }
+
+	 $q = "SELECT * FROM `semester`;";
+	 $result = $mysqli->dbquery($q);
+	 while ($sqlrow=$result->fetch_assoc()) {
+		 $GblSemIDs[$sqlrow['name']] = $sqlrow['id'];
+	 }
 
 	function fixvacancies(){
 		global $mysqli;
@@ -98,6 +109,7 @@ function DBinsertdept($grpAcro,$sem,$DiscCode,$DiscName,$DiscCred,$Class,$ClassV
 	global $GblDiscIDs;
 	global $GblSegIDs;
 	global $GblVacIDs;
+	global $GblSemIDs;
 	
 	$PreSem = '';
 	$PreDiscCode = '';
@@ -105,12 +117,14 @@ function DBinsertdept($grpAcro,$sem,$DiscCode,$DiscName,$DiscCred,$Class,$ClassV
     $dbcntB +=1;
 	echo "Bcnt:$dbcntB &nbsp;&nbsp;&nbsp;\n";
 	 
-	if (!($_SESSION['sem'][$sem])) {
+//	vardebug($_SESSION['sem']);
+//	vardebug($_SESSION['termbycode']);
+	if (!($GblSemIDs[$sem])) {
 		$q="INSERT INTO `semester` (`name`) VALUES ('" . $sem . "');"; 
 		$mysqli->dbquery($q);
-		$_SESSION['sem'][$sem]=$mysqli->insert_id;
+		$GblSemIDs[$sem]=$mysqli->insert_id;
 	}
-	$semID = $_SESSION['sem'][$sem];
+	$semID = $GblSemIDs[$sem];
 	
 	
 	/// verify that $Building already exists ...

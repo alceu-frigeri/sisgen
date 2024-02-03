@@ -74,6 +74,52 @@
 				echo 'done<p>';
 			}
 		break;
+		
+		case 'Import Term Data':
+			if($_POST['termdata']) {
+				echo '<h3>Importing Term Data</h3>';
+				echo 'going over it...<br>';
+					echo '<h3>Inserting Classes</h3>';						
+					if(!($file = fopen('csv/TERM.csv','r')))	{
+						echo 'TERM.csv file not found...';
+					};
+					$line = fgetcsv($file,512,',','"','"');
+					while ($line = fgetcsv($file,512,',','"','"')) {
+						DBinsertdept($line[0],$line[1],$line[2],$line[3],$line[4],$line[5],$line[6],$line[7],$line[8],$line[9],$line[10],$line[11],$line[12],$line[13],$line[14]);
+					}
+					fclose($file);
+					echo '<p>';
+
+					echo '<h3>Fixing Vacancies</h3>';
+					fixvacancies();
+
+				echo 'done<p>';
+			}
+		break;
+
+		case 'Import Course Data':
+			if($_POST['coursedata']) {
+				echo '<h3>Importing Course Data</h3>';
+				echo 'going over it...<br>';
+					echo '<h3>Inserting Courses Curricula</h3>';						
+					if(!($file = fopen('csv/COURSE.csv','r')))	{
+						echo 'COURSE.csv file not found...';
+					};
+					$line = fgetcsv($file,512,',','"','"');
+					while ($line = fgetcsv($file,512,',','"','"')) {
+						DBinsertgrade($line[0],$line[1],$line[2],$line[3],$line[4],$line[5]);
+					}					
+					fclose($file);
+					echo '<p>';
+
+					echo '<h3>Fixing Vacancies</h3>';
+					fixvacancies();
+
+				echo 'done<p>';
+			}
+		break;
+		
+		
 		case 'Fix Vacancies':
 			if($_POST['fixvacancies']) {
 				echo '<h3>Fixing Vacancies...</h3>';
@@ -374,6 +420,12 @@
 	echo formpost($thisform);
 	formselectsession('courseadjust','bool',0);
 	echo formsubmit('act','Courses Adjust') . '</form><p>';	
+	echo formpost($thisform);
+	formselectsession('termdata','bool',0);
+	echo formsubmit('act','Import Term Data') . '</form><p>';
+	echo formpost($thisform);
+	formselectsession('coursedata','bool',0);
+	echo formsubmit('act','Import Course Data') . '</form><p>';
 
   }
 

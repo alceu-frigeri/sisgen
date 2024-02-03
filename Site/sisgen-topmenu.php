@@ -90,7 +90,7 @@
                                 </div>
 
                     <div class="col-sm-4 banner-title">                
-                        <span class="title3">Porto Alegre<br>  2023</span>
+                        <span class="title3">Porto Alegre<br>  <?php echo date("Y"); ?></span>
                     </div>
                 </div>
             </div>

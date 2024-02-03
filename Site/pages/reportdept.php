@@ -1,12 +1,15 @@
 
-<?php $thisform=$basepage.'?q=reports&sq=dept'; ?>
 
 <div class="row">
-        <h2>Relatório Departamento </h2>
+        <h2>Relatório Depto. p/ Disciplina </h2>
         <hr>
 
-<?php	
+<?php
+	$thisform=$basepage.'?q=reports&sq=dept'; 
+	
 	$mysqli->postsanitize();
+
+	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 
 	echo formpost($thisform);
 	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
@@ -17,10 +20,8 @@
 	
 	echo '</form>';
 
-//	$in = "'0'";
-//	foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//		$in .= " , '".$scenid."'";
-//	}
+	
+	echo "<button onclick=\"printContent('Encargos')\">Print</button>";
 
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
@@ -29,6 +30,10 @@
 	$q="SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['deptid']."' ORDER BY  `name`;";
 
 	$discsql = $mysqli->dbquery($q);
+	
+	echo '<hr><div id="Encargos">';
+	
+	echo '<h2>' . displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos p/ ','semester',$_POST['semid'],'name') . '</h2>';
 	while ($discrow = $discsql->fetch_assoc()) {
 		echo '<br><b>'. spanformat('','darkblue',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
 //  		list($qscentbl,$qscensql) = scenery_sql($in);
@@ -77,6 +82,7 @@
 			 
 		}
 	}
+	echo '</div>';
 			
  ?>
     

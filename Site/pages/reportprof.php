@@ -1,5 +1,5 @@
 <div class="row">
-        <h2>Relatório p/Departamento </h2>
+        <h2>Relatório p/ Prof. </h2>
         <hr>
 
 <?php 

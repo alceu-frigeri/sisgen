@@ -198,7 +198,7 @@ class DBclass extends mysqli {
 		unset($_SESSION['scen.acc.view']);
 		unset($_SESSION['scen.acc.edit']);
 
-		$q = "SELECT * FROM `scenery` WHERE '1';";
+		$q = "SELECT * FROM `scenery` WHERE '1' ORDER BY `name`;";
 		$result = $this->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
 			if ($_SESSION['role']['isadmin']) {
@@ -227,6 +227,10 @@ class DBclass extends mysqli {
 			$_SESSION['scen.acc.edit'][$sqlrow['id']] = $sqlrow['name'] ; // all the user can add/remove classes to/from => that's for editclass
 			$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ;
 		}
+//		sort($_SESSION['scen.all']);
+//		sort($_SESSION['scen.hidden']);
+//		sort($_SESSION['scen.acc.view']);
+//		sort($_SESSION['scen.acc.edit']);
 		$result->close();
 	}
 	
@@ -256,7 +260,8 @@ class DBclass extends mysqli {
 		$result = $this->dbquery("SELECT *  FROM building;");
 		while ($sqlrow = $result->fetch_assoc()) {
 			$_SESSION['buildingbyacronym'][$sqlrow['acronym']] = $sqlrow;
-			$roomquery = $this->dbquery("SELECT room.*  FROM room , building WHERE room.building_id = building.id;");
+			
+			$roomquery = $this->dbquery("SELECT `room`.*  FROM `room` , `building` WHERE `room`.`building_id` = `building`.`id` AND `building`.`id` = '" . $sqlrow['id'] . "';");
 			while ($sqlroom = $roomquery->fetch_assoc()) {
 				$_SESSION['buildingbyacronym'][$sqlrow['acronym']]['roombyacronym'][$sqlroom['acronym']] = $sqlroom['id'];
 			}

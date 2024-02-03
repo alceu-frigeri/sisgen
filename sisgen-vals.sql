@@ -29,7 +29,9 @@ insert into `building` (`id`,`acronym`,`name`,`location`,`mark`) values
   ('10','Economia','Prédio Fac. Economia','Campus Centro','0'),
   ('11','Prédio Branco','Prédio Branco','Campus Centro','0'),
   ('12','Saúde','Campus Médico','Campus Médico','0'),
-  ('13','Vale','Campus do Vale','Campus do Vale','0');
+  ('13','Vale','Campus do Vale','Campus do Vale','0'),
+  ('14','observatorio','Antigo Observatório','Campus Centro','0')
+  ;
   
 insert into `room` (`building_id`,`acronym`,`name`) VALUES
   ('1','undef','não definido'),
@@ -44,7 +46,8 @@ insert into `room` (`building_id`,`acronym`,`name`) VALUES
   ('10','undef','não definido'),
   ('11','undef','não definido'),
   ('12','undef','não definido'),
-  ('13','undef','não definido');
+  ('13','undef','não definido'),
+  ('14','undef','não definido');
   
   
 insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) values 
@@ -53,17 +56,17 @@ insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) val
   ('3','DELAE','ENG10','Departamento de Sistemas Elétricos de Automação e Energia',0,1,1),
   ('4','DEMEC','ENG03','Departamento de Engenharia Mecânica',0,1,1),
   ('5','DEQUI','ENG07','Departamento de Engenharia Química',0,1,0),
-  ('6','CCA','CCA99','Eng. de Controle e Automação',1,0,1),
-  ('7','ENE','EEN99','Eng. de Energia',1,0,1),
-  ('8','ECP','ECP99','Eng. de Computação',1,0,1),
-  ('9','ELE','ELE99','Eng. Elétrica',1,0,1),
-  ('10','MEC','MEC99','Eng. Mecânica',1,0,1),
+  ('6','Eng.CCA','CCA99','Eng. de Controle e Automação',1,0,1),
+  ('7','Eng.ENE','EEN99','Eng. de Energia',1,0,1),
+  ('8','Eng.ECP','ECP99','Eng. de Computação',1,0,1),
+  ('9','Eng.ELE','ELE99','Eng. Elétrica',1,0,1),
+  ('10','Eng.MEC','MEC99','Eng. Mecânica',1,0,1),
   ('11','DMPA','MAT01','Departamento de Matemática Pura e Aplicada',0,1,0),
   ('12','INA','INF01','Departamento de Informática Aplicada',0,1,0),
   ('13','INT','INF05','Departamento de Informática Teórica',0,1,0),
   ('14','DEFIS','FIS01','Departamento de Física',0,1,0),
   ('15','DCA','ADM01','Departamento de Ciências Administrativas',0,1,0),
-  ('16','DARQ','ARQ03','Departamento de Arquitetura',0,1,0),
+  ('16','DEG','ARQ03','Departamento de Desgin e Expressão Gráfica',0,1,0),
   ('17','DERI','ECO02','Departamento de Economia e Relações Internacionais',0,1,0),
   ('18','DECIV','ENG01','Departamento de Engenharia Civil',0,1,0),
   ('19','DEMAT','ENG02','Departamento de Engenharia dos Materiais',0,1,0),
@@ -83,7 +86,7 @@ insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) val
   ('33','DDET','DIR04','Departamento de Direito Econômico e do Trabalho',0,1,0),
   ('34','DEA','FIS02','Departamento de Astronomia',0,1,0),
   ('35','DH','HUM03','Departamento de História',0,1,0),
-  ('36','AMB','AMB99','Eng. Ambiental',1,0,0),
+  ('36','Eng.AMB','AMB99','Eng. Ambiental',1,0,0),
   ('37','PPGEE','ELExx','Prog. Pós-Graduação Eng. Elétrica',1,0,1),
   ('38','PPGIE','PEI00','Prog. Pós-Graduação em Informática na Educação',1,0,1),
   ('39','DEGD','GEO05','Departamento de Geodésia',0,1,0),
@@ -95,7 +98,15 @@ insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) val
   ('45','DEMIC','CBS06','Departamento de Microbiologia, Imunologia e Parasitologia',0,1,0),
   ('46','DEGEG','GEO01','Departamento de Geografia',0,1,0),
   ('47','DQO','QUI02','Departamento de Química Orgânica',0,1,0),
-  ('48','VAERE','VAERE','Vínculo Acadêmico - ERE',0,1,0);
+  ('48','VAERE','VAERE','Vínculo Acadêmico - ERE',0,1,0),
+  ('49','PROMEC','MECxx','Prog. Pós-Graduação Eng. Mecânica',1,0,1),
+  ('50','Eng.CIV','CIV99','Eng. Civil',1,0,1),
+  ('51','Eng.MAT','MAT99','Eng. Materiais',1,0,1),
+  ('52','Eng.MIN','MIN99','Eng. Minas',1,0,1),
+  ('53','Eng.ALI','ITA99','Eng. Alimentos',1,0,1),
+  ('54','Eng.QUI','QUI9x','Eng. Química',1,0,1),
+  ('55','Eng.MET','MET99','Eng. Metalúrgica',1,0,1),
+  ('56','Eng.PROD','PRO99','Eng. Produção',1,0,1);
   
   
 insert into `coursedept` (`course_id`,`dept_id`) values
@@ -109,13 +120,16 @@ insert into `coursedept` (`course_id`,`dept_id`) values
   ('9','20'),
   ('10','4'),
   ('37','3'),
-  ('37','20');
+  ('37','20'),
+  ('49','4');
   
 insert into `profkind` (`id`,`acronym`,`name`) values 
   ('1','DE','Dedicação Exclusiva'),
   ('2','20h','20 Horas'),
   ('3','40h','40 Horas'),
-  ('4','Subs','Substituto(a)');
+  ('4','Subs','Substituto(a)'),
+  ('5','-none-','Inativo(a)');
+  
 insert into `term` (`id`,`code`,`name`) values 
   ('1','Etp.01','Etapa 01'),('2','Etp.02','Etapa 02'),('3','Etp.03','Etapa 03'),
   ('4','Etp.04','Etapa 04'),('5','Etp.05','Etapa 05'),('6','Etp.06','Etapa 06'),

@@ -37,7 +37,7 @@
 
 
 <?php
-  $pattern = '[a-zA-Z \-\.\(\)]+';
+  $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
   if($_SESSION['role']['isadmin']) {
 	$q = "SELECT * FROM `scenery` ORDER BY `name`;";
 	$sqlsceneries = $mysqli->dbquery($q);

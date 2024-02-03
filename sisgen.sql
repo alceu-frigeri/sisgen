@@ -129,6 +129,7 @@ CREATE TABLE `vacancies` (
   `class_id` integer unsigned,
   `course_id` integer unsigned,
   `askednum` integer unsigned DEFAULT 0 COMMENT 'by a course',
+  `reservnum` integer unsigned DEFAULT 0 COMMENT 'reserved',
   `askedstatus_id` integer unsigned DEFAULT "1" COMMENT 'course vacancy review status',
   `givennum` integer unsigned DEFAULT 0 COMMENT 'by the dept',
   `givenstatus_id` integer unsigned DEFAULT "1" COMMENT 'depto vacancy review status',

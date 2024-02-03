@@ -45,10 +45,7 @@
 
   
   	  echo '<br>';
-	  echo  formpost($basepage.'?q=reports&sq=course','coursehid'.$_POST['courseid'].'-'.$termrow['id'],'coursehid'.$_POST['courseid'].'-'.$termrow['id']) . //'course-hid'.$_POST['courseid'].'-'.$termrow['id']
-		formhiddenval('semid',$_POST['semid']) . formhiddenval('courseid',$_POST['courseid']) . 
-		formhiddenval('termid',$termrow['id']) . formhiddenval('act',$_POST['Refresh']) . 
-		formsubmit('submit','go report') . spanformat('larger','',$termrow['name']) . '</form>'  ;
+	  echo hiddencourseform($_POST['semid'],$_POST['courseid'],$termrow['id'],'') . formsubmit('submit','go report') . spanformat('larger','',$termrow['name']) . '</form>'  ;
 
 	  
 	  $flag =  checkweek($q,null,$_POST['courseid'],$termrow['id']);

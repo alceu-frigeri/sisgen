@@ -25,18 +25,35 @@
 	$result = $mysqli->dbquery($q);
 	$sqlrow = $result->fetch_assoc();
 	$readonly = $sqlrow['readonly'];
-	$hiddenprofforms = null;
-	$hiddenroomforms = null;
+	$hiddenprofdeptid = null;
+	$hiddenroombuildingid = null;
 
 	$can_class=($_SESSION['role'][$_POST['unitid']]['can_class'] | $_SESSION['role']['isadmin']) & !$readonly;
 	$can_addclass=($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
-	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Add Class')) & !$readonly;
+	
+	// BUG!!!
+//	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Add Class') | ($_POST['act'] == 'Replicate Class')) & !$readonly;
+
+//	$postedit = (((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') ) & $can_class ) | ((($_POST['act'] == 'Add Class') | ($_POST['act'] == 'Replicate Class') ) & $can_addclass ) ) & !$readonly;
+
+	// BUG!!!
+	$postedit = false;
+	if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') ) & $can_class ) {
+		$postedit = true;
+	} else {
+		if ((($_POST['act'] == 'Add Class') | ($_POST['act'] == 'Replicate Class') ) & $can_addclass) {
+			$postedit = true;
+		} else {
+			$_POST['act'] = 'Cancel';
+		}
+	}
+
 	
 	$mysqli->postsanitize();
 				//vardebug($_POST);
 
 	include 'coreedit.php';
-	$classpattern = '[A-Z][A-Za-z0-9]*';
+	$classpattern = '[A-Z][A-Za-z0-9\*]*';
 
     $Gblvackind=array();
 	$q="SELECT `kind`.`code` , `cd`.`course_id` , `term`.`code` AS `trm` , `term`.`id` AS `termid` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `term` WHERE `cd`.`discipline_id` = '".$_POST['discid']."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND `cd`.`term_id` = `term`.`id`;";
@@ -49,13 +66,10 @@
 			$kba=null;
 			$kbb=null;
 		}
-		$Gblvackind[$kindrow['course_id']]=$kba.'<a href="javascript:document.forms['."'". 'coursehid'. $kindrow['course_id'].'-'.$kindrow['termid']   . "'" . '].submit()">' .$kindrow['code'].'-'.$kindrow['trm'] . '</a>'.$kbb;
+		$Gblvackind[$kindrow['course_id']]=$kba . hiddenformlnk(hiddencoursekey($_POST['semid'],$kindrow['course_id'],$kindrow['termid']) , $kindrow['code'].'-'.$kindrow['trm']) . $kbb;
 		
 		echo hiddencourseform($_POST['semid'],$kindrow['course_id'],$kindrow['termid']);
 		
-//		echo formpost($basepage.'?q=reports&sq=course','coursehid'.$kindrow['course_id'].'-'.$kindrow['termid'],'coursehid'.$kindrow['course_id'].'-'.$kindrow['termid']) . 
-//			formhiddenval('semid',$_POST['semid']) . formhiddenval('termid',$kindrow['termid']) . 
-//			formhiddenval('courseid',$kindrow['course_id']) . formhiddenval('act','Refresh') . '</form>';
 
 	}
 	
@@ -102,7 +116,7 @@ function agregupdt($aclassid) {
 		switch ($_POST['act']){
 			case 'Submit':
 //				$mysqli->eventlog(array('level'=>'INFO','action'=>'class edit','str'=>displaysqlitem('','semester',$_POST['semid'],'name').displaysqlitem('','discipline',$_POST['discid'],'code'),'xtra'=>'editclass.php'));
-				
+				//vardebug($_POST);
 				foreach ($_SESSION['segments'] as $segid => $segkey) {
 					if (($_POST[$segkey.'delete'])) {
 						$q = "DELETE FROM `classsegment` WHERE `id` = '" . $segid . "';";
@@ -372,6 +386,38 @@ function agregupdt($aclassid) {
 	unset($_SESSION['agreg']);
 	unset($_SESSION['org']);
 
+function sceneryclasshack($profnicks,$inselect=true) {
+	if($inselect) {
+		formselectscenery('scen.acc.view');
+	} else {
+		echo '<br>';
+		displayscenerysession();
+	}
+	
+	$inselected = inscenery_sessionlst('sceneryselected');
+	list($qqscentbl,$qqscensql) = scenery_sql($inselected);
+
+	if($profnicks) {
+		$qnicks = " , `prof`.`nickname` AS `profnick`, `prof`.`id` AS `profid`, `prof`.`dept_id` AS `profdeptid`  ";
+	} else {
+		$qnicks='';
+	}
+
+//	$qqscentbl = ""; //nothing by now
+	$qq = "SELECT DISTINCT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid` , `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid` " . $qnicks .
+		 " FROM `classsegment` , `class`, `semester`,`unit`,`discipline`,`prof` , `unit` AS `discdept`  " . $qqscentbl . " WHERE " . 
+		 "`class`.`discipline_id` = `discipline`.`id` AND `class`.`sem_id` = `semester`.`id` AND " . 
+		 "`classsegment`.`class_id` = `class`.`id` AND `classsegment`.`prof_id` = `prof`.`id` AND " .
+		 "`discipline`.`dept_id` = `discdept`.`id` AND " .
+		 "`unit`.`id` = '".$_POST['unitid']."' AND `semester`.`id` = '".$_POST['semid']."' AND " . 
+		 "`discipline`.`id` = '".$_POST['discid'] . "' " . $qqscensql . " ORDER BY `discipline`.`name` , `class`.`name`";
+
+	return [$inselected,$qq];
+		//echo '<details>';
+		//echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> Matriz Horários</summary>';
+		//dbweekmatrix($qq,$inselected,null,null,false,true);
+		//echo '</details>';
+}
 
 
 
@@ -384,13 +430,28 @@ function agregupdt($aclassid) {
 		echo '</b>';
 		echo formsubmit('act','Cancel');
 		echo spanformat('smaller',$commentcolor, displaysqlitem('&nbsp;&nbsp;','discipline',$_POST['discid'],'comment')) ;
+		//formselectscenery('scen.acc.view');
+		echo formhiddenval('profnicks',$_POST['profnicks']);
+		echo formhiddenval('courseHL',$_POST['courseHL']);
+		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks'],false);
+		if($_POST['courseHL']) {
+			echo displaysqlitem('<br>Realçando: ','unit',$_POST['courseHL'],'name');
+		}
+
 		echo  '</form>';
 	} else {
 		echo formpost($thisform);
 		formselectsql($anytmp,"SELECT * FROM semester ORDER BY name;",'semid',$_POST['semid'],'id','name');
 		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
 		formselectsql($anytmp,"SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['unitid']."' ORDER BY name;",'discid',$_POST['discid'],'id','code','name');
-		echo '<br>';
+		//formselectscenery('scen.acc.view');
+		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks']);
+		//echo '<br>';
+	echo "Nome Profs? ";
+	formselectsession('profnicks','bool',$_POST['profnicks']);
+	echo "Realçar curso: ";
+	formselectsql($anytmp,"SELECT `course`.* FROM `unit` AS `course`, coursedisciplines AS `cdisc` WHERE `cdisc`.`discipline_id` = '".$_POST['discid']."' AND `cdisc`.`course_id` = `course`.`id` ORDER BY name;",'courseHL',$_POST['courseHL'],'id','name');
+	
 		if (!$readonly) {
 			if ($_POST['semid'] && $_POST['unitid'] && $_POST['discid']) {
 				echo formsubmit('act','Refresh') . formsubmit('act','Edit') . '</form>';
@@ -403,7 +464,12 @@ function agregupdt($aclassid) {
 		}
 
 	}
+	dbweekmatrix($SCquery,$SCinselected,null,null,false,true,$_POST['courseHL']);
 	echo '<hr>';
+   	$inselected = inscenery_sessionlst('sceneryselected');
+	list($qqscentbl,$qqscensql) = scenery_sql($inselected);
+
+
 
 
 	$q = "SELECT class.* FROM class,discipline WHERE class.discipline_id = discipline.id AND class.discipline_id = '" . $_POST['discid'] . "' AND class.sem_id = '" . $_POST['semid'] . "' AND discipline.dept_id = '" . $_POST['unitid'] . "' AND class.agreg = '1' ORDER BY class.name;";
@@ -435,7 +501,8 @@ function agregupdt($aclassid) {
 	while ($classrow = $result->fetch_assoc()) {
 		$anyone = 1;
 		if ($postedit) {
-			echo '<div id="class'.$classrow['id'].'div">&nbsp;<br></div><br><br>';
+			echo '<div id="class'.$classrow['id'].'div">&nbsp;</div>';
+			echo '<br><br>';
 			thisformpost('class'.$classrow['id'].'div');
 			echo formhiddenval('classid',$classrow['id']);
 			echo formhiddenval('classname',$classrow['name']);
@@ -453,7 +520,9 @@ function agregupdt($aclassid) {
 					}
 				}
 				echo formsubmit('act','Submit');
+				echo formsubmit('act','Cancel');
 			} else {
+				echo formsubmit('act','Cancel');
 				echo formsubmit('act','Edit');
 				formclassdisplay($classrow);
 			}
@@ -482,14 +551,14 @@ function agregupdt($aclassid) {
 		echo '<hr>';
 	}
 	echo '</p>';
-	if ($hiddenprofforms) {
-		foreach ($hiddenprofforms as $profid => $hidlnk ) { // '_blank'
-			echo hiddenprofform($_POST['semid'],$_SESSION['deptIDprof'.$_POST['unitid']][$profid],$profid);	
+	if ($hiddenprofdeptid) {
+		foreach ($hiddenprofdeptid as $profid => $hidprofdeptid ) { // '_blank'
+			echo hiddenprofform($_POST['semid'],$hidprofdeptid,$profid);	
 		}
 	}
-	if ($hiddenroomforms) {
-		foreach ($hiddenroomforms as $roomid => $roomflag) {
-			echo hiddenroomform($_POST['semid'],$_SESSION['rooms'][$roomid]['buildingid'],$roomid);
+	if ($hiddenroombuildingid) {
+		foreach ($hiddenroombuildingid as $roomid => $buildingid) {
+			echo hiddenroomform($_POST['semid'],$buildingid,$roomid);
 		}
 	}
 	if ($postedit) {
@@ -508,7 +577,6 @@ function agregupdt($aclassid) {
 			}
 		}
 	}
-
 ?>
 
 
