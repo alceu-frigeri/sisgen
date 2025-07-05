@@ -22,9 +22,9 @@
 		 if (($_GET['st'] == 'logout') | ($_GET['q'] == 'logout')) {
 			 session_destroy();
 			 include 'pages/Start.php';
-			 echo pagereload($basepage);
+			 echo pagereload($GBLbasepage);
 		 } else {
-			if ($mysqli->hashcheck()) {
+			if ($GBLmysqli->hashcheck()) {
 					if ($menu[$query]["hasChildren"]) {
 						$pag = "pages/" . $menu[$query]["children"][$childQuery]["page"];
 					} else {
@@ -39,7 +39,7 @@
 			} else {
 				session_destroy();
 				include 'pages/Start.php';
-				echo pagereload($basepage);
+				echo pagereload($GBLbasepage);
 			}
 		 }
 	}else{
@@ -67,9 +67,9 @@
 			break;
 			case 'login': // login (and assigning a session hash to it)
 			    echo '<br> account login<br>';
-			    if ($mysqli->maillogincheck($_POST['emailA'],$_POST['passA'])) {
+			    if ($GBLmysqli->maillogincheck($_POST['emailA'],$_POST['passA'])) {
 					include 'pages/usrhome.php';
-					echo pagereload($basepage);
+					echo pagereload($GBLbasepage);
 				} else {
 					include 'pages/Start.php';
 				};

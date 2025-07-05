@@ -3,16 +3,16 @@
         <h2>Verificação Curso p/semestre</h2>
         <hr>
 <?php
- $thisform=$basepage.'?q=check&sq=course';
+ $thisform=$GBLbasepage.'?q=check&sq=course';
 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
-	echo formsubmit('act','Check') . '<br>';
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
 
 	echo '</form>';
 	
@@ -27,7 +27,7 @@
 	
 // semester, course, term
     $q = "SELECT * FROM `term` ORDER BY `id`;";
-	$termsql = $mysqli->dbquery($q);
+	$termsql = $GBLmysqli->dbquery($q);
 	
 //	list($qscentbl,$qscensql) = scenery_sql($in);
 	

@@ -30,7 +30,8 @@ insert into `building` (`id`,`acronym`,`name`,`location`,`mark`) values
   ('11','Prédio Branco','Prédio Branco','Campus Centro','0'),
   ('12','Saúde','Campus Médico','Campus Médico','0'),
   ('13','Vale','Campus do Vale','Campus do Vale','0'),
-  ('14','observatorio','Antigo Observatório','Campus Centro','0')
+  ('14','observatorio','Antigo Observatório','Campus Centro','0'),
+  ('15','Anexo I','Anexo à Reitoria I','Campus Centro','0')
   ;
   
 insert into `room` (`building_id`,`acronym`,`name`) VALUES
@@ -47,7 +48,8 @@ insert into `room` (`building_id`,`acronym`,`name`) VALUES
   ('11','undef','não definido'),
   ('12','undef','não definido'),
   ('13','undef','não definido'),
-  ('14','undef','não definido');
+  ('14','undef','não definido'),
+  ('15','undef','não definido');
   
   
 insert into `unit` (`id`,`acronym`,`code`,`name`,`iscourse`,`isdept`,`mark`) values 

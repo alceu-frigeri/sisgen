@@ -41,7 +41,7 @@
                                               <ul class="dropdown-menu">
                                                 <?php foreach($value["children"] as $childKey => $childValue): ?> 
 
-                                                    <li><a href="<?php echo $basepage; ?>?q=<?php echo $key; ?>&sq=<?php echo $childKey; ?>"><?php echo $childValue["label"]; ?></a>
+                                                    <li><a href="<?php echo $GBLbasepage; ?>?q=<?php echo $key; ?>&sq=<?php echo $childKey; ?>"><?php echo $childValue["label"]; ?></a>
 													</li>                                    
 
                                                 <?php endforeach; ?>                    

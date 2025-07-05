@@ -7,33 +7,34 @@ $timestamp=date('Y-m-d H:i:s',$timestamp);
 list($microstamp,$sec) = explode(' ',microtime(false));
 list($nothing,$microstamp) = explode('.',$microstamp);
 
-$domainurl='https://www.ufrgs.br';
-$baseurl=$domainurl.'/sisgen';
-$basepage='/sisgen/';
-$debug=true;
+$GBLdomainurl='https://www.ufrgs.br';
+$GBLbaseurl=$GBLdomainurl.'/sisgen';
+$GBLbasepage='/sisgen/';
+$GBLdebug=true;
 
 $sisgensetup=true; //to enable/disable 'initial' import/fix pages (admin)
 $sisgenimportCSV=true; //'new' simple way, direct from CSV file...
 
 // some handy/aux values
-	$commentcolor='teal';
-//	$commentpattern='[a-zA-Z0-9 \'\"\?\!\.\-]+';
-	$commentpattern="[a-zA-Z0-9 \.\-]+";
-	$discpattern='[a-zA-Z0-8à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \(\)\-]+';
-	$namepattern='[a-zA-Z0-8à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \_\'\-\.@]+';
-	$passwdpattern='(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
+	$GBLcommentcolor='teal';
+//	$GBLcommentpattern='[a-zA-Z0-9 \'\"\?\!\.\-]+';
+	$GBLcommentpattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \*\(\)\.\-]+';
+	$GBLdiscpattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \(\)\-]+';
+	$GBLnamepattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \_\'\-\.@]+';
+	$GBLpasswdpattern='(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
+	$GBLclasspattern = '[A-Z][A-Za-z0-9\*\-\+@]*';
 	
-	$Gblspc='&nbsp;&nbsp;';
-	$GblDspc=$Gblspc.$Gblspc;
-	
+	$GBLspc='&nbsp;&nbsp;';
+	$GBLDspc=$GBLspc.$GBLspc;
+	$GBLhighlightstyle=' style="background-color:#E0FFE0;color:#8000B0;"';
 
 include 'dbconnect.php';
 
-$mysqli = myconnect();
+$GBLmysqli = myconnect();
 
 
 function mymail($email,$subject,$msg) {
-    $msg .= "\n\nAtt.\n sisgen\n$baseurl";
+    $msg .= "\n\nAtt.\n sisgen\n$GBLbaseurl";
 	$mailheaders  = 'MIME-Version: 1.0' . "\r\n";
 	$mailheaders .= 'Content-Type: text/plain; charset=utf-8' . "\r\n";
 	$mailheaders .= 'Content-Transfer-Encoding: base64' . "\r\n";
@@ -69,8 +70,8 @@ function writeLogFile($msg) {
 }
 
 function vardebug($var) {
-	global $debug;
-	if($debug) {
+	global $GBLdebug;
+	if($GBLdebug) {
 		echo '<pre>';
 		var_dump($var);
 		echo '</pre>';
@@ -78,9 +79,9 @@ function vardebug($var) {
 }
 
 function regacc_create() {
-    global $mysqli;
+    global $GBLmysqli;
     global $regpage;
-    global $baseurl;
+    global $GBLbaseurl;
     global $microstamp;
     
 
@@ -89,13 +90,13 @@ function regacc_create() {
     $emailhash=md5($email);
     $today = date('Y-m-d');
 
-    $email = $mysqli->real_escape_string($email);
-    $passwd = $mysqli->real_escape_string($passwd);
+    $email = $GBLmysqli->real_escape_string($email);
+    $passwd = $GBLmysqli->real_escape_string($passwd);
     list($usrname,$usrdomain) = explode('@',$email,2);
 
     
-    if (!($stmt = $mysqli->prepare("SELECT email,password,activ FROM `account` WHERE `email` = ?;"))) {
-		echo 'Prepare failed: (' . $mysqli->errno . ') ' . $mysqli->error;
+    if (!($stmt = $GBLmysqli->prepare("SELECT email,password,activ FROM `account` WHERE `email` = ?;"))) {
+		echo 'Prepare failed: (' . $GBLmysqli->errno . ') ' . $GBLmysqli->error;
     }
     if (!$stmt->bind_param('s',$email)) {
 		echo 'Binding parameters failed: (' . $stmt->errno . ') ' . $stmt->error;
@@ -110,7 +111,7 @@ function regacc_create() {
 		} else {
 			echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>\n';
 			$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
-				"${baseurl}?st=validate&h=$emailhash\n\n";
+				"${GBLbaseurl}?st=validate&h=$emailhash\n\n";
 			mymail($email,'Confirmação de Email',$msg);
 		}
 		$stmt->close();
@@ -118,13 +119,13 @@ function regacc_create() {
 		$stmt->close();
 
 		$sql = "INSERT INTO `account` (`email`, `password`, `name` , `displayname` , `valhash`) VALUES ('$email','$passwd','$email','$usrname','$emailhash');";
-		$result=$mysqli->dbquery($sql);
+		$result=$GBLmysqli->dbquery($sql);
 
 		echo '<h4>Obrigado por criar uma conta.</h4><br>
 Você estará recebendo, em breve, um Email com instruções para ativar a sua conta.<br>';
 
 		$msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
-   	       "${baseurl}?st=validate&h=$emailhash\n\nAtt. sisgen";
+   	       "${GBLbaseurl}?st=validate&h=$emailhash\n\nAtt. sisgen";
 		mymail($email,'Confirmação de Email',$msg);
 		$msg ="P/Registro:\n\nConta registrada: $email\n";
 		mymail('alceu.frigeri@ufrgs.br','Conta Nova - sisgen',$msg);
@@ -134,16 +135,16 @@ Você estará recebendo, em breve, um Email com instruções para ativar a sua c
 
 
 function regacc_validate($gethash) {
-    global $mysqli;
+    global $GBLmysqli;
     global $regpage;
     
     echo '<h2>Confirmação de Email</h2><hr>';
     $sql = "SELECT * FROM `account` WHERE `account`.`valhash` = '$gethash'";
-	$result = $mysqli->dbquery($sql);
+	$result = $GBLmysqli->dbquery($sql);
     if ($result->num_rows) {
 		echo 'Obrigado por confirmar seu Email<br>';
 		$sql ="UPDATE `sisgen`.`account` SET `activ` = '1' WHERE `account`.`valhash` = '$gethash'";
-		$result = $mysqli->dbquery($sql);
+		$result = $GBLmysqli->dbquery($sql);
 		echo 'Agora você já pode se logar no sistema !<br>';
 	} else {
 		echo '<b>'.spanformat('','red','Link Inválido ou Expirado').'</b><br>';
@@ -152,11 +153,11 @@ function regacc_validate($gethash) {
 
 
 function getacc_byemail($email) {
-    global $mysqli;
+    global $GBLmysqli;
 	
-    $email = $mysqli->real_escape_string($email);
+    $email = $GBLmysqli->real_escape_string($email);
 	$q = "SELECT * FROM `account` WHERE account.email = '".$email."'";
-	if(!($result = $mysqli->dbquery($q))) {
+	if(!($result = $GBLmysqli->dbquery($q))) {
 		return NULL;
     }
     return $result->fetch_assoc();
@@ -173,14 +174,14 @@ function regacc_passrecovery() {
 
 
 function regacc_valresend() {
-    global $baseurl;
+    global $GBLbaseurl;
     $accdt = getacc_byemail($_POST['emailA']);
     if ($accdt && !$accdt['activ']) {
 	$msg = "
 Obrigado por criar uma conta.
 Por favor, acesse o link abaixo para ativar a mesma
 
-      ${baseurl}?st=validade&h=$accdt[valhash]
+      ${GBLbaseurl}?st=validade&h=$accdt[valhash]
 
 Att.
 sisgen";
@@ -190,48 +191,48 @@ sisgen";
 
 
 function duplicatecourse($courseid,$acronym,$code,$name,$comment) {
-	global $mysqli;
+	global $GBLmysqli;
 	
 	$q = "INSERT INTO `unit` (`acronym`,`code`,`name`,`iscourse`,`isdept`) VALUES ('".$acronym."','".$code."','".$name."','1','1')";
-	$result = $mysqli->dbquery($q);
-	$newid = $mysqli->insert_id;
+	$result = $GBLmysqli->dbquery($q);
+	$newid = $GBLmysqli->insert_id;
 	$q = "INSERT INTO `coursedisciplines` (`course_id`,`term_id`,`discipline_id`,`disciplinekind_id`) SELECT '".$newid."' , `cd`.`term_id` , `cd`.`discipline_id`  , `cd`.`disciplinekind_id` FROM `coursedisciplines` AS `cd` WHERE `course_id` = '".$courseid."'";
-	$mysqli->dbquery($q);
+	$GBLmysqli->dbquery($q);
 	$q= "SELECT `id` FROM `status` WHERE `status` = 'dup';";
-	$result = $mysqli->dbquery($q);
+	$result = $GBLmysqli->dbquery($q);
 	$strow=$result->fetch_assoc();
 	$q = "INSERT INTO `vacancies` (`course_id`,`class_id`,`askednum`,`givennum`,`comment`,`askedstatus_id`,`givenstatus_id`) SELECT '".$newid."' , `vc`.`class_id` , `vc`.`askednum`  , `vc`.`givennum` , '".$comment."' , '".$strow['id']."' , '".$strow['id']."' FROM `vacancies` AS `vc` WHERE `course_id` = '".$courseid."'";
-	$mysqli->dbquery($q);
+	$GBLmysqli->dbquery($q);
 }
 
 
 
 function duplicatesem($currsemid,$newsemname) {
-	global $mysqli;
+	global $GBLmysqli;
 	
-	$newsem = $mysqli->real_escape_string($newsemname);
+	$newsem = $GBLmysqli->real_escape_string($newsemname);
 	$q = "SELECT * FROM semester WHERE `name` = '" . $newsem . "';";
-	$result = $mysqli->dbquery($q);
+	$result = $GBLmysqli->dbquery($q);
 	if ($sqlrow = $result->fetch_assoc()) {
 		echo "ERR: semestre já existente ! </br>";
 	} else {
 		$q = "INSERT INTO `semester` (`name`) VALUES ('" . $newsem . "');";
-		$mysqli->dbquery($q);
-		$newsemid = $mysqli->insert_id;
+		$GBLmysqli->dbquery($q);
+		$newsemid = $GBLmysqli->insert_id;
 
 
 		$qnewclass = "INSERT INTO `class` (`name`,`agreg`,`partof`,`sem_id`,`discipline_id`,`scenery`) " . 
 				"SELECT `cl`.`name`, `cl`.`agreg` , `cl`.`partof`, '".$newsemid."' , `cl`.`discipline_id` , `cl`.`scenery` " . 
 				"FROM `class` AS `cl` WHERE  `cl`.`sem_id` = '".$currsemid."';";
 		//echo "<br> $qnewclass";
-		$mysqli->dbquery($qnewclass);
+		$GBLmysqli->dbquery($qnewclass);
 
 		$qsegment = "INSERT INTO `classsegment` (`class_id`,`day`,`start`,`length`,`room_id`,`prof_id`) " . 
 				"SELECT `new`.`id` , `cs`.`day` , `cs`.`start` , `cs`.`length` , `cs`.`room_id` , `cs`.`prof_id` " . 
 				"FROM `class` AS `org`, `class` AS `new` , `classsegment` AS `cs` " . 
 				"WHERE `cs`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
 		//echo "<br> $qsegment";
-		$mysqli->dbquery($qsegment);
+		$GBLmysqli->dbquery($qsegment);
 
 
 		$qvacancy = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`,`usednum`) " . 
@@ -239,14 +240,14 @@ function duplicatesem($currsemid,$newsemname) {
 				"FROM `class` AS `org`, `class` AS `new` , `vacancies` AS `vc` " . 
 				"WHERE `vc`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
 		//echo "<br> $qvacancy";
-		$mysqli->dbquery($qvacancy);
+		$GBLmysqli->dbquery($qvacancy);
 		
 		$qscenery = "INSERT INTO `sceneryclass` (`class_id`,`scenery_id`) " . 
 				"SELECT `new`.`id` , `sc`.`scenery_id` " .
 				"FROM `class` AS `org`, `class` AS `new` , `sceneryclass` AS `sc` " . 
 				"WHERE `sc`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
 		//echo "<br> $qscenery";
-		$mysqli->dbquery($qscenery);
+		$GBLmysqli->dbquery($qscenery);
 				
 
 	
@@ -261,10 +262,10 @@ function duplicatesem($currsemid,$newsemname) {
 
 
 function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
-	global $mysqli;
+	global $GBLmysqli;
 	$flag=array();
 
-	$result = $mysqli->dbquery($q);
+	$result = $GBLmysqli->dbquery($q);
 	while ($sqlrow = $result->fetch_assoc()) {
 		$disccodes[$sqlrow['code']] = $sqlrow['code'];
 		$disc[$sqlrow['code']] = $sqlrow['discname'];
@@ -277,7 +278,7 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 			} else {
 				$q = "SELECT SUM(givennum) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
 			}
-			$vacresult = $mysqli->dbquery($q);
+			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
 			$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] = $vacrow['total'];
 		}
@@ -295,7 +296,7 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 		$q = "SELECT `discipline`.`code` FROM `discipline`,`coursedisciplines`,`disciplinekind` WHERE `coursedisciplines`.`course_id` = '".$courseid."' AND " . 
 			"`coursedisciplines`.`term_id` = '".$termid."' AND `coursedisciplines`.`disciplinekind_id` = `disciplinekind`.`id` AND " . 
 			"`coursedisciplines`.`discipline_id` = `discipline`.`id` AND (`disciplinekind`.`code` = 'OB' OR `disciplinekind`.`code` = 'AL');";
-		$termsql = $mysqli->dbquery($q);
+		$termsql = $GBLmysqli->dbquery($q);
 		while ($termrow = $termsql->fetch_assoc()) {
 			if(!$discflag[$termrow['code']]) {$flag['ob']=1;};
 		}
@@ -319,11 +320,12 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 
 
 function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$matrixonly=false,$courseHL=null) {
-	global $mysqli;
+	global $GBLmysqli;
 	
 //	$basevals = array('DA','A0','68','40','00');
 //	$basevals = array('D8','A0','80','50','00');
-	$basevals = array('E6','9B','5A','00');
+//	$basevals = array('E6','9B','5A','00');
+	$basevals = array('C8','90','5A','00');
 	$numcolors=0;
 	  foreach ($basevals as $red) {
 		  foreach ($basevals as $green) {
@@ -340,8 +342,9 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 
 	$hiddenclasskeys=null;
 	$hiddenprofdeptid=null;
-	$result = $mysqli->dbquery($q);
+	$result = $GBLmysqli->dbquery($q);
 	while ($sqlrow = $result->fetch_assoc()) {
+		$courseHLquery = $sqlrow['courseid'];
 		$disccodes[$sqlrow['code']] = $sqlrow['code'];
 		$disc[$sqlrow['code']] = $sqlrow['discname'];
 		$discid[$sqlrow['code']] = $sqlrow['discid'];
@@ -352,7 +355,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 			if($sqlrow['scenery']) {
 				if(isset($qscen)) {
 					$qx = "SELECT `scen`.`id`, `scen`.`name` FROM `sceneryclass` AS `sc` , `scenery` AS `scen` WHERE `sc`.`class_id` = '".$sqlrow['classid']."' AND `sc`.`scenery_id` IN (".$qscen.") AND `sc`.`scenery_id` = `scen`.`id`;";
-					$qxresult = $mysqli->dbquery($qx);
+					$qxresult = $GBLmysqli->dbquery($qx);
 					while ($qxrow = $qxresult->fetch_assoc()) {
 						$scen[$sqlrow['classid']] .= $qxrow['name'];
 					}
@@ -372,13 +375,13 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 			} else {
 				$q = "SELECT SUM(givennum) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
 			}
-			$vacresult = $mysqli->dbquery($q);
+			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
 			$vac[$classindex] = $vacrow['total'];	
 		}
 		if(!$vacHL[$classindex] && $courseHL) {
 			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseHL."';";
-			$vacresult = $mysqli->dbquery($q);
+			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
 			$vacHL[$classindex] = $vacrow['total'];	
 		}
@@ -399,11 +402,11 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 				if ($sqlrow['profnick']) {
 					$profnicks=1;
 					$hiddenprofdeptid[$sqlrow['profid']]=$sqlrow['profdeptid'];
-					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%',null,$scen[$sqlrow['classid']],null);
-					$d .= hiddenformlnk(hiddenprofkey($_POST['semid'],$sqlrow['profdeptid'],$sqlrow['profid']) , spanformat('75%',red,'('.$sqlrow['profnick'].')')) . '</sup></p>'; 
+					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%','MidnightBlue',$scen[$sqlrow['classid']],null);
+					$d .= hiddenformlnk(hiddenprofkey($_POST['semid'],$sqlrow['profdeptid'],$sqlrow['profid']) , spanformat('75%','red','('.$sqlrow['profnick'].')')) . '</sup></p>'; 
 				} else {
-					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%',null,$scen[$sqlrow['classid']],null).'</sup></p>';
-				}
+					$d .= '<p style="margin:0;border:0;line-height:50%;"><sup>'. spanformat('75%','MidnightBlue',$scen[$sqlrow['classid']],null).'</sup></p>';
+				} 
 				$seg[$d] = $sqlrow['code'];
 				$discflag[$sqlrow['code']] = 1;
 
@@ -430,6 +433,9 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 		foreach ($hiddenclasskeys as $Hdeptid => $HdeptX) {
 			foreach ($HdeptX as $Hdiscid => $HdiscX) {
 				foreach ($HdiscX as $Hclassid => $HclassX) {
+					if($courseHLquery) {
+						$courseHL = $courseHLquery;
+					}
 					echo hiddenclassform($_POST['semid'],$Hdeptid,$Hdiscid,$Hclassid,'name',$profnicks,$courseHL);
 				}
 			}
@@ -484,7 +490,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 		foreach ($disccodes as $d) {
 			if($courseid){
 				$q = "SELECT `kind`.`code` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` WHERE `cd`.`course_id` = '".$courseid."' AND `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`disciplinekind_id`= `kind`.`id`;";
-				$result = $mysqli->dbquery($q);
+				$result = $GBLmysqli->dbquery($q);
 				$sqlrow=$result->fetch_assoc();
 				$kind = '<sub>'.spanformat('smaller','',$sqlrow['code']).'</sub>';
 			} else {
@@ -492,7 +498,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 				$q = "SELECT `kind`.`code` AS kcode , `course`.`acronym` AS acro, `course`.`id` AS courseid , `term`.`code`  AS tcode , `term`.`id`  AS termid ".
 					"FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `unit` AS `course` , term " . 
 					"WHERE  `cd`.`discipline_id` = '".$discid[$d]."' AND `cd`.`course_id`= `course`.`id` AND `cd`.`term_id`= `term`.`id`  AND `cd`.`disciplinekind_id`= `kind`.`id`;";
-				$result = $mysqli->dbquery($q);
+				$result = $GBLmysqli->dbquery($q);
 				while ($sqlrow=$result->fetch_assoc()) {
 					$hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] = hiddencoursekey($_POST['semid'],$sqlrow['courseid'],$sqlrow['termid']);
 					if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor='#0000A0';} else {$bold=false;$tcolor=null;}
@@ -510,7 +516,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 			//$bgcolor=null;
 
 			if ($edit) {
-				echo hiddendiscform($_POST['semid'],$discdept[$d],$discid[$d],'') . formsubmit('submit','go edit');			
+				echo hiddendiscform($_POST['semid'],$discdept[$d],$discid[$d],$profnicks,$courseHL,'') . formsubmit('submit','go edit');			
 				echo	spanformat('',$disccolor[$d], $d . ' - ' . $disc[$d] ,$bgcolor,true) . $kind;
 				echo  '</form>'   ;
 			} else {
@@ -534,7 +540,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 				"`cd`.`term_id` = '".$termid."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND " . 
 				"`cd`.`discipline_id` = `disc`.`id`; " ;
 				//"AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
-			$termsql = $mysqli->dbquery($q);
+			$termsql = $GBLmysqli->dbquery($q);
 			$title = '<h5><b>Disciplina(s) não ofertada(s)</b></h5>';
 			while ($termrow = $termsql->fetch_assoc()) {
 				if(!$discflag[$termrow['code']]) {
@@ -542,7 +548,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 						echo $title;
 						$title='';
 					}
-					echo hiddendiscform($_POST['semid'],$termrow['discdeptid'],$termrow['discid'],null) . 
+					echo hiddendiscform($_POST['semid'],$termrow['discdeptid'],$termrow['discid'],$profnicks,$courseHL,null) . 
 						formsubmit('submit','go edit') . $termrow['code'].' - '.$termrow['name']  . '<sub>'.spanformat('smaller','',$termrow['kindcode']).'</sub>' . '</form>'  ;
 				};
 			}
@@ -560,9 +566,9 @@ function inscenery_sessionlst ($sessionlst) {
 	return $in;
 }	
 function scenery_sql($inscenery) {
-	global $mysqli;
+	global $GBLmysqli;
 	
-   if ($mysqli->scenclass_test()) {
+   if ($GBLmysqli->scenclass_test()) {
 	   $tbl=' , `sceneryclass` ';
 	   $sql=" AND ( (`class`.`scenery` = '0') OR " .
 		 " (`class`.`scenery` = '1' AND `sceneryclass`.`class_id` = `class`.`id` AND `sceneryclass`.`scenery_id` IN (" .$inscenery. ")) ) "  ;
@@ -573,11 +579,6 @@ function scenery_sql($inscenery) {
 }
 
 
-
-
-	// function spanformat($style,$text) {
-		// return '<span style="'.$style.'">' . $text . '</span>';
-	// }
 
 	function spanformat($size,$color,$text,$bgcolor=null,$bold=null,$height=null) {
 		$style='';
@@ -607,9 +608,9 @@ function scenery_sql($inscenery) {
 	}
 	
 	function hiddenprofform($semid,$deptid,$profid,$closing='</form>') {
-		global $basepage;
+		global $GBLbasepage;
 		$lnk = join('_',array('profhid',$semid,$deptid,$profid));
-		return formpost($basepage.'?q=reports&sq=prof', $lnk, $lnk ) . 
+		return formpost($GBLbasepage.'?q=reports&sq=prof', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('deptid',$deptid) . 
 			formhiddenval('profid',$profid) . formhiddenval('act','Refresh') . $closing;
 	}
@@ -618,9 +619,9 @@ function scenery_sql($inscenery) {
 	}
 	
 	function hiddenroomform($semid,$buildingid,$roomid,$closing='</form>') {
-		global $basepage;
+		global $GBLbasepage;
 		$lnk = join('_',array('roomhid',$semid,$buildingid,$roomid));
-		return formpost($basepage.'?q=reports&sq=room', $lnk, $lnk ) . 
+		return formpost($GBLbasepage.'?q=reports&sq=room', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('buildingid',$buildingid) . 
 			formhiddenval('roomid',$roomid) . formhiddenval('act','Refresh') . $closing;
 	}
@@ -629,9 +630,9 @@ function scenery_sql($inscenery) {
 	}
 
 	function hiddencourseform($semid,$courseid,$termid,$closing='</form>') {
-		global $basepage;
+		global $GBLbasepage;
 		$lnk = join('_',array('coursehid',$semid,$courseid,$termid));
-		return formpost($basepage.'?q=reports&sq=course', $lnk, $lnk ) . 
+		return formpost($GBLbasepage.'?q=reports&sq=course', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('courseid',$courseid) . 
 			formhiddenval('termid',$termid) . formhiddenval('act','Refresh') . $closing;
 	}
@@ -639,38 +640,47 @@ function scenery_sql($inscenery) {
 		return join('_',array('coursehid',$semid,$courseid,$termid));
 	}
 	
-	function hiddendiscform($semid,$deptid,$discid,$closing='</form>') {
-		global $basepage;
-//		$lnk = 'dischid'.$deptid.'_'.$discid;
+	function hiddendiscform($semid,$deptid,$discid,$profnicks='0',$courseHL='',$closing='</form>') {
+		global $GBLbasepage;
 		$lnk = join('_',array('dischid',$semid,$deptid,$discid));
-		return formpost($basepage.'?q=edits&sq=classes', $lnk, $lnk ) . 
+		return formpost($GBLbasepage.'?q=edits&sq=classes', $lnk, $lnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('unitid',$deptid) . 
-			formhiddenval('discid',$discid) . formhiddenval('act','Refresh') . $closing;
-//			formhiddenval('discid',$discid) . $closing;
+			formhiddenval('discid',$discid) . 
+			formhiddenval('profnicks',$profnicks) . 
+			formhiddenval('courseHL',$courseHL) . 
+			formhiddenval('act','Refresh') . $closing;
 		}
 	function hiddendisckey($semid,$deptid,$discid) {
-		//return 'dischid'.$deptid.'_'.$discid;
 		return join('_',array('dischid',$semid,$deptid,$discid));
 	}
 	
 	function hiddenclassform($semid,$deptid,$discid,$classid,$classname,$profnicks='0',$courseHL='',$closing='</form>') {
-		global $basepage;
-//		$lnk = 'classhid'.$deptid.'_'.$discid;
-		$lnk = join('_',array('classhid',$semid,$deptid,$discid));
-		return formpost($basepage.'?q=edits&sq=classes#class'.$classid.'div', $lnk, $lnk . '_'.$classid ) . 
+		global $GBLbasepage;
+		$pagelnk = join('_',array('dischid',$semid,$deptid,$discid));
+		$formlnk = join('_',array('classhid',$semid,$deptid,$discid,$classid));
+		return formpost($GBLbasepage.'?q=edits&sq=classes#class'.$classid.'div', $pagelnk, $formlnk ) . 
 			formhiddenval('semid',$semid) . formhiddenval('unitid',$deptid) . 
 			formhiddenval('discid',$discid) . 
 			formhiddenval('classid',$classid) . formhiddenval('classname',$classname) . 
 			formhiddenval('profnicks',$profnicks) . 
 			formhiddenval('courseHL',$courseHL) . 
 			formhiddenval('act','Edit') . $closing;
-//			formhiddenval('discid',$discid) . $closing;
 		}
 	function hiddenclasskey($semid,$deptid,$discid,$classid) {
-//		return 'classhid'.$deptid.'_'.$discid.'_'.$classid;;
 		return join('_',array('classhid',$semid,$deptid,$discid,$classid));
 	}		
 		
+	function iddivkey($key,$val) {
+		return ' id="' . $key . $val . 'div"';
+	}
+	
+	function hiddendivkey($key,$val) {
+		return '<div id="' . $key . $val . 'div">&nbsp;</div><br><br>';
+	}
+	
+	function targetdivkey($key,$val) {
+		return '#' . $key . $val . 'div';
+	}
 
 	function formpatterninput($max,$size,$pattern,$title,$fieldname,$fieldval) {
 		$_SESSION['org'][$fieldname]=$fieldval;
@@ -687,10 +697,10 @@ function scenery_sql($inscenery) {
 
 
 	function displaysqlitem($str,$sqltable,$sqlid,$sqlitem,$sqlitemB=null) {
-		global $mysqli;
+		global $GBLmysqli;
 		if($sqlitemB) {$b=' , `'.$sqlitemB.'`';} else {$b='';};
 		$q = "SELECT `".$sqlitem."`$b FROM `".$sqltable."` WHERE `id` = '" . $sqlid . "';";
-		$result = $mysqli->dbquery($q);
+		$result = $GBLmysqli->dbquery($q);
 		$sqlrow = $result->fetch_assoc();
 		if($sqlitemB) {
 			return $str . $sqlrow[$sqlitem] . ' -- ' . $sqlrow[$sqlitemB] .'   ';
@@ -708,8 +718,7 @@ function scenery_sql($inscenery) {
 	}
 
 	
-	function formselectscenery($scenlst) {
-		//$_SESSION['scen.acc.view']
+	function formselectscenery($scenlst,$xtra=null) {
 		if ($_POST['sceneryselect']) {
 			unset($_SESSION['sceneryselected']);
 			foreach ($_SESSION['scen.all'] as $scenid => $scenname) {
@@ -735,18 +744,20 @@ function scenery_sql($inscenery) {
 				$style=';background-color: lightgray';
 			};
 			$cnt++;
-			if ($cnt == 9) {
+			if ($cnt == 7) {
 				$cnt = 1;
 				echo '</tr><tr>';
 			}
-//			echo '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. '> <label for="scenselect'. $scenid .'">*' . $scenid . '&nbsp;&nbsp;' . $scenname .'</label>&nbsp;&nbsp;';
-			echo '<th style="width:110px'.$style.'">' . '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. '> <label for="scenselect'. $scenid .'">'  . $scenname .'</label></th>';
+			echo '<th style="width:170px'.$style.'">' . '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. ' > <label for="scenselect'. $scenid .'">'  . $scenname .'</label></th>';
 
 		}
 		echo '</tr></table>';
+		if ($xtra) {
+			echo $xtra;
+		}
 		echo '</details>';
 		
-		
+		// onchange="this.form.submit()"
 	}
 	
 	function displayscenerysession(){
@@ -774,9 +785,13 @@ function scenery_sql($inscenery) {
 	}
 
 
-	function formselectsession($selectname,$sessionkey,$refval,$nulloption=false) {
+	function formselectsession($selectname,$sessionkey,$refval,$nulloption=false,$onchange=false) {
 		$_SESSION['org'][$selectname]=$refval;
-		echo "<select name='$selectname'>";
+		if ($onchange) {
+			echo "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
+		} else {
+			echo "<select name='".$selectname."'>";
+		}
 		if($nulloption) { echo "<option value='0'>--</option>";	}
 		foreach ($_SESSION[$sessionkey] as $id => $val) {
 			if ($id == $refval) {
@@ -790,13 +805,18 @@ function scenery_sql($inscenery) {
 	}
 
 
-	function formselectsql(&$any,$q,$selectname,$refval,$idkey,$valAkey,$valBkey=null) {
-		global $mysqli;
+	function formselectsql(&$any,$q,$selectname,$refval,$idkey,$valAkey,$valBkey=null,$onchange=true) {
+		global $GBLmysqli;
 		
 		$_SESSION['org'][$selectname]=$refval;
-		$result = $mysqli->dbquery($q);
-		echo "<select name='".$selectname."'>";
-		echo "<option value='0'>---</option>";
+		$result = $GBLmysqli->dbquery($q);
+		if ($onchange) {
+			echo "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
+			echo "<option value='0'>---</option>";
+		} else {
+			echo "<select name='".$selectname."'>";
+			echo "<option value='0'>---</option>";
+		};
 		$any=0;
 		while ($sqlrow = $result->fetch_assoc()) {
 			$any=1;
@@ -814,8 +834,16 @@ function scenery_sql($inscenery) {
 		}
 		echo '</select>';
 	}
+//	$GBLhighlightstyle
+	function highlightbegin() {
+		global $GBLhighlightstyle;
+		echo '<table '.$GBLhighlightstyle.'><tr><td>';
+	}
 	
-
+	function highlightend() {
+		echo '</td></tr></table>';
+	}
+	
 	function formjavaprint($title) {
 
 		echo 

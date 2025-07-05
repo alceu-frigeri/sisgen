@@ -5,7 +5,7 @@ $menu = array (
     'home'  => array('hasChildren' => false,'page' => 'usrhome.php', 'label' => 'Home', 'visible' => true));
 
 if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
-	if ($mysqli->hashcheck() & $_SESSION['role']) {
+	if ($GBLmysqli->hashcheck() & $_SESSION['role']) {
 		$menu['reports'] = array(
 			'hasChildren' => true,'page' => 'home.php', 'label' => 'Relatórios','visible' => true,
 			'children' => array(
@@ -15,6 +15,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 				'dept' => array('page'=> 'reportdept.php', 'label' => 'Departamento'),
 				'assignment' => array('page'=> 'reportassignment.php', 'label' => 'Encargos'),				
 				'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad'),
+				'enrollment' => array('page'=> 'reportenrollment.php', 'label' => 'Hist. Ocupação'),
 			)
 		);
 		$menu['check'] = array(

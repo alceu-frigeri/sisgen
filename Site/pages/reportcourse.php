@@ -3,18 +3,18 @@
         <h2>Relatório p/Curso e Etapa </h2>
         <hr>
 <?php
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
 	formselectsql($anytmp,"SELECT * FROM term ORDER BY term.name;",'termid',$_POST['termid'],'id','name');
 	echo " Somente OB/AL ? ";
-	formselectsession('reqonly','bool',$_POST['reqonly']);
+	formselectsession('reqonly','bool',$_POST['reqonly'],false,true);
 	echo " Nome Profs ? ";
-	formselectsession('profnicks','bool',$_POST['profnicks']);
-	echo formsubmit('act','Refresh') . '<br>';	
-	formselectscenery('scen.acc.view');
+	formselectsession('profnicks','bool',$_POST['profnicks'],false,true);
+	echo  '<br>';	
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh')); 
 	echo '</form>';
 	
 // semester, course, term
@@ -40,7 +40,7 @@
 		$qnicks='';
 	}
 
-	  $q = "SELECT DISTINCT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid` , `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid` " . $qnicks  . 
+	  $q = "SELECT DISTINCT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid` , `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid`, `unit`.`id` AS `courseid` " . $qnicks  . 
 	    "FROM  `classsegment` , `class`, `term`, `semester` , `coursedisciplines`,`unit`,`discipline` , `unit` AS `discdept` , `prof` " . $qscentbl . " WHERE " .
 		"`coursedisciplines`.`course_id` = `unit`.`id` AND `coursedisciplines`.`term_id` = `term`.`id` AND `coursedisciplines`.`discipline_id` = `discipline`.`id` AND " .
 		"`discipline`.`dept_id` = `discdept`.`id` AND `classsegment`.`prof_id` = `prof`.`id` AND " . 

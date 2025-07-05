@@ -1,5 +1,5 @@
 
-<?php $thisform=$basepage.'?q=admin&sq=DBimport'; ?>
+<?php $thisform=$GBLbasepage.'?q=admin&sq=DBimport'; ?>
 <div class="row">
         <h2>Initial Data setup/import </h2>
         <hr>
@@ -43,18 +43,18 @@
 
 					echo '<h3>Fixing Rooms Info</h3>';
 					$q = "UPDATE `semester` SET `readonly` = '1';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 					$q = "SELECT `id` FROM `building` WHERE `acronym` = 'Eletro';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$sqlrow=$result->fetch_assoc();
 					$q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Teo';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$roomT=$result->fetch_assoc();
 					$q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Lab';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$roomL=$result->fetch_assoc();
 					$q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Inf';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$roomI=$result->fetch_assoc();
 
 					roomset($roomL['id'],'20',$sqlrow['id'],'110');
@@ -149,19 +149,19 @@
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
 					foreach ($line as &$val) {
-						$val = $mysqli->real_escape_string($val);
+						$val = $GBLmysqli->real_escape_string($val);
 					}
 					$q = "SELECT * FROM `account` WHERE `email` = '".$line[1]."';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					if($result->fetch_assoc()){
 						$q = "UPDATE `account` SET `password` = '".$line[2]."', `name` = '".$line[7]."', `displayname` = '".$line[8]."'  WHERE `email` = '".$line[1]."';";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					} else {
 						unset($line[0]);
 						unset($line[4]);
 						unset($line[5]);
 						$q = "INSERT INTO `account` (`email`,`password`,`chgpasswd`,`activ`,`name`,`displayname`) VALUES ('" . implode("','",$line) . "');";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}
 				fclose($file);
@@ -172,20 +172,20 @@
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
 					foreach ($line as &$val) {
-						$val = $mysqli->real_escape_string($val);
+						$val = $GBLmysqli->real_escape_string($val);
 					}
 					$q = "SELECT * FROM `unit` WHERE `acronym` = '".$line[16]."';";
-					$unitsql = $mysqli->dbquery($q);
+					$unitsql = $GBLmysqli->dbquery($q);
 					$unitrow = $unitsql->fetch_assoc();
 					$q = "SELECT * FROM `role` WHERE `rolename` = '".$line[1]."';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					if($result->fetch_assoc()){
 						$q = "UPDATE `role` SET " . "`description` = '".$line[2]."',  `isadmin` = '".$line[3].
 							"', `can_edit` = '".$line[4]."', `can_dupsem` = ".$line[5].", `can_class` = ".$line[6].
 							", `can_addclass` = ".$line[7].", `can_vacancies` = ".$line[8].", `can_disciplines` = ".$line[9].
 							", `can_coursedisciplines` = ".$line[10].", `can_prof` = ".$line[11].", `can_room` = ".$line[12].
 							", `can_viewlog` = ".$line[13].", `unit_id` = ".$unitrow['id']." WHERE `rolename` = '".$line[1]."';";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					} else {
 						unset($line[0]);
 						unset($line[14]);						
@@ -197,7 +197,7 @@
 
 						$q = "INSERT INTO `role` (`rolename`, `description`,  `isadmin`, `can_edit`, `can_dupsem`, `can_class`, `can_addclass`,  `can_vacancies`, `can_disciplines`, `can_coursedisciplines`, `can_prof`, `can_room`, `can_viewlog`, `unit_id`) VALUES " .
 						"('". implode("','",$line) . "','".$unitrow['id']."');";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}
 				fclose($file);
@@ -209,16 +209,16 @@
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
 					$q = "SELECT `account`.`id`  FROM `account` WHERE `email` = '".$line[0]."';" ;
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$accrow=$result->fetch_assoc();
 					$q = "SELECT `role`.`id`  FROM `role` WHERE `rolename` = '".$line[1]."';" ;
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$rolerow=$result->fetch_assoc();
 					$q = "SELECT * FROM `accrole` WHERE `account_id` = '".$accrow['id']."' AND `role_id` = '".$rolerow['id']."';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					if(!$result->fetch_assoc()){
 						$q = "INSERT INTO `accrole` (`account_id`,`role_id`) VALUES ('" . $accrow['id'] . "' , '" . $rolerow['id'] . "');";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}
 				fclose($file);
@@ -228,8 +228,8 @@
 					echo 'units.csv file not found...<br>';
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
-					$q = "UPDATE `unit` SET `contactname` = '".$mysqli->real_escape_string($line[4])."', `contactemail` = '".$mysqli->real_escape_string($line[5])."', `contactphone` = '".$mysqli->real_escape_string($line[6])."'  WHERE `id` = '".$line[0]."';";
-					$mysqli->dbquery($q);
+					$q = "UPDATE `unit` SET `contactname` = '".$GBLmysqli->real_escape_string($line[4])."', `contactemail` = '".$GBLmysqli->real_escape_string($line[5])."', `contactphone` = '".$GBLmysqli->real_escape_string($line[6])."'  WHERE `id` = '".$line[0]."';";
+					$GBLmysqli->dbquery($q);
 				}					
 				fclose($file);
 
@@ -239,10 +239,10 @@
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
 					$q = "SELECT * FROM `scenery` WHERE `name` = '" . $line[1] . "';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					if(!$result->fetch_assoc()) {					
 						$q = "INSERT INTO `scenery` (`name`,`desc`) VALUES  ('" . $line[1] . "' , '" . $line[2] . "');";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}					
 				fclose($file);
@@ -252,16 +252,16 @@
 				};
 				while ($line = fgetcsv($file,512,',','"','"')) {
 					$q = "SELECT `scenery`.`id`  FROM `scenery` WHERE `name` = '".$line[0]."';" ;
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$scenrow=$result->fetch_assoc();
 					$q = "SELECT `role`.`id`  FROM `role` WHERE `rolename` = '".$line[1]."';" ;
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					$rolerow=$result->fetch_assoc();
 					$q = "SELECT * FROM `sceneryrole` WHERE `scenery_id` = '".$scenrow['id']."' AND `role_id` = '".$rolerow['id']."';";
-					$result = $mysqli->dbquery($q);
+					$result = $GBLmysqli->dbquery($q);
 					if(!$result->fetch_assoc()){
 						$q = "INSERT INTO `sceneryrole` (`scenery_id`,`role_id`) VALUES ('" . $scenrow['id'] . "' , '" . $rolerow['id'] . "');";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}					
 				fclose($file);
@@ -275,7 +275,7 @@
 		case 'Courses Adjust':
 		if($_POST['courseadjust']){
 			// $q = "SELECT `id` FROM `unit` WHERE `acronym` = 'CCA';";
-			// $result = $mysqli->dbquery($q);
+			// $result = $GBLmysqli->dbquery($q);
 			// $oldcourse = $result->fetch_assoc();
 			echo 'Adjusting CCA<br>';
 			$courseid=$_SESSION['unitbycode']['CCA99']['id'];

@@ -1,17 +1,17 @@
 
-<?php $thisform=$basepage.'?q=admin&sq=adminroles'; ?>
+<?php $thisform=$GBLbasepage.'?q=admin&sq=adminroles'; ?>
 
 <?php
 	$bfields = array('isadmin');
 	$canfields = array('edit','dupsem','class','addclass','scenery','vacancies','disciplines','coursedisciplines','prof','room','viewlog');
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	if ($_SESSION['role']['isadmin']) {
 		switch($_POST['act']) {
 			case 'Delete':
 				if ($_POST['roledelete']) {
 					$q = "DELETE FROM `role` WHERE `id` = '" . $_POST['roleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 					$_POST['roleid']=null;
 				}
 			break;
@@ -26,7 +26,7 @@
 					$q = $q .  " WHERE `id` = '".$_POST['roleid']."';";
 					//echo $q.'<br>';
 			//		$q = "UPDATE `accrole` SET `role_id` = '" . $_POST['newroleid'] . "' WHERE `id` = '" . $_POST['accroleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				$_POST['roleid'] = null;
 			break;
 			case 'Add Role':
@@ -47,7 +47,7 @@
 					}
 					$q = $q . ');';
 					
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				$_POST['roleid'] = null;
 			break;
@@ -55,7 +55,7 @@
 			case 'Delete Scenery':
 				if ($_POST['scenerydelete']) {
 					$q = "DELETE FROM `sceneryrole` WHERE `id` = '" . $_POST['sceneryroleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				$_POST['sceneryroleid'] = null;
 				$_POST['roleid'] = null;
@@ -63,14 +63,14 @@
 			case 'Change Scenery':
 				if(fieldscompare('',array('newsceneryid'))){
 					$q = "UPDATE `sceneryrole` SET `scenery_id` = '" . $_POST['newsceneryid'] . "' WHERE `id` = '" . $_POST['sceneryroleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				$_POST['sceneryroleid'] = null;
 				$_POST['roleid'] = null;
 			break;
 			case 'Add Scenery':
 				$q = "INSERT INTO `sceneryrole` (`role_id`, `scenery_id`) VALUES ('" . $_POST['roleid'] . "' , '" . $_POST['newsceneryid'] . "');";
-				$mysqli->dbquery($q);
+				$GBLmysqli->dbquery($q);
 				$_POST['sceneryroleid'] = null;
 				$_POST['roleid'] = null;
 			break;
@@ -94,12 +94,13 @@
   $pattern = '[a-zA-Z \-\.\(\)]+';
   if($_SESSION['role']['isadmin']) {
 	$q = "SELECT `role`.*, `unit`.`acronym` FROM `role`,`unit` WHERE `role`.`unit_id` = `unit`.`id` ORDER BY `rolename`;";
-	$sqlroles = $mysqli->dbquery($q);
+	$sqlroles = $GBLmysqli->dbquery($q);
 	while ($rolerow = $sqlroles->fetch_assoc()) {
 		echo '<div id="role'.$rolerow['id'].'div">&nbsp;<br></div><br><br>';
 
 		if ($rolerow['id'] == $_POST['roleid']) {
 			echo '<br>'.formpost($thisform.'#role'.$rolerow['id'].'div') . formhiddenval('roleid',$rolerow['id']);
+			echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
 			echo 'Nome:' . formpatterninput(32,8,$pattern,'role name','rolename',$rolerow['rolename']) .
 			 'Descriçao:' . formpatterninput(64,32,$pattern,'role name','description',$rolerow['description']);
 			formselectsql($anytmp,'SELECT * FROM `unit`;','unitid',$rolerow['unit_id'],'id','acronym');
@@ -117,11 +118,11 @@
 			echo '</form>';			
 		
 			echo formpost($thisform) . formhiddenval('roleid',$rolerow['id']);
-			echo 'Delete Role &lt;'.$rolerow['rolename'] .'&gt;?';
+			echo spanformat('','red','Delete Role &lt;'.$rolerow['rolename'] .'&gt;?','',true);
 			formselectsession('roledelete','bool',0);
-			echo formsubmit('act','Delete');
+			echo spanformat('','red',formsubmit('act','Delete'),'',true);
 			echo '</form><br>';			
-			
+			echo '</td></tr></table>';
 		} else {
 			echo formpost($thisform.'#role'.$rolerow['id'].'div') . formhiddenval('roleid',$rolerow['id']) . formsubmit('act','Edit');
 			echo $rolerow['rolename'] . ' ( ' . $rolerow['description'] . ' ) :: ' . $rolerow['acronym'] . ' <br>';
@@ -145,7 +146,7 @@
 		
 			
 		$q = "SELECT `scenery`.* , `sceneryrole`.`id` AS `sceneryroleid` FROM `sceneryrole`,`scenery` WHERE `sceneryrole`.`scenery_id` = `scenery`.`id` AND `sceneryrole`.`role_id` = '" . $rolerow['id'] . "' ;";
-		$sqlscenery = $mysqli->dbquery($q);
+		$sqlscenery = $GBLmysqli->dbquery($q);
 		while ($sceneryrow = $sqlscenery->fetch_assoc()) {
 			echo formpost($thisform.'#role'.$rolerow['id'].'div');
 			echo formhiddenval('sceneryroleid',$sceneryrow['sceneryroleid']);
@@ -178,7 +179,7 @@
 		echo '<br>'.formpost($thisform);
 		echo 'Nome:' . formpatterninput(32,8,$pattern,'role name','rolename','!') .
 		 'Descriçao:' . formpatterninput(64,32,$pattern,'role name','description','!');
-		formselectsql($anytmp,'SELECT * FROM `unit`;','unitid',0,'id','acronym');
+		formselectsql($anytmp,'SELECT * FROM `unit`;','unitid',0,'id','acronym',null,false);
 		echo '<br>';
 		foreach ($bfields as $key) {
 			echo '  '.$key.': ';

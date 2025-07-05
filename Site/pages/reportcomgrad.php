@@ -1,15 +1,15 @@
 
-<?php $thisform=$basepage.'?q=reports&sq=comgrad'; ?>
+<?php $thisform=$GBLbasepage.'?q=reports&sq=comgrad'; ?>
 
 <div class="row">
         <h2>Relatório COMGRAD por Departamento </h2>
         <hr>
 
 <?php
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	
 	echo 'Curso:'; 
 	formselectsql($anytmp,"SELECT * FROM unit WHERE `iscourse` = '1' ORDER BY unit.acronym;",'courseid',$_POST['courseid'],'id','acronym');
@@ -21,9 +21,9 @@
     echo '&nbsp;&nbsp;&nbsp;Dept.:';
 	formselectsql($anytmp,$q,'deptid',$_POST['deptid'],'dept_id','acronym');
 	
-	echo formsubmit('act','Refresh') . '<br>';
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh') );
 	echo '</form>';
 
 
@@ -37,7 +37,7 @@
 
 
 	    $q = "SELECT acronym,name FROM unit WHERE id='".$_POST['deptid']."'";
-		$result=$mysqli->dbquery($q);
+		$result=$GBLmysqli->dbquery($q);
 		$sqlrow=$result->fetch_assoc();
 		$emailbody = '';
 		$emailbodyhdr = '';
@@ -47,10 +47,10 @@
 			$emailbodyhdr .= $temp;
 		}
 		$q = "SELECT * FROM `term` ORDER BY `id`";
-		$termsql = $mysqli->dbquery($q);
+		$termsql = $GBLmysqli->dbquery($q);
 		while ($termrow = $termsql->fetch_assoc()) {
 			$q = "SELECT discipline.* FROM coursedisciplines , discipline WHERE coursedisciplines.course_id = '".$_POST['courseid']."' AND coursedisciplines.discipline_id = discipline.id AND discipline.dept_id = '".$_POST['deptid']."' AND `coursedisciplines`.`term_id` = '".$termrow['id']."' ORDER BY  discipline.name ";
-			$discsql = $mysqli->dbquery($q);
+			$discsql = $GBLmysqli->dbquery($q);
 			if($discsql->num_rows) {
 				$temp = '<hr><b>'.$termrow['name'].'</b><br>';
 				//echo $temp; 
@@ -66,7 +66,7 @@
 				"`class`.`sem_id` = '" . $_POST['semid'] . "' AND `vac`.`class_id` = `class`.`id` AND `vac`.`askednum` > '0' AND `vac`.`course_id` = '" . $_POST['courseid'] . "' " . 
 				$qscensql . " ORDER BY `class`.`name`"	 ;
 				
-				$classsql = $mysqli->dbquery($q);
+				$classsql = $GBLmysqli->dbquery($q);
 				while($classrow = $classsql->fetch_assoc()) {
 					if ($classrow['askednum']>1) { $p='s'; } else { $p=''; };
 					 $flag = 1;
@@ -80,7 +80,7 @@
 					 } else {
 						 if($classrow['partof']) {
 							 $q="SELECT `name` FROM `class` WHERE `id` = '".$classrow['partof']."'";
-							 $partsql=$mysqli->dbquery($q);
+							 $partsql=$GBLmysqli->dbquery($q);
 							 $partrow=$partsql->fetch_assoc();
 							 $temp = spanformat('','darkorange',' (agregada à '.$partrow['name'].')');
 							 //echo $temp; 
@@ -91,7 +91,7 @@
 					 //echo $temp; 
 					 $emailbody .= $temp;
 					 $q = "SELECT * FROM `classsegment` AS `seg` WHERE `seg`.`class_id` = '" . $classrow['id'] . "';";
-					 $segsql = $mysqli->dbquery($q);
+					 $segsql = $GBLmysqli->dbquery($q);
 					 while ($segrow = $segsql->fetch_assoc()) {
 						 if ($segrow['length']>1) { $p='s'; } else { $p=''; };
 						 $temp = '&nbsp;&nbsp;&nbsp;' . spanformat('','gray',$_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora'.$p.'-Aula<br>'); 
@@ -109,15 +109,15 @@
 		}
 		if ($emailbody) {
 		$q = "SELECT * FROM `unit`  WHERE `id` = '" . $_POST['courseid'] . "';";
-			$coursesql = $mysqli->dbquery($q);
+			$coursesql = $GBLmysqli->dbquery($q);
 			$courserow = $coursesql->fetch_assoc();
 
 			$q = "SELECT * FROM `unit`  WHERE `id` = '" . $_POST['deptid'] . "';";
-			$deptsql = $mysqli->dbquery($q);
+			$deptsql = $GBLmysqli->dbquery($q);
 			$deptrow = $deptsql->fetch_assoc();
 
 			$q = "SELECT * FROM `semester`  WHERE `id` = '" . $_POST['semid'] . "';";
-			$semsql = $mysqli->dbquery($q);
+			$semsql = $GBLmysqli->dbquery($q);
 			$semrow = $semsql->fetch_assoc();
 			
 			if (($_POST['act'] == 'Send Email') & ($_POST['trulysend'])) {
@@ -151,4 +151,4 @@
  ?>
     
  
-</div>
+</div> 

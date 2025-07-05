@@ -1,5 +1,5 @@
 
-<?php $thisform=$basepage.'?q=edits&sq=rooms'; ?>
+<?php $thisform=$GBLbasepage.'?q=edits&sq=rooms'; ?>
 <div class="row">
     
         <h2>Salas</h2>
@@ -9,15 +9,23 @@
 	
 <?php 
 	$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_room']);
-	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
+	//$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
 
-	$mysqli->postsanitize();
+
+	$GBLmysqli->postsanitize();
+
+	$postedit = false;
+	if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit')) & $can_room) {
+		$postedit = true;
+	} else {
+		$_POST['act']='Cancel';
+	}
 
 	echo formpost($thisform);
 	
 	if (!($_SESSION['roomtype'])) {
 		$q = "SELECT * FROM `roomtype`; ";
-		$result = $mysqli->dbquery($q);
+		$result = $GBLmysqli->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
 			$_SESSION['roomtype'][$sqlrow['id']] = $sqlrow['name'];
 		}
@@ -30,12 +38,12 @@
 		case 'Delete':
 			if ($_POST['roomdelete']) {
 				$q = "DELETE FROM `room` WHERE `id` = '" . $_POST['roomid'] . "';";
-				$mysqli->dbquery($q);
+				$GBLmysqli->dbquery($q);
 			}
 		break;
 		case 'Submit':
 			$q = "UPDATE `room` SET `roomtype_id` = '" . $_POST['roomtype'] . "' , `capacity` = '" . $_POST['capacity']  .  "'  WHERE `id` = '" . $_POST['roomid'] . "'";
-			$mysqli->dbquery($q);
+			$GBLmysqli->dbquery($q);
 			$_POST['roomid'] = null;
 		break;
 		
@@ -64,7 +72,7 @@
 // course, term
   $q = "SELECT * FROM   `room` WHERE `building_id` = '".$_POST['buildingid']."' ORDER BY `name`;";
 
-  $result=$mysqli->dbquery($q);
+  $result=$GBLmysqli->dbquery($q);
   $anyone = 0;
   if ($postedit & $can_room) {
 	  while ($sqlrow=$result->fetch_assoc()) {
@@ -107,7 +115,7 @@
   	if ($anyone & $can_room) {
 		echo formsubmit('act','Edit');
 	}
-	echo formsubmit('act','Refresh');
+	//echo formsubmit('act','Refresh');
   }
 
 	echo '</form>';

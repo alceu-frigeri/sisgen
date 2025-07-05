@@ -5,18 +5,18 @@
         <hr>
 
 <?php
-	$thisform=$basepage.'?q=reports&sq=dept'; 
+	$thisform=$GBLbasepage.'?q=reports&sq=dept'; 
 	
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name` DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
-	echo formsubmit('act','Refresh') . '<br>';
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
 	
 	echo '</form>';
 
@@ -29,7 +29,7 @@
 
 	$q="SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['deptid']."' ORDER BY  `name`;";
 
-	$discsql = $mysqli->dbquery($q);
+	$discsql = $GBLmysqli->dbquery($q);
 	
 	echo '<hr><div id="Encargos">';
 	
@@ -42,7 +42,7 @@
 		"`class`.`sem_id` = '" . $_POST['semid'] . "' " . $qscensql . 
 		 " ORDER BY `class`.`name`" ;
 		 
-		$classsql = $mysqli->dbquery($q);
+		$classsql = $GBLmysqli->dbquery($q);
 		while($classrow = $classsql->fetch_assoc()) {
 			 echo 'Turma: ' . $classrow['name'];
 			 if ($classrow['agreg']) {
@@ -50,7 +50,7 @@
 			 } else {
 				 if($classrow['partof']) {
 					 $q="SELECT `name` FROM `class` WHERE `id` = '".$classrow['partof']."'";
-					 $partsql=$mysqli->dbquery($q);
+					 $partsql=$GBLmysqli->dbquery($q);
 					 $partrow=$partsql->fetch_assoc();
 					 echo spanformat('','darkorange',' (agregada à '.$partrow['name'].')');
 				 }
@@ -59,7 +59,7 @@
 			 echo '<br>';
 			 $q = "SELECT `seg`.* , `building`.`acronym` AS `buildingname` , `room`.`acronym` AS `roomname` , `room`.`capacity` AS `capacity` , `prof`.`nickname` , `prof`.`name`  FROM `classsegment` AS `seg` , `room` , `building`, `prof` WHERE " .
 				"`seg`.`room_id` = `room`.`id` AND `room`.`building_id` = `building`.`id`  AND `seg`.`prof_id` = `prof`.`id` AND  `seg`.`class_id` = '" . $classrow['id'] . "';";
-			 $segsql = $mysqli->dbquery($q);
+			 $segsql = $GBLmysqli->dbquery($q);
 			 while ($segrow = $segsql->fetch_assoc()) {
 				 if ($segrow['length']>1) { $p='s'; } else { $p=''; };
 				 echo '&nbsp;&nbsp;&nbsp;' . 
@@ -74,7 +74,7 @@
 			 $q="SELECT `vac`.* , `unit`.`acronym`, `kind`.`code` AS `disckind` FROM `vacancies` AS `vac`,`unit` , `coursedisciplines` AS `grade` , `disciplinekind` AS `kind` WHERE " .
 				"`vac`.`course_id` = `unit`.`id` AND `vac`.`course_id` = `grade`.`course_id` AND `grade`.`disciplinekind_id` = `kind`.`id` AND " .
 				"`grade`.`discipline_id` = '" . $discrow['id'] . "' AND `vac`.`class_id` = '" . $classrow['id'] . "' ORDER BY `unit`.`acronym`";
-			 $vacsql = $mysqli->dbquery($q);
+			 $vacsql = $GBLmysqli->dbquery($q);
 			 while ($vacrow = $vacsql->fetch_assoc()) {
 				 if ($vacrow['givennum']==1) { $p=''; } else { $p='s'; };			 
 				 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $vacrow['acronym'] . ' : ' . $vacrow['givennum'] . ' Vaga'.$p. ' ('.$vacrow['disckind'] .')<br>';
@@ -87,4 +87,4 @@
  ?>
     
  
-</div>
+</div> 

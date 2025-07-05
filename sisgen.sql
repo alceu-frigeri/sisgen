@@ -86,7 +86,8 @@ CREATE TABLE `discipline` (
 CREATE TABLE `semester` (
   `id` integer unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `name` varchar(10) UNIQUE COMMENT '20xx/I',
-  `readonly` tinyint(1) DEFAULT 0 COMMENT 'to block changes'
+  `readonly` tinyint(1) DEFAULT 0 COMMENT 'to block changes',
+  `imported` tinyint(1) DEFAULT 0 COMMENT 'if it was imported',
 );
 
 CREATE TABLE `profkind` (

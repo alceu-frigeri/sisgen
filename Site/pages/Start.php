@@ -22,7 +22,7 @@
 
  <div id='new-account' hidden>
 
-<form onsubmit='return validate()'  method='post' enctype='multipart/form-data' action='<?php echo $basepage; ?>?st=register'>
+<form onsubmit='return validate()'  method='post' enctype='multipart/form-data' action='<?php echo $GBLbasepage; ?>?st=register'>
 <input type='text' name='phase' value='subscribe' hidden />
 <table id='regform'>
 <tr>
@@ -33,11 +33,11 @@
 <td style='text-align:right; width:30%'>Email (Confirmação):</td><td style='text-align:left'><input type='email' name='emailB' id='emailB' size='30' required <?php $emailcheck ?> /><span id='emailBdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr>
-<td style='text-align:right; width:30%'>Senha:</td><td style='text-align:left'><input type='password' name='passA' id='passA' size='30' pattern='<?php echo $passwdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> /><span id='passAdiff' style='color:white'>(diff.)</span></td>
+<td style='text-align:right; width:30%'>Senha:</td><td style='text-align:left'><input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> /><span id='passAdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr>
 <tr>
-<td style='text-align:right; width:30%'>Senha (Confirmação):</td><td style='text-align:left'><input type='password' name='passB' id='passB' size='30' pattern='<?php echo $passwdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> /><span id='passBdiff' style='color:white'>(diff.)</span></td>
+<td style='text-align:right; width:30%'>Senha (Confirmação):</td><td style='text-align:left'><input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> /><span id='passBdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr><td></td>
 <td>
@@ -48,7 +48,7 @@ Você estará, na seqüência, recebendo um Email de confirmação.
 </div>
 <div id='login'>
 
-<form method='post' enctype='multipart/form-data' action='<?php echo $basepage; ?>?st=login'>
+<form method='post' enctype='multipart/form-data' action='<?php echo $GBLbasepage; ?>?st=login'>
 <input type='text' name='phase' value='login' hidden />
 <table id='regform'>
 <tr>
@@ -69,7 +69,7 @@ Você estará, na seqüência, recebendo um Email de confirmação.
 
 <div id='forgot' hidden>
 
-<form method='post' enctype='multipart/form-data' action='<?php echo $basepage; ?>?st=passrecovery'>
+<form method='post' enctype='multipart/form-data' action='<?php echo $GBLbasepage; ?>?st=passrecovery'>
 <input type='text' name='phase' value='forgot' hidden />
 <table id='regform'>
 <tr>
@@ -86,7 +86,7 @@ Você receberá um Email com sua senha, caso já esteja cadastrado e sua conta c
 
 <div id='re-send' hidden>
 
-<form method='post' enctype='multipart/form-data' action='<?php echo $basepage; ?>?st=valresend'>
+<form method='post' enctype='multipart/form-data' action='<?php echo $GBLbasepage; ?>?st=valresend'>
 <input type='text' name='phase' value='forgot' hidden />
 <table id='regform'>
 <tr>

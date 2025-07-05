@@ -3,15 +3,15 @@
         <hr>
 
 <?php 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit.name;",'deptid',$_POST['deptid'],'id','acronym');
-	formselectsql($anytmp,"SELECT prof.* FROM prof,unit WHERE prof.dept_id = unit.id AND unit.id = '".$_POST['deptid']."' ORDER BY prof.name;",'profid',$_POST['profid'],'id','name');
-	echo formsubmit('act','Refresh') . '<br>';
+	formselectsql($anytmp,"SELECT prof.* FROM prof,unit,profkind WHERE prof.dept_id = unit.id AND prof.profkind_id = profkind.id AND profkind.acronym <> '-none-' AND unit.id = '".$_POST['deptid']."' ORDER BY prof.name;",'profid',$_POST['profid'],'id','name');
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
 	echo '</form>';
    
    if ($_POST['profid']) {
@@ -64,4 +64,4 @@
 
 
 
-?>
+?> 

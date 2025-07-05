@@ -1,29 +1,29 @@
 
-<?php $thisform=$basepage.'?q=reports&sq=room'; ?>
+<?php $thisform=$GBLbasepage.'?q=reports&sq=room'; ?>
 
 <div class="row">
         <h2>Relatório p/Salas </h2>
         <hr>
 
 <?php 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM building WHERE mark = 1 ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
 	formselectsql($anytmp,"SELECT room.* FROM room,building WHERE room.building_id = building.id AND building.id = '".$_POST['buildingid']."' ORDER BY room.acronym;",'roomid',$_POST['roomid'],'id','acronym');
 	echo "Nome Profs ? ";
-	formselectsession('profnicks','bool',$_POST['profnicks']);
-	echo formsubmit('act','Refresh') . '<br>';
+	formselectsession('profnicks','bool',$_POST['profnicks'],false,true);
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
 	echo '</form>';
    
 
   // semester, building, room
   if ($_POST['roomid']) {
 	  $q = "SELECT `room`.*, `roomtype`.`name` AS `type` , `building`.`name` AS `buildingname`  FROM `room`,`roomtype`,`building` WHERE `room`.`roomtype_id` = `roomtype`.`id` AND `room`.`building_id` = `building`.`id` AND `room`.`id` = '". $_POST['roomid'] ."';";
-	  $result = $mysqli->dbquery($q);
+	  $result = $GBLmysqli->dbquery($q);
 	  $sqlrow = $result->fetch_assoc();
 	  
 	  echo '<br>'.$sqlrow['buildingname'] . ' - ' . $sqlrow['name'] . ' : ' . $sqlrow['type'];
@@ -62,4 +62,4 @@
  ?>
     
  
-</div>
+</div> 

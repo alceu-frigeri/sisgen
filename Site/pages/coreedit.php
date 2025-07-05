@@ -4,12 +4,13 @@
 
 	if(!($_SESSION['rooms'])) {
 		$q = "SELECT room.id , room.acronym AS room , room.capacity AS capacity , building.acronym AS building , building.mark AS mark , building.id AS buildingid FROM room,building WHERE room.building_id = building.id ORDER BY building.acronym,room.acronym;";
-		$sqlroom = $mysqli->dbquery($q);
+		$sqlroom = $GBLmysqli->dbquery($q);
 		while ($roomrow = $sqlroom->fetch_assoc()) {
 			if ($roomrow['capacity']){$cap = ' (cap.: '.$roomrow['capacity'] . ')';} else {$cap='';}
 			$_SESSION['rooms'][$roomrow['id']]['txt'] = $roomrow['building'].' - '.$roomrow['room'] . $cap;
 			$_SESSION['rooms'][$roomrow['id']]['buildmark'] = $roomrow['mark'];
 			$_SESSION['rooms'][$roomrow['id']]['buildingid'] = $roomrow['buildingid'];
+			$_SESSION['roomsID'][$roomrow['id']] = $roomrow['building'] . ' - ' . $roomrow['room'];
 			if ($roomrow['mark']) {
 				$_SESSION['rooms'][$roomrow['id']]['txtlnk'] = hiddenformlnk(hiddenroomkey($_POST['semid'],$roomrow['buildingid'],$roomrow['id']) , $roomrow['building'].' - '.$roomrow['room']) . $cap;
 			} else {
@@ -20,13 +21,13 @@
 	}
 	if(!($_SESSION['deptprof'.$_POST['unitid']])) {
 		$q = "SELECT prof.id , prof.name FROM prof WHERE prof.dept_id = '".$_POST['unitid']."' ORDER BY name;";
-		$sqlprof = $mysqli->dbquery($q);
+		$sqlprof = $GBLmysqli->dbquery($q);
 		while ($profrow = $sqlprof->fetch_assoc()) {
 			$_SESSION['deptprof'.$_POST['unitid']][$profrow['id']] = $profrow['name'];
 			$_SESSION['deptIDprof'.$_POST['unitid']][$profrow['id']] = $_POST['unitid'];
 		}
 		$q = "SELECT prof.id , prof.name , prof.dept_id FROM prof,coursedept WHERE prof.dept_id = coursedept.dept_id AND coursedept.course_id ='".$_POST['unitid']."' ORDER BY name;";
-		$sqlprof = $mysqli->dbquery($q);
+		$sqlprof = $GBLmysqli->dbquery($q);
 		while ($profrow = $sqlprof->fetch_assoc()) {
 			$_SESSION['deptprof'.$_POST['unitid']][$profrow['id']] = $profrow['name'];
 			$_SESSION['deptIDprof'.$_POST['unitid']][$profrow['id']] = $profrow['dept_id'];
@@ -35,7 +36,7 @@
 
 	if(!($_SESSION['status'])) {
 		$q = "SELECT * FROM status;";
-		$sqlstatus = $mysqli->dbquery($q);
+		$sqlstatus = $GBLmysqli->dbquery($q);
 		while ($statusrow = $sqlstatus->fetch_assoc()) {
 			$_SESSION['status'][$statusrow['id']] = $statusrow['status'];
 			$_SESSION['statuscolor'][$statusrow['id']] = $statusrow['color'];
@@ -61,7 +62,7 @@
 	}
 
 	function formsegmentdisplay($segrow) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $hiddenprofdeptid;
 		global $hiddenroombuildingid;
 		
@@ -74,7 +75,7 @@
     
 	
 	function formsegmentedit($segrow) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $can_addclass;
 		
 		$segformid = 'seg'.$segrow['id'];
@@ -94,12 +95,12 @@
 	}
 	
 	function formclassedit ($classrow,$incanedit,$canbyscenery=false) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $can_class;
 		global $can_addclass;
 		global $postedit;
-		global $commentpattern;
-		global $classpattern;
+		global $GBLcommentpattern;
+		global $GBLclasspattern;
 
 		//thisformpost();
 		$classkey = 'class'.$classrow['id'];
@@ -108,7 +109,7 @@
 		//echo 'Turma:<b>' . $classrow['name'] . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 		//echo '<span style="color:#8000B0;">';
 		echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
-		echo 'Turma:<b>' . formpatterninput(3,1,$classpattern,' Turma',$classkey.'classname',$classrow['name']) . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
+		echo 'Turma:<b>' . formpatterninput(3,1,$GBLclasspattern,' Turma',$classkey.'classname',$classrow['name']) . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 
 
 		formselectsession($classkey.'agreg','bool',$classrow['agreg']);
@@ -121,11 +122,11 @@
 		echo '&nbsp;&nbsp;&nbsp;remover:';
 		formselectsession($classkey.'delete','bool',0);
 		echo '</br>';
-		echo 'Obs.: ' . formpatterninput(48,16,$commentpattern,'Obs.',$classkey.'comment',$classrow['comment']).'<br>';
+		echo 'Obs.: ' . formpatterninput(48,16,$GBLcommentpattern,'Obs.',$classkey.'comment',$classrow['comment']).'<br>';
 		
 				
 		$q = "SELECT * FROM classsegment WHERE classsegment.class_id = '" . $classrow['id'] . "' ORDER BY day,start;";
-		$segresult = $mysqli->dbquery($q);
+		$segresult = $GBLmysqli->dbquery($q);
 		while ($segrow = $segresult->fetch_assoc()) {
 			formsegmentedit($segrow);
 			echo '<br>';
@@ -151,7 +152,7 @@
 				unset ($_SESSION['org']['sceneryusr']);
 				echo '&nbsp;&nbsp;&nbsp;&nbsp;';
 				$q = "SELECT * FROM sceneryclass WHERE class_id = '" . $classrow['id'] .  "';"; // classkey X classid !!!!
-				$scentmpsql = $mysqli->dbquery($q);
+				$scentmpsql = $GBLmysqli->dbquery($q);
 				while ($scentmprow = $scentmpsql->fetch_assoc()) {
 					$_SESSION['org']['sceneryclass'][$scentmprow['scenery_id']] = $scentmprow['id'];
 				}
@@ -179,7 +180,7 @@
 		}
 
 		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
-		$vacsql = $mysqli->dbquery($q);
+		$vacsql = $GBLmysqli->dbquery($q);
 		if($classrow['agreg']) {
 			formvacdisplay($vacsql);
 		} else {
@@ -191,16 +192,16 @@
 	}
 	
 	function formclassdisplay ($classrow,$vacedit=false) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $can_class;
 		global $can_addclass;
 		global $postedit;
-		global $commentcolor;
+		global $GBLcommentcolor;
 		
 		$courseHL=false;
 		if ($_POST['courseHL']) {
 			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$classrow['id']."' AND `course_id` = '".$_POST['courseHL']."';";
-			$xresult = $mysqli->dbquery($q);
+			$xresult = $GBLmysqli->dbquery($q);
 			$xrow = $xresult->fetch_assoc();
 			if($xrow['total']) {
 				$courseHL=true;
@@ -216,11 +217,11 @@
 		echo '</br>';
 
 		if ($classrow['comment']) {
-			echo '&nbsp;&nbsp;&nbsp;' .spanformat('smaller',$commentcolor ,$classrow['comment']) . '<br>';
+			echo '&nbsp;&nbsp;&nbsp;' .spanformat('smaller',$GBLcommentcolor ,$classrow['comment']) . '<br>';
 		}
 		
 		$q = "SELECT * FROM classsegment WHERE classsegment.class_id = '" . $classrow['id'] . "' ORDER BY day,start;";
-		$segresult = $mysqli->dbquery($q);
+		$segresult = $GBLmysqli->dbquery($q);
 		while ($segrow = $segresult->fetch_assoc()) {
 			formsegmentdisplay($segrow);
 			echo '<br>';
@@ -229,11 +230,11 @@
 		echo '<table>';
 		echo '<tr style="visibility:collapse"><td>----</td><td>---</td><td>---</td><td>---</td></tr>';
 		if ($classrow['scenery']) {
-			echo '<tr><td></td><td>Cenário(s):</td><td></td><td></td></tr>';
+			echo '<tr><td></td><td><b style="color:MidnightBlue;">Cenário(s):</b></td><td></td><td></td></tr>';
 			$q = "SELECT scenery.* FROM scenery , sceneryclass WHERE scenery.id = sceneryclass.scenery_id AND sceneryclass.class_id = '" . $classrow['id'] . "' ORDER BY scenery.name;";
-			$scensql = $mysqli->dbquery($q);
+			$scensql = $GBLmysqli->dbquery($q);
 			while ($scenrow = $scensql->fetch_assoc()) {
-				echo '<tr><td></td><td></td><td></td><td>' . $scenrow['name'] . '</td></tr>';
+				echo '<tr><td></td><td></td><td></td><td><b style="color:MidnightBlue;">' . $scenrow['name'] . '</b></td></tr>';
 			}
 		} else {
 			echo '<tr><td></td><td>Cenário:</td><td></td><td>Default</td></tr>';
@@ -245,7 +246,7 @@
 		}
 		
 		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
-		$vacsql = $mysqli->dbquery($q);
+		$vacsql = $GBLmysqli->dbquery($q);
 		if ($vacedit && !$classrow['agreg']) {
 			formvacedit($vacsql);
 		} else {
@@ -262,14 +263,14 @@
 	
 	
 	function formvacedit ($vacsql) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $can_class;
 		global $can_addclass;
 		global $postedit;
 		global $readonly;
-		global $commentpattern;
-		global $commentcolor;
-		global $Gblvackind;
+		global $GBLcommentpattern;
+		global $GBLcommentcolor;
+		global $GBLvackind;
 		
 		
 		echo '<table>';
@@ -278,13 +279,13 @@
 			$vacid = 'vac'.$vacrow['id'];
 			if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
-				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' . formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'asked',$vacrow['askednum']) . '&nbsp;&nbsp;' .spanformat('','',$Gblvackind[$vacrow['courseid']]) . '&nbsp;&nbsp;';
+				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' . formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'asked',$vacrow['askednum']) . '&nbsp;&nbsp;' .spanformat('','',$GBLvackind[$vacrow['courseid']]) . '&nbsp;&nbsp;';
 				formselectsession($vacid.'askedstatusid','status',$vacrow['askedstatus_id']);
 				echo '</td>';
 			} else {
 				echo formhiddenval($vacid.'asked',$vacrow['askednum']);
 				echo formhiddenval($vacid.'askedstatusid',$vacrow['askedstatus_id']);
-				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller','',$Gblvackind[$vacrow['courseid']]). '</sub>' . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['askedstatus_id']] , '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
+				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller','',$GBLvackind[$vacrow['courseid']]). '</sub>' . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['askedstatus_id']] , '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
 			}
 			if (($_SESSION['role'][$_POST['unitid']]['can_vacancies'] | $_SESSION['role']['isadmin']) & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
@@ -301,11 +302,11 @@
 			if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
 				echo '<tr>';
-				echo '<td>Obs.: ' . formpatterninput(48,16,$commentpattern,'Obs.',$vacid.'comment',$vacrow['comment']).'</td>';
+				echo '<td>Obs.: ' . formpatterninput(48,16,$GBLcommentpattern,'Obs.',$vacid.'comment',$vacrow['comment']).'</td>';
 				echo '<td></td></tr>';
 			} else {
 				echo formhiddenval($vacid.'comment',$vacrow['comment']);
-				echo '<tr><td>'.'&nbsp;&nbsp;&nbsp;'.spanformat('smaller',$commentcolor,$vacrow['comment']) . '</td><td></td></tr>';
+				echo '<tr><td>'.'&nbsp;&nbsp;&nbsp;'.spanformat('smaller',$GBLcommentcolor,$vacrow['comment']) . '</td><td></td></tr>';
 			}
 			
 		}
@@ -313,26 +314,26 @@
 	}
 	
 	function formvacdisplay ($vacsql) {
-		global $mysqli;
+		global $GBLmysqli;
 		global $can_class;
 		global $can_addclass;
 		global $postedit;
-		global $commentcolor;
-		global $Gblvackind;
+		global $GBLcommentcolor;
+		global $GBLvackind;
 		
 		echo '<table>';
 		$totalasked = 0;
 		$totalgiven = 0;
 		while ($vacrow = $vacsql->fetch_assoc()) {
 			echo '<tr>';
-			if ($Gblvackind[$vacrow['courseid']] == 'OB') {
+			if ($GBLvackind[$vacrow['courseid']] == 'OB') {
 				$coursecolor='#0000F0';
 				$coursebold=true;
 			} else {
 				$coursecolor=null;
 				$coursebold=false;
 			}
-			echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller',$coursecolor,$Gblvackind[$vacrow['courseid']],null,$coursebold). '</sub>'. '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('',$_SESSION['statuscolor'][$vacrow['askedstatus_id']], '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
+			echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller',$coursecolor,$GBLvackind[$vacrow['courseid']],null,$coursebold). '</sub>'. '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('',$_SESSION['statuscolor'][$vacrow['askedstatus_id']], '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
 			echo '<td>&nbsp;&nbsp;Vagas concedidas: ' . $vacrow['givennum'] . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']] , '(' .  $_SESSION['status'][$vacrow['givenstatus_id']] . ')') .  '</td>';
 			echo '<td>&nbsp;&nbsp;Vagas Ocupadas: ' . $vacrow['usednum'] . '</td>';
 			echo '</tr>';
@@ -341,7 +342,7 @@
 				$totalgiven += $vacrow['givennum'];			
 			}
 			if ($vacrow['comment']) {
-				echo '<tr><td>'.'&nbsp;&nbsp;&nbsp;'.spanformat('smaller',$commentcolor,$vacrow['comment']) . '</td><td></td></tr>';
+				echo '<tr><td>'.'&nbsp;&nbsp;&nbsp;'.spanformat('smaller',$GBLcommentcolor,$vacrow['comment']) . '</td><td></td></tr>';
 			}
 		}
 		echo '<tr><td>' . spanformat('','darkblue','Total: ' . $totalasked) . '</td><td>&nbsp;&nbsp;' . spanformat('','darkblue','Total: ' . $totalgiven) . '</td></tr>';

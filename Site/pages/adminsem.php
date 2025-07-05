@@ -1,5 +1,5 @@
 
-<?php $thisform=$basepage.'?q=admin&sq=sem'; ?>
+<?php $thisform=$GBLbasepage.'?q=admin&sq=sem'; ?>
 
 <div class="row">
     
@@ -9,7 +9,7 @@
 <?php 
 
 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 
 
@@ -19,14 +19,14 @@
 			case 'Submit':
 				if (fieldscompare('',array('readonly'))) {
 					$q = "UPDATE `semester` SET `readonly` = '".$_POST['readonly']."' WHERE `id` = '".$_POST['semid']."';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				break;
 			case 'Delete':
 				if($_POST['act'] == 'Delete') {
 					if ($_POST['delete']) {
 						$q = "DELETE FROM `semester` WHERE `id` = '".$_POST['semid']."';";
-						$mysqli->dbquery($q);
+						$GBLmysqli->dbquery($q);
 					}
 				}
 				break;
@@ -36,7 +36,7 @@
 		}
 
 		$q = "SELECT * FROM `semester` ORDER BY `name`;";
-		$semsql = $mysqli->dbquery($q);
+		$semsql = $GBLmysqli->dbquery($q);
 		while ($semrow = $semsql->fetch_assoc()) {
 			echo formpost($thisform) . formhiddenval('semid',$semrow['id']);
 			if (($_POST['semid'] == $semrow['id']) & (($_POST['act'] == 'Edit'))) {

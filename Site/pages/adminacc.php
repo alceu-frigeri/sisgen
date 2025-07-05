@@ -1,13 +1,13 @@
 
 <?php 
 
-	$thisform=$basepage.'?q=admin&sq=adminacc'; 
+	$thisform=$GBLbasepage.'?q=admin&sq=adminacc'; 
 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	unset($_SESSION['rolelist']);
 		$q = "SELECT * FROM `role`;";
-		$result = $mysqli->dbquery($q);
+		$result = $GBLmysqli->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
 			$_SESSION['roleslist'][$sqlrow['id']] = $sqlrow['rolename'] .'  /  '.$sqlrow['description'];
 		}
@@ -23,39 +23,39 @@
 					$pass='';
 				}
 					$q = "UPDATE `account` SET `activ` = '" . $_POST['activ'] . "' $pass WHERE `id` = '" . $_POST['usrid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 			break;
 			case 'Delete User':
 				if ($_POST['userdelete']) {
 					$q = "DELETE FROM `account` WHERE `id` = '" . $_POST['usrid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 					$_POST['accroleid'] = null;
 				}
 			break;
 			case 'Delete Role':
 				if ($_POST['roledelete']) {
 					$q = "DELETE FROM `accrole` WHERE `id` = '" . $_POST['accroleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				$_POST['accroleid'] = null;
 			break;
 			case 'Change Role':
 				if(fieldscompare('',array('newroleid'))){
 					$q = "UPDATE `accrole` SET `role_id` = '" . $_POST['newroleid'] . "' WHERE `id` = '" . $_POST['accroleid'] . "';";
-					$mysqli->dbquery($q);
+					$GBLmysqli->dbquery($q);
 				}
 				$_POST['accroleid'] = null;
 			break;
 			case 'Add Role':
 				$q = "INSERT INTO `accrole` (`account_id`, `role_id`) VALUES ('" . $_POST['usrid'] . "' , '" . $_POST['newroleid'] . "');";
-				$mysqli->dbquery($q);
+				$GBLmysqli->dbquery($q);
 				$_POST['accroleid'] = null;
 			break;		
 		}
 	}
 
-	$mysqli->set_scenerysessionvalues();
-	$mysqli->set_rolesessionvalues();
+	$GBLmysqli->set_scenerysessionvalues();
+	$GBLmysqli->set_rolesessionvalues();
 
 ?>
 
@@ -69,12 +69,15 @@
 <?php
   if($_SESSION['role']['isadmin']) {
 	$q = "SELECT * FROM `account` ORDER BY `name`;";
-	$sqlusers = $mysqli->dbquery($q);
+	$sqlusers = $GBLmysqli->dbquery($q);
 	while ($usrrow = $sqlusers->fetch_assoc()) {
 		echo '<div id="acc'.$usrrow['id'].'div">&nbsp;<br></div><br><br>';
 
 		echo formpost($thisform.'#acc'.$usrrow['id'].'div');
 		echo formhiddenval('usrid',$usrrow['id']);
+		if ($usrrow['id'] == $_POST['usrid']) {
+			highlightbegin();
+		}
 		echo spanformat('','darkblue','User: <b>' . $usrrow['name'] . ' / ' . $usrrow['email'] . '</b>');
 		echo '&nbsp;&nbsp;&nbsp;&nbsp; Reset passwd?';
 		formselectsession('resetpasswd','bool',0);
@@ -90,24 +93,25 @@
 		echo '</form>';
 		echo formpost($thisform);
 		echo formhiddenval('usrid',$usrrow['id']);
-		echo ' &nbsp;&nbsp;Delete?';
+		echo spanformat('','red',' &nbsp;&nbsp;Delete?',null,true);
 		formselectsession('userdelete','bool',0);
-		echo formsubmit('act','Delete User') . '<br>';
+		echo spanformat('','red',formsubmit('act','Delete User') . '<br>',null,true);
 		echo '</form>';
 		$q = "SELECT `role`.* , `accrole`.`id` AS `accroleid` FROM `accrole`,`role` WHERE `accrole`.`role_id` = `role`.`id` AND `accrole`.`account_id` = '" . $usrrow['id'] . "' ;";
-		$sqlrole = $mysqli->dbquery($q);
+		$sqlrole = $GBLmysqli->dbquery($q);
 		while ($rolerow = $sqlrole->fetch_assoc()) {
 			echo formpost($thisform.'#acc'.$usrrow['id'].'div');
 			echo formhiddenval('accroleid',$rolerow['accroleid']);
+			echo formhiddenval('usrid',$usrrow['id']);
 			if ($rolerow['accroleid'] == $_POST['accroleid']) {
 				formselectsession('newroleid','roleslist',$rolerow['id']);
 				echo formsubmit('act','Change Role');
 			} else {
 				echo formsubmit('act','Edit Role');
 				echo '&nbsp;&nbsp;&nbsp;&nbsp; ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
-				echo ' &nbsp;&nbsp;Delete?';
+				echo spanformat('','red',' &nbsp;&nbsp;Delete?');
 				formselectsession('roledelete','bool',0);
-				echo formsubmit('act','Delete Role') .'<br>';
+				echo spanformat('','red',formsubmit('act','Delete Role') .'<br>');
 			}
 			echo '</form>';
 		}
@@ -116,6 +120,10 @@
 		formselectsession('newroleid','roleslist',15);
 		echo formsubmit('act','Add Role');
 		echo '</form><p>';	
+		if ($usrrow['id'] == $_POST['usrid']) {
+			highlightend();
+		}
+	
 		
 	}
   }

@@ -8,7 +8,7 @@
 	</p>     <p align="justify">
 	</p>     <p align="justify">
 
-		<h5><a href="<?php echo $basepage; ?>?st=logout">logout</a></h5>
+		<h5><a href="<?php echo $GBLbasepage; ?>?st=logout">logout</a></h5>
     </div>
     
     <div class="col-sm-4">

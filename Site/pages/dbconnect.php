@@ -57,7 +57,7 @@ class DBclass extends mysqli {
 			$callerA['function'].'><'.$callerB['function'].'><'.$callerC['function'].'>  action:'.$logdata['action'].'==>'.$logdata['str'].'('.$logdata['xtra'].')';
 		//
 		if (!($stmt = $this->prepare("INSERT INTO `log` (loglevel_id,user_id,browserIP,browseragent,callerA,callerB,callerC,action,logline,logxtra,dataorg,datanew) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"))) {
-			$str = '<br>LOG Prepare failed: (' . $mysqli->errno . ') ' . $mysqli->error;
+			$str = '<br>LOG Prepare failed: (' . $GBLmysqli->errno . ') ' . $GBLmysqli->error;
 			echo $str;
 			writeLogFile("$str \n $logline \n"); // last resort !!!
 		}
@@ -161,6 +161,9 @@ class DBclass extends mysqli {
 		$_SESSION['bool'][0] = 'Não';
 		$_SESSION['bool'][1] = 'Sim';
 
+		
+		$_SESSION['orderby'][0] = 'Nome';
+		$_SESSION['orderby'][1] = 'Código';
 		
 	}
 
@@ -280,8 +283,6 @@ class DBclass extends mysqli {
 
 }
 
-
-
 /////
 /////
 /////
@@ -292,9 +293,6 @@ include 'pages/coreconnect.php';
 // to reduce the number of DB calls (inside a SESSION)
 function dbsessionset() {
 }
-
-
-
 
 
 ?>

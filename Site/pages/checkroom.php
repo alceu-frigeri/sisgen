@@ -1,19 +1,19 @@
 
-<?php $thisform=$basepage.'?q=check&sq=room'; ?>
+<?php $thisform=$GBLbasepage.'?q=check&sq=room'; ?>
 
 <div class="row">
         <h2>Verificação Salas p/prédio</h2>
         <hr>
 
 <?php 
-	$mysqli->postsanitize();
+	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
-	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name;",'semid',$_POST['semid'],'id','name');
+	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM building WHERE mark = 1 ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
-	echo formsubmit('act','Check') . '<br>';
+	echo  '<br>';
 	
-	formselectscenery('scen.acc.view');	
+	formselectscenery('scen.acc.view',formsubmit('act','Refresh') );	
 	
 	echo '</form>';
    
@@ -29,7 +29,7 @@
 
 
 	$q = "SELECT room.* FROM room,building WHERE room.building_id = building.id AND building.id = '".$_POST['buildingid']."' ORDER BY room.acronym;";
-	$roomsql = $mysqli->dbquery($q);
+	$roomsql = $GBLmysqli->dbquery($q);
 	while ($roomrow = $roomsql->fetch_assoc()) {
 		
 		$q = "SELECT DISTINCT `discipline`.`name` AS `discname`, `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* " . 
@@ -55,4 +55,4 @@
  ?>
     
  
-</div>
+</div> 

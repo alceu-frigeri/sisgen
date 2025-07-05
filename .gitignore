@@ -18,6 +18,9 @@
 ## TeXstudio
 *.txss2
 
+## WinEdt
+*.prj
+
 ## Intermediate documents:
 *.dvi
 *.xdv
@@ -30,9 +33,8 @@
 ## temp/live data directory
 excel/
 
-## Deprecated directory
-Deprecated/
-alteracoes/
+## site specific temp data directory
+Site/csv/*
 
 ##password sensitive information
 Site/pages/coreconnect.php

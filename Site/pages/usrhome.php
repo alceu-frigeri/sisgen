@@ -1,7 +1,7 @@
 <?php
 
-	$thisform=$basepage.'?q=home';
-	$logout=$basepage.'?st=logout';
+	$thisform=$GBLbasepage.'?q=home';
+	$logout=$GBLbasepage.'?st=logout';
 
 function usrdata() {
 	echo "<div id='currentdata'><h3>Dados Atuais</h3><hr>" .
@@ -35,15 +35,15 @@ function usrdata() {
 				include 'usrpasswd.php';
 				break;
 			case 'Atualizar Senha':
-				$passwd = $mysqli->real_escape_string($_POST['passORG']);
-				$newpasswd = $mysqli->real_escape_string($_POST['passA']);
-				if ($mysqli->hashpasswdcheck($passwd)) {
+				$passwd = $GBLmysqli->real_escape_string($_POST['passORG']);
+				$newpasswd = $GBLmysqli->real_escape_string($_POST['passA']);
+				if ($GBLmysqli->hashpasswdcheck($passwd)) {
 				  $q = "UPDATE `account` SET `chgpasswd` = '0' ,  `password` =  '".$newpasswd."' WHERE `id` = '" . $_SESSION['userid'] . "';";
-				  $mysqli->dbquery($q);
+				  $GBLmysqli->dbquery($q);
 				  echo 'Senha Atualizada.<br>';
 				  if ($_SESSION['userchgpasswd']) {
 					$_SESSION['userchgpasswd'] = 0;
-					echo pagereload($basepage);
+					echo pagereload($GBLbasepage);
 				  }
 				  
 				} else {
@@ -58,8 +58,8 @@ function usrdata() {
 			case 'Editar Dados':
 				echo formpost($thisform);
 				echo '<table>';
-				echo '<tr><td>Nome: </td><td>' . formpatterninput(16,16,$namepattern,'Nome Abreviado','usrdisplayname',$_SESSION['userdisplayname']) . '</td></tr>';
-				echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128,48,$namepattern,'Nome Completo','usrname',$_SESSION['username']) . '</td></tr>';
+				echo '<tr><td>Nome: </td><td>' . formpatterninput(16,16,$GBLnamepattern,'Nome Abreviado','usrdisplayname',$_SESSION['userdisplayname']) . '</td></tr>';
+				echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128,48,$GBLnamepattern,'Nome Completo','usrname',$_SESSION['username']) . '</td></tr>';
 				echo '<tr><td></td><td>' .formsubmit('act','Atualizar Dados') . '</td></tr>';
 				echo '</table>';
 				echo '</form>';
@@ -67,8 +67,8 @@ function usrdata() {
 			case 'Atualizar Dados':
 				$_SESSION['username'] = $_POST['usrname']; 
 				$_SESSION['userdisplayname'] = $_POST['usrdisplayname']; 
-				$q = "UPDATE `account` SET `name` =  '" . $mysqli->real_escape_string($_POST['usrname'])  ."' , `displayname` =  '" . $mysqli->real_escape_string($_POST['usrdisplayname'])  . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
-				$mysqli->dbquery($q);
+				$q = "UPDATE `account` SET `name` =  '" . $GBLmysqli->real_escape_string($_POST['usrname'])  ."' , `displayname` =  '" . $GBLmysqli->real_escape_string($_POST['usrdisplayname'])  . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
+				$GBLmysqli->dbquery($q);
 				usrdata();
 				break;
 			default :
