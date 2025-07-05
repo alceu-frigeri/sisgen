@@ -12,8 +12,8 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 				'course' => array('page'=> 'reportcourse.php', 'label' => 'Cursos'),
 				'prof' => array('page'=> 'reportprof.php', 'label' => 'Professores'),
 				'room' => array('page'=> 'reportroom.php', 'label' => 'Salas'),
-				'dept' => array('page'=> 'reportdept.php', 'label' => 'Departamento'),
-				'assignment' => array('page'=> 'reportassignment.php', 'label' => 'Encargos'),				
+				'dept' => array('page'=> 'reportdept.php', 'label' => 'Depto. p/ Disc.'),
+				'assignment' => array('page'=> 'reportassignment.php', 'label' => 'Depto. p/ Prof.'),				
 				'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad'),
 				'enrollment' => array('page'=> 'reportenrollment.php', 'label' => 'Hist. Ocupação'),
 			)
@@ -24,8 +24,6 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 				'course' => array('page'=> 'checkcourse.php', 'label' => 'Cursos'),
 				'prof' => array('page'=> 'checkprof.php', 'label' => 'Professores'),
 				'room' => array('page'=> 'checkroom.php', 'label' => 'Salas'),
-				// 'dept' => array('page'=> 'reportdept.php', 'label' => 'Departamento'),
-				// 'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad'),
 			)
 		);
 		$menu['edits'] = array(
