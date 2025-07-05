@@ -34,7 +34,7 @@
 excel/
 
 ## site specific temp data directory
-Site/csv/*
+Site/csv/*.csv/
 
 ##password sensitive information
 Site/pages/coreconnect.php
