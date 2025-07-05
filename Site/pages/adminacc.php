@@ -17,13 +17,11 @@
 	if($_SESSION['role']['isadmin']) {
 		switch ($_POST['act']) {
 			case 'Submit':
-				if(_POST['resetpasswd']) {
+				if($_POST['resetpasswd']) {
 					$pass = " , `password` = 'abc123xyz' , `chgpasswd` = '1' ";
-				} else {
-					$pass='';
-				}
 					$q = "UPDATE `account` SET `activ` = '" . $_POST['activ'] . "' $pass WHERE `id` = '" . $_POST['usrid'] . "';";
 					$GBLmysqli->dbquery($q);
+				}
 			break;
 			case 'Delete User':
 				if ($_POST['userdelete']) {
@@ -71,9 +69,9 @@
 	$q = "SELECT * FROM `account` ORDER BY `name`;";
 	$sqlusers = $GBLmysqli->dbquery($q);
 	while ($usrrow = $sqlusers->fetch_assoc()) {
-		echo '<div id="acc'.$usrrow['id'].'div">&nbsp;<br></div><br><br>';
+                echo hiddendivkey('acc',$usrrow['id']);
 
-		echo formpost($thisform.'#acc'.$usrrow['id'].'div');
+		echo formpost($thisform.targetdivkey('acc',$usrrow['id']));
 		echo formhiddenval('usrid',$usrrow['id']);
 		if ($usrrow['id'] == $_POST['usrid']) {
 			highlightbegin();
@@ -90,9 +88,6 @@
 		echo '&nbsp;&nbsp;&nbsp;&nbsp; Activ?';
 		formselectsession('activ','bool',$usrrow['activ']);	
 		echo formsubmit('act','Submit') . '<br>';
-		echo '</form>';
-		echo formpost($thisform);
-		echo formhiddenval('usrid',$usrrow['id']);
 		echo spanformat('','red',' &nbsp;&nbsp;Delete?',null,true);
 		formselectsession('userdelete','bool',0);
 		echo spanformat('','red',formsubmit('act','Delete User') . '<br>',null,true);
@@ -100,7 +95,8 @@
 		$q = "SELECT `role`.* , `accrole`.`id` AS `accroleid` FROM `accrole`,`role` WHERE `accrole`.`role_id` = `role`.`id` AND `accrole`.`account_id` = '" . $usrrow['id'] . "' ;";
 		$sqlrole = $GBLmysqli->dbquery($q);
 		while ($rolerow = $sqlrole->fetch_assoc()) {
-			echo formpost($thisform.'#acc'.$usrrow['id'].'div');
+			//echo formpost($thisform.'#acc'.$usrrow['id'].'div');
+                        echo formpost($thisform.targetdivkey('acc',$usrrow['id']));
 			echo formhiddenval('accroleid',$rolerow['accroleid']);
 			echo formhiddenval('usrid',$usrrow['id']);
 			if ($rolerow['accroleid'] == $_POST['accroleid']) {
@@ -115,11 +111,11 @@
 			}
 			echo '</form>';
 		}
-		echo formpost($thisform.'#acc'.$usrrow['id'].'div');
+                echo formpost($thisform.targetdivkey('acc',$usrrow['id']));
 		echo formhiddenval('usrid',$usrrow['id']);
 		formselectsession('newroleid','roleslist',15);
 		echo formsubmit('act','Add Role');
-		echo '</form><p>';	
+		echo '</form>';	
 		if ($usrrow['id'] == $_POST['usrid']) {
 			highlightend();
 		}
@@ -132,4 +128,4 @@
 
 		
  
-</div>
+</div> 

@@ -204,6 +204,7 @@ class DBclass extends mysqli {
 		$q = "SELECT * FROM `scenery` WHERE '1' ORDER BY `name`;";
 		$result = $this->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
+                        $_SESSION['scen.desc'][$sqlrow['id']] = $sqlrow['desc'] ; 
 			if ($_SESSION['role']['isadmin']) {
 				$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; 
 				$_SESSION['scen.acc.edit'][$sqlrow['id']] = $sqlrow['name'] ; 

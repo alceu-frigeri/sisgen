@@ -96,10 +96,11 @@
 	$q = "SELECT `role`.*, `unit`.`acronym` FROM `role`,`unit` WHERE `role`.`unit_id` = `unit`.`id` ORDER BY `rolename`;";
 	$sqlroles = $GBLmysqli->dbquery($q);
 	while ($rolerow = $sqlroles->fetch_assoc()) {
-		echo '<div id="role'.$rolerow['id'].'div">&nbsp;<br></div><br><br>';
+		
+                echo hiddendivkey('role',$rolerow['id']);
 
 		if ($rolerow['id'] == $_POST['roleid']) {
-			echo '<br>'.formpost($thisform.'#role'.$rolerow['id'].'div') . formhiddenval('roleid',$rolerow['id']);
+			echo '<br>'.formpost($thisform.targetdivkey('role',$rolerow['id'])) . formhiddenval('roleid',$rolerow['id']);
 			echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
 			echo 'Nome:' . formpatterninput(32,8,$pattern,'role name','rolename',$rolerow['rolename']) .
 			 'Descriçao:' . formpatterninput(64,32,$pattern,'role name','description',$rolerow['description']);
@@ -203,4 +204,4 @@
 
 		
  
-</div>
+</div> 

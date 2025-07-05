@@ -13,7 +13,10 @@ $GBLbasepage='/sisgen/';
 $GBLdebug=true;
 
 $sisgensetup=true; //to enable/disable 'initial' import/fix pages (admin)
+$sisgenfullsetup=false; // this disable the "initial data imports"
+$sisgenDBsetupHacks=false; // this disable whatever "DB import hack"
 $sisgenimportCSV=true; //'new' simple way, direct from CSV file...
+
 
 // some handy/aux values
 	$GBLcommentcolor='teal';
@@ -752,6 +755,27 @@ function scenery_sql($inscenery) {
 
 		}
 		echo '</tr></table>';
+        		echo '<details>';
+        		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> Legenda: ';
+                        echo '</summary>';
+		$cnt = 0;
+		echo '<table><tr>';
+		foreach ($_SESSION[$scenlst] as $scenid => $scenname) {
+			$cnt++;
+			if ($cnt == 7) {
+				$cnt = 1;
+				echo '</tr><tr>';
+			}
+                        $style = '';
+			if ($_SESSION['sceneryselected'][$scenid]) {
+				$style=';background-color: lightgray';
+			};
+                        echo '<td style="width:170px' . $style . '"><b>' . $scenname .':</b> '. $_SESSION['scen.desc'][$scenid].'</td>';
+                
+                }
+
+		echo '</tr></table>';
+        		echo '</details>';
 		if ($xtra) {
 			echo $xtra;
 		}

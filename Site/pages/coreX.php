@@ -246,8 +246,6 @@ function disccourserem($disclist,$courseid) {
 	}
 }
 
-// 07041 -> 33
-// 857 995 1056 2835
 ?> 
 
 

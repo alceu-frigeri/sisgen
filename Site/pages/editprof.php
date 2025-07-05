@@ -61,23 +61,13 @@
 		formselectsql($anytmp,"SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit.acronym;",'unitid',$_POST['unitid'],'id','acronym');
 	}
 	
-	
-		
-	?>
-	
-<br>
-
-
-
-		
-<?php
-
 
 // course, term
   $q = "SELECT * FROM   `prof` WHERE `dept_id` = '".$_POST['unitid']."' ORDER BY `profkind_id`,`name`;";
 
   $result=$GBLmysqli->dbquery($q);
   $anyone = 0;
+  $first = true;
   if ($postedit & $can_prof) {
 	  while ($sqlrow=$result->fetch_assoc()) {
 	  	echo formpost($thisform.targetdivkey('prof',$sqlrow['id']));
@@ -121,20 +111,26 @@
 
   } else {
 	  while ($sqlrow=$result->fetch_assoc()) {
-		  $anyone = 1;
+               if ($first) {
+                  if ($can_prof) {
+                          echo formsubmit('act','Edit');
+                  } 
+                  echo '<br>';
+                  $first = false;
+               } 
 		  echo $_SESSION['profkind'][$sqlrow['profkind_id']].'&nbsp;&nbsp;'.$sqlrow['name'].'&nbsp;&nbsp; ('.$sqlrow['nickname'].')<br>';
 	  }
   }
 
 
 
-  if ($postedit & $can_prof) {
-  } else {
-  	if ($anyone & $can_prof) {
-		echo formsubmit('act','Edit');
-	}
+//  if ($postedit & $can_prof) {
+//  } else {
+//  	if ($anyone & $can_prof) {
+//		echo formsubmit('act','Edit');
+//	}
 	//echo formsubmit('act','Refresh');
-  }
+//  }
 
 	echo '</form>';
 	

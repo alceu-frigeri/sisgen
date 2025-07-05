@@ -23,7 +23,6 @@
 
 
 <?php 
-	echo formpost($thisform);
 
 	switch ($_POST['act']) {
 		case 'Insert':
@@ -45,7 +44,8 @@
 	}
 	
 
-
+	echo formpost($thisform);
+        $firstofmany=false;
 	if ($postedit & $can_discipline) {
 		echo formhiddenval('unitid',$_POST['unitid']);
 		echo formhiddenval('orderby',$_POST['orderby']);
@@ -57,22 +57,13 @@
 		echo "Ordenado por:  ";
 		formselectsession('orderby','orderby',$_POST['orderby'],false,true);
 		//echo formsubmit('act','Refresh');
-		if ($can_discipline) {
-			echo formsubmit('act','Edit');
-		}
-
-		echo '</form>';
+                $firstofmany=true;
+//		if ($can_discipline) {
+//			echo formsubmit('act','Edit');
+//		}
+//		echo '</form>';
 	}
 			
-	?>
-	
-<br>
-
-
-
-		
-<?php
-
 
 // course, term
   if ($_POST['orderby'] == 0) {
@@ -149,6 +140,10 @@
   } else {
 	  while ($sqlrow=$result->fetch_assoc()) {
 		  $anyone = 1;
+                if ($firstofmany) {
+                        $firstofmany = false;
+                        echo formsubmit('act','Edit') .  '</form><br>';
+                }
 		  echo $sqlrow['code'].'&nbsp;&nbsp;&nbsp;T: '.$sqlrow['Tcred'].'&nbsp;&nbsp;L: '.$sqlrow['Lcred'].'&nbsp;&nbsp; '.$sqlrow['name'];
 		  if ($sqlrow['comment']) {
 			  echo '&nbsp;&nbsp;&nbsp;' . spanformat('smaller',$GBLcommentcolor,$sqlrow['comment']);

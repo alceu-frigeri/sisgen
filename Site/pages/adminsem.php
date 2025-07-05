@@ -35,7 +35,7 @@
 			break;
 		}
 
-		$q = "SELECT * FROM `semester` ORDER BY `name`;";
+		$q = "SELECT * FROM `semester` ORDER BY `name` DESC;";
 		$semsql = $GBLmysqli->dbquery($q);
 		while ($semrow = $semsql->fetch_assoc()) {
 			echo formpost($thisform) . formhiddenval('semid',$semrow['id']);

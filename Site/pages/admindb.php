@@ -16,7 +16,7 @@
   if($_SESSION['role']['isadmin'] & $sisgensetup) {
 	switch($_POST['act']) {
 		case 'Import Initial Data':
-			if($_POST['importdata']) {
+			if($_POST['importdata'] & $sisgenfullsetup) {
 				echo '<h3>Importing Initial Data</h3>';
 				echo 'going over it...<br>';
 				
@@ -273,7 +273,7 @@
 			}
 		break;
 		case 'Courses Adjust':
-		if($_POST['courseadjust']){
+		if($_POST['courseadjust'] & $sisgenDBsetupHacks){
 			// $q = "SELECT `id` FROM `unit` WHERE `acronym` = 'CCA';";
 			// $result = $GBLmysqli->dbquery($q);
 			// $oldcourse = $result->fetch_assoc();
@@ -405,24 +405,34 @@
 		break;
 		
 	}
-	echo formpost($thisform);
-	formselectsession('importdata','bool',0);
-	echo formsubmit('act','Import Initial Data') . '</form><p>';
+        if ($sisgenfullsetup) {
+        	echo formpost($thisform);
+        	formselectsession('importdata','bool',0);
+        	echo formsubmit('act','Import Initial Data') . '</form><p>';
+        }
+
 	echo formpost($thisform);
 	formselectsession('fixvacancies','bool',0);
 	echo formsubmit('act','Fix Vacancies') . '</form><p>';
+
 	echo formpost($thisform);
 	formselectsession('dumptables','bool',0);
 	echo formsubmit('act','Dump acc/unit tables') . '</form><p>';
+
 	echo formpost($thisform);
 	formselectsession('restoretables','bool',0);
 	echo formsubmit('act','Restore acc/unit tables') . '</form><p>';	
-	echo formpost($thisform);
-	formselectsession('courseadjust','bool',0);
-	echo formsubmit('act','Courses Adjust') . '</form><p>';	
+
+        if ($sisgenDBsetupHacks) {
+        	echo formpost($thisform);
+        	formselectsession('courseadjust','bool',0);
+        	echo formsubmit('act','Courses Adjust') . '</form><p>';	
+        }
+
 	echo formpost($thisform);
 	formselectsession('termdata','bool',0);
 	echo formsubmit('act','Import Term Data') . '</form><p>';
+
 	echo formpost($thisform);
 	formselectsession('coursedata','bool',0);
 	echo formsubmit('act','Import Course Data') . '</form><p>';
@@ -433,4 +443,4 @@
  ?>
     
  
-</div>
+</div> 

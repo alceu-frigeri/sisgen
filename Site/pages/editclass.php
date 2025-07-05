@@ -438,7 +438,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		echo  '</form>';
 	} else {
 		echo formpost($thisform);
-		formselectsql($anytmp,"SELECT * FROM semester ORDER BY name;",'semid',$_POST['semid'],'id','name');
+		formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
 		formselectsql($anytmp,"SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['unitid']."' ORDER BY name;",'discid',$_POST['discid'],'id','code','name');
 		//formselectscenery('scen.acc.view');
@@ -501,8 +501,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	while ($classrow = $result->fetch_assoc()) {
 		$anyone = 1;
 		if ($postedit) {
-			echo '<div id="class'.$classrow['id'].'div">&nbsp;</div>';
-			echo '<br><br>';
+                        echo hiddendivkey('class',$classrow['id']);
 			thisformpost('class'.$classrow['id'].'div');
 			echo formhiddenval('classid',$classrow['id']);
 			echo formhiddenval('classname',$classrow['name']);
@@ -530,7 +529,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 			
 			if ($can_addclass) {
 				thisformpost();
-				echo 'Replicar Turma:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
+				echo 'Replicar esta Turma como:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
 				echo formhiddenval('classid',$classrow['id']);
 				formselectsession('addclass','bool',0);
 				echo formsubmit('act','Replicate Class') . '</form>';
@@ -585,4 +584,4 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		
     
  
-</div>
+</div> 
