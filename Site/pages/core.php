@@ -20,12 +20,14 @@ $sisgenimportCSV=true; //'new' simple way, direct from CSV file...
 
 // some handy/aux values
 	$GBLcommentcolor='teal';
-//	$GBLcommentpattern='[a-zA-Z0-9 \'\"\?\!\.\-]+';
-	$GBLcommentpattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \*\(\)\.\-]+';
+	$GBLcommentpattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ :\*\(\)\.\-\+]+';
 	$GBLdiscpattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \(\)\-]+';
-	$GBLnamepattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \_\'\-\.@]+';
+	$GBLnamepattern='[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \'\-\.@_]+';
 	$GBLpasswdpattern='(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
 	$GBLclasspattern = '[A-Z][A-Za-z0-9\*\-\+@]*';
+
+// $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
+
 	
 	$GBLspc='&nbsp;&nbsp;';
 	$GBLDspc=$GBLspc.$GBLspc;

@@ -173,7 +173,7 @@ class DBclass extends mysqli {
 		$q = "SELECT role.* , unit.acronym, unit.code, unit.iscourse, unit.isdept FROM role , unit  , accrole accr , account  WHERE " . 
 			"role.unit_id = unit.id AND role.id = accr.role_id AND account.id = accr.account_id AND account.id = '".$_SESSION['userid']."';";
 		$result = $this->dbquery($q);
-		$boolkeys  = array('can_edit','can_dupsem','can_vacancies','can_class','can_addclass','can_disciplines','can_coursedisciplines','can_prof','can_viewlog');
+		$boolkeys  = array('can_edit','can_dupsem','can_vacancies','can_class','can_addclass','can_disciplines','can_coursedisciplines','can_prof','can_viewlog','can_scenery');
 		$txtkeys = array('rolename','description');
 		$_SESSION['usercanedit'] = '1';
 		while ($sqlrow = $result->fetch_assoc()) {
@@ -218,18 +218,28 @@ class DBclass extends mysqli {
 				}
 			} else {
 				$_SESSION['scen.unhidden'][$sqlrow['id']] = $sqlrow['name'] ; // all 'unhidden' => that's for reports
-				$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; // all the account can view
+				$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; // all accounts can view
 				$_SESSION['scen.all'][$sqlrow['id']] = $sqlrow['name'] ; // all 
 			}
 		}
 		$result->close();
 
-		$q = "SELECT DISTINCT scenery.* FROM `scenery` , `sceneryrole` , `accrole`  " . 
-			"WHERE `scenery`.`id` = `sceneryrole`.`scenery_id` AND `sceneryrole`.`role_id` = `accrole`.`role_id` AND  `accrole`.`account_id` = '" . $_SESSION['userid'] . "';";
+//		$q = "SELECT DISTINCT scenery.* FROM `scenery` , `sceneryrole` , `accrole`  " . 
+//			"WHERE `scenery`.`id` = `sceneryrole`.`scenery_id` AND `sceneryrole`.`role_id` = `accrole`.`role_id` AND  `accrole`.`account_id` = '" . $_SESSION['userid'] . "';";
+
+		$q = "SELECT DISTINCT scenery.* , role.can_scenery , sceneryrole.role_id FROM `scenery` , `sceneryrole` , `accrole`  , `role` " . 
+			"WHERE `scenery`.`id` = `sceneryrole`.`scenery_id` AND `sceneryrole`.`role_id` = `accrole`.`role_id` AND `accrole`.`role_id` = `role`.`id` AND  `accrole`.`account_id` = '" . $_SESSION['userid'] . "';";
+
 		$result = $this->dbquery($q);
 		while ($sqlrow = $result->fetch_assoc()) {
-			$_SESSION['scen.acc.edit'][$sqlrow['id']] = $sqlrow['name'] ; // all the user can add/remove classes to/from => that's for editclass
+			$_SESSION['scen.acc.edit'][$sqlrow['id']] = $sqlrow['name'] ; // all users can add/remove classes to/from => that's for editclass
 			$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ;
+
+                        $_SESSION['role.scen'][$sqlrow['role_id']][$sqlrow['id']] = $sqlrow['can_scenery'];
+                        $_SESSION['role.scen'][$sqlrow['role_id']]['can_scenery'] = $sqlrow['can_scenery'];
+                        if ($sqlrow['can_scenery']) {
+                                $_SESSION['scen.role'][$sqlrow['id']] = $sqlrow['can_scenery'];
+                        }
 		}
 //		sort($_SESSION['scen.all']);
 //		sort($_SESSION['scen.hidden']);

@@ -15,6 +15,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 				'dept' => array('page'=> 'reportdept.php', 'label' => 'Depto. p/ Disc.'),
 				'assignment' => array('page'=> 'reportassignment.php', 'label' => 'Depto. p/ Prof.'),				
 				'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad'),
+                                'scenery' => array('page'=> 'reportscenery.php', 'label' => 'Cenários'),
 				'enrollment' => array('page'=> 'reportenrollment.php', 'label' => 'Hist. Ocupação'),
 			)
 		);
@@ -30,6 +31,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
 			'hasChildren' => true,'page' => 'home.php', 'label' => 'Edição','visible' => true,
 			'children' => array(
 				'classes' => array('page'=> 'editclass.php', 'label' => 'Turmas'),
+				'scenery' => array('page'=> 'editscenery.php', 'label' => 'Cenários'),                        
 				'Disciplines' => array('page'=> 'editdisc.php', 'label' => 'Disciplinas'),
 				'Course' => array('page'=> 'editcourse.php', 'label' => 'Grades'),
 				'Prof' => array('page'=> 'editprof.php', 'label' => 'Professores'),

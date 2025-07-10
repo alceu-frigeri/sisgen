@@ -12,7 +12,7 @@
 <?php 
     //vardebug($_POST);
 
-				//vardebug($_SESSION['scenery']);
+//				vardebug($_SESSION);
 				//vardebug($_SESSION['org'][sceneryusr]);
 				//vardebug($_SESSION['org'][sceneryclass]);
 				//vardebug($_POST);
@@ -32,16 +32,33 @@
 	$can_addclass=($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
 	
 	$GBLmysqli->postsanitize();
-				//vardebug($_POST);
+//				vardebug($_POST);
+//                                vardebug($can_class);
+//                                vardebug($can_addclass);
+//                                vardebug($_SESSION['role']);
+
+
+//$can_class = true;
+//$can_addclass = false;
+
+
+// TO BE REVIEWED !!! 
+// LOGIC ERROR !!!
+
 
 	$postedit = false;
-	if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') ) & $can_class ) {
+//	if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') ) & $can_class ) {
+	if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') )  ) {
 		$postedit = true;
 	} else {
 		if ((($_POST['act'] == 'Add Class') | ($_POST['act'] == 'Replicate Class') ) & $can_addclass) {
 			$postedit = true;
 		} else {
-			$_POST['act'] = 'Cancel';
+              		if ((($_POST['act'] == 'Add Class in Scenery') | ($_POST['act'] == 'Replicate Class in Scenery') ) ) {
+                        $postedit = true;
+                        } else {
+			     $_POST['act'] = 'Cancel';
+                        }
 		}
 	}
 

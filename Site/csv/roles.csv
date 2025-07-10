@@ -1,0 +1,25 @@
+1,admin,"Administrator account",1,1,1,1,1,0,1,1,1,1,1,1,1,ADMIN
+2,delae-f,"Dept. account DELAE (full)",0,1,0,1,1,0,1,1,0,1,1,0,3,DELAE
+3,delae,"Dept. account DELAE",0,1,0,1,0,0,1,0,0,0,0,0,3,DELAE
+4,demec-f,"Dept. account DEMEC (full)",0,1,0,1,1,0,1,1,0,1,1,0,4,DEMEC
+5,demec,"Dept. account DEMEC",0,1,0,1,0,0,1,0,0,0,0,0,4,DEMEC
+6,dequi-f,"Dept. account DEQUI (full)",0,1,0,1,1,0,1,1,0,1,1,0,5,DEQUI
+7,dequi,"Dept. account DEQUI",0,1,0,1,0,0,1,0,0,0,0,0,5,DEQUI
+8,cca-f,"COMGRAD account CCA (full)",0,1,0,1,1,0,1,1,1,0,0,0,6,Eng.CCA
+9,cca,"COMGRAD account CCA",0,1,0,1,0,0,1,0,0,0,0,0,6,Eng.CCA
+10,ene-f,"COMGRAD account ENE (full)",0,1,0,1,1,0,1,1,1,0,0,0,7,Eng.ENE
+11,ene,"COMGRAD account ENE",0,1,0,1,0,0,1,0,0,0,0,0,7,Eng.ENE
+12,ecp-f,"COMGRAD account ECP (full)",0,1,0,1,1,0,1,1,1,0,0,0,8,Eng.ECP
+13,ecp,"COMGRAD account ECP",0,1,0,1,0,0,1,0,0,0,0,0,8,Eng.ECP
+14,prof(a),"Prof. account (view only)",0,0,0,0,0,0,0,0,0,0,0,0,2,OTHERS
+15,sec(a),"Sec. account (view only)",0,0,0,0,0,0,0,0,0,0,0,0,2,OTHERS
+16,mec,"COMGRAD account MEC",0,1,0,1,0,0,1,0,0,0,0,0,10,Eng.MEC
+17,mec-f,"COMGRAD account MEC (full)",0,1,0,1,1,0,1,1,1,0,0,0,10,Eng.MEC
+18,dmpa-f,"Dept. account DMPA (semi-full)",0,1,0,1,1,0,1,0,0,0,0,0,11,DMPA
+19,defis-f,"Dept. account DEFIS (semi-full)",0,1,0,1,1,0,1,0,0,0,0,0,14,DEFIS
+20,dest-f,"Dept. DEST (semi-full)",0,1,0,1,1,0,1,0,0,0,0,0,29,DEST
+21,darq-f,"Dept. account DARQ (semi-full)",0,1,0,1,1,0,1,0,0,0,0,0,16,DEG
+22,promec-f,PROMEC,0,1,0,1,1,0,1,1,1,0,0,0,49,PROMEC
+23,delet-f,"Dept. account DELET",0,1,0,1,1,0,1,1,0,1,1,0,20,DELET
+24,ele-f,"COMGRAD account ELE (full)",0,1,0,1,1,0,1,1,1,0,0,0,9,Eng.ELE
+25,ele,"COMGRAD account ELE",0,1,0,1,0,0,1,0,0,0,0,0,9,Eng.ELE

@@ -1,0 +1,56 @@
+1,ADMIN,-A-,"Admin. place holder",,,,0,0,0
+2,OTHERS,-O-,"Others place holder",,,,0,0,0
+3,DELAE,ENG10,"Departamento de Sistemas Elétricos de Automação e Energia","Lucíola Campestrini",delae@ufrgs.br,33083561,0,1,1
+4,DEMEC,ENG03,"Departamento de Engenharia Mecânica","Leticia Jenisch Rodrigues",chefia_demec@ufrgs.br,33083929,0,1,1
+5,DEQUI,ENG07,"Departamento de Engenharia Química","Liliane Damaris Pollo",dequi@enq.ufrgs.br,33082199,0,1,0
+6,Eng.CCA,CCA99,"Eng. de Controle e Automação","Fabiano Disconzi Wildner",comgrad_cca@ufrgs.br,33084541,1,0,1
+7,Eng.ENE,EEN99,"Eng. de Energia","Roberto Chouhy Leborgne",comgradener@ufrgs.br,33083561,1,0,1
+8,Eng.ECP,ECP99,"Eng. de Computação","Cláudio Machado Diniz",comgrad-ecp@ufrgs.br,33086162,1,0,1
+9,Eng.ELE,ELE99,"Eng. Elétrica","Ivan Müller",comgradele@ufrgs.br,,1,0,1
+10,Eng.MEC,MEC99,"Eng. Mecânica","Patric Neyes","comgradmec@ufrgs.br ",33084541,1,0,1
+11,DMPA,MAT01,"Departamento de Matemática Pura e Aplicada","Evandro Manica ",dmpa@mat.ufrgs.br,33086189,0,1,0
+12,INA,INF01,"Departamento de Informática Aplicada","Jeferson Campos Nobre",sec.deps@inf.ufrgs.br,33087033,0,1,0
+13,INT,INF05,"Departamento de Informática Teórica","Mariana Luderitz Kolberg Fernandes",sec.deps@inf.ufrgs.br,33086157,0,1,0
+14,DEFIS,FIS01,"Departamento de Física","Antonio Marcos Helgueira de Andrade",depfis@if.ufrgs.br,33086438,0,1,0
+15,DCA,ADM01,"Departamento de Ciências Administrativas","Fernanda Müller",ea_dca@ufrgs.br,33083824,0,1,0
+16,DEG,ARQ03,"Departamento de Design e Expressão Gráfica","Sérgio Leandro dos Santos",arq03@ufrgs.br,33083124,0,1,0
+17,DERI,ECO02,"Departamento de Economia e Relações Internacionais","Fabian Scholze Domingues",deri@ufrgs.br,33083324,0,1,0
+18,DECIV,ENG01,"Departamento de Engenharia Civil","Cesar Alberto Ruver",chefia.deciv@ufrgs.br,33083450,0,1,0
+19,DEMAT,ENG02,"Departamento de Engenharia dos Materiais","Fabiano Gasparin",demat@ufrgs.br,33089468,0,1,0
+20,DELET,ENG04,"Departamento de Engenharia Elétrica","Alexandre Balbinot",delet@ufrgs.br,33083515,0,1,1
+21,DEMET,ENG06,"Departamento de Metalurgia","Thomas Clarke",demet@ufrgs.br,33089468,0,1,0
+22,DEPROT,ENG09,"Departamento de Engenharia de Produção e Transportes","Ricardo Augusto Cassel",secretaria@producao.ufrgs.br,33083491,0,1,0
+23,DEESP,EDU03,"Departamento de Estudos Especializados","Graciele Marjana Kraemer",dee@ufrgs.br,33083099,0,1,0
+24,DESOC,HUM04,"Departamento de Sociologia","Daniel Gustavo Mocelin",deptosifch@ufrgs.br,33086956,0,1,0
+25,DHH,IPH01,"Departamento de Hidromecânica e Hidrologia","Daniela Sanagiotto",dhh@iph.ufrgs.br,33086664,0,1,0
+26,DOH,IPH02,"Departamento de Obras Hidráulicas","Fernando Fan",doh@iph.ufrgs.br,33086664,0,1,0
+27,DLM,LET02,"Departamento de Línguas Modernas","Liliam Ramos",ilelet2@ufrgs.br,33086706,0,1,0
+28,DECOL,BIO11,"Departamento de Ecologia","Renato Azevedo Matias Silvano",ecologia@ufrgs.br,33087754,0,1,0
+29,DEST,MAT02,"Departamento de Estatística","Danilo Marcondes Filho",mat-dest@ufrgs.br,33086189,0,1,0
+30,DEPMSOC,MED05,"Departamento de Medicina Social","Paulo Antonio Barros Oliveira",administrativo-famed@ufrgs.br,33085117,0,1,0
+31,DQI,QUI01,"Departamento de Química Inorgânica","Silvana Inês Wolke",chefedqi@ufrgs.br,33086269,0,1,0
+32,CGQUI,QUI99,"Comissão de Graduação de Química",,comgradquimica@ufrgs.br,33086277,0,1,0
+33,DDET,DIR04,"Departamento de Direito Econômico e do Trabalho","Leandro do Amaral Dorneles de Dorneles",departamentos_dir@ufrgs.br,33083464,0,1,0
+34,DEA,FIS02,"Departamento de Astronomia","Charles José Bonatto",depastro@if.ufrgs.br,33086439,0,1,0
+35,DH,HUM03,"Departamento de História","Natalia Pietra Méndez",deptohis@ufrgs.br,33086625,0,1,0
+36,Eng.AMB,AMB99,"Eng. Ambiental",,,,1,0,0
+37,PPGEE,ELExx,"Prog. Pós-Graduação Eng. Elétrica",,,,1,0,1
+38,PPGIE,PEI00,"Prog. Pós-Graduação em Informática na Educação",,,,1,0,1
+39,DEGD,GEO05,"Departamento de Geodésia","Jair Weschenfelder",secretaria.igeo@ufrgs.br,33089802,0,1,0
+40,DEBOT,BIO02,"Departamento de Botânica","Maria Cecília de Chiara Moço",botanica@ufrgs.br,33087754,0,1,0
+41,DFQ,QUI03,"Departamento de Físico-Química"," Irene Teresinha Santos Garcia",chefia_dfq@ufrgs.br,33086259,0,1,0
+42,DMP,GEO03,"Departamento de Mineralogia e Petrologia","Antonio Pedro Viero",secretaria.igeo@ufrgs.br,33086359,0,1,0
+43,DEMIN,ENG05,"Departamento de Engenharia de Minas","Paulo Salvadoretti",demin@ufrgs.br,33089438,0,1,0
+44,DCP,DIR01,"Departamento de Ciências Penais","Ângelo Roberto Ilha da Silva",departamentos_dir@ufrgs.br,33083464,0,1,0
+45,DEMIC,CBS06,"Departamento de Microbiologia, Imunologia e Parasitologia","Ana Paula Guedes Frazzon",chefe-demic@ufrgs.br,,0,1,0
+46,DEGEG,GEO01,"Departamento de Geografia","Marcelo Argenta Câmara",secretaria.igeo@ufrgs.br,33086856,0,1,0
+47,DQO,QUI02,"Departamento de Química Orgânica","Douglas Gamba","douglas.gamba@ufrgs.br ",33086259,0,1,0
+48,VAERE,VAERE,"Vínculo Acadêmico - ERE",,,,0,1,0
+49,PROMEC,MECxx,"Prog. Pós-Graduação Eng. Mecânica",,,,1,0,1
+50,Eng.CIV,CIV99,"Eng. Civil",,,,1,0,1
+51,Eng.MAT,MAT99,"Eng. Materiais",,,,1,0,1
+52,Eng.MIN,MIN99,"Eng. Minas",,,,1,0,1
+53,Eng.ALI,ITA99,"Eng. Alimentos",,,,1,0,1
+54,Eng.QUI,QUI9x,"Eng. Química",,,,1,0,1
+55,Eng.MET,MET99,"Eng. Metalúrgica",,,,1,0,1
+56,Eng.PROD,PRO99,"Eng. Produção",,,,1,0,1

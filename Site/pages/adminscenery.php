@@ -18,7 +18,7 @@
 					$q = "UPDATE `scenery` SET `name` = '".$_POST['sceneryname'] ."', `desc` = '".$_POST['scenerydesc'] ."' , `hide` = '".$_POST['sceneryhide'] ."' ";
 					$q = $q .  " WHERE `id` = '".$_POST['sceneryid']."';";
 					$GBLmysqli->dbquery($q);
-				$_POST['roleid'] = null;
+				$_POST['sceneryid'] = null;
 			break;
 			case 'Add Scenery':
 				if ($_POST['addscenery']) {
@@ -37,7 +37,7 @@
 
 
 <?php
-  $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
+//  $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
   if($_SESSION['role']['isadmin']) {
 	$q = "SELECT * FROM `scenery` ORDER BY `name`;";
 	$sqlsceneries = $GBLmysqli->dbquery($q);
@@ -47,8 +47,8 @@
 			echo hiddendivkey('scen',$sceneryrow['id']);
 			highlightbegin();
 			echo formpost($thisform) . formhiddenval('sceneryid',$sceneryrow['id']);
-			echo 'Nome:' . formpatterninput(32,8,$pattern,'scenery name','sceneryname',$sceneryrow['name']) .
-			 'Descrição:' . formpatterninput(64,32,$pattern,'scenery description','scenerydesc',$sceneryrow['desc']);
+			echo 'Nome:' . formpatterninput(32,8,$GBLnamepattern,'scenery name','sceneryname',$sceneryrow['name']) .
+			 'Descrição:' . formpatterninput(64,32,$GBLcommentpattern,'scenery description','scenerydesc',$sceneryrow['desc']);
 			echo 'hide scenery? ';
      		formselectsession('sceneryhide','bool',$sceneryrow['hide']);
 			echo '<br>' . formsubmit('act','Submit');
@@ -73,8 +73,8 @@
 		}
 	}
 		echo formpost($thisform);
-		echo 'Nome:' . formpatterninput(32,8,$pattern,'scenery name','sceneryname','!') .
-		 'Descriçao:' . formpatterninput(64,32,$pattern,'scenery name','scenerydesc','!');
+		echo 'Nome:' . formpatterninput(32,8,$GBLnamepattern,'scenery name','sceneryname','!') .
+		 'Descriçao:' . formpatterninput(64,32,$GBLcommentpattern,'scenery name','scenerydesc','!');
 			echo '  hidden? ';
 			formselectsession('sceneryhide','bool',0);
 		echo '<br> Add scenery? ';
@@ -88,4 +88,4 @@
 
 		
  
-</div>
+</div> 
