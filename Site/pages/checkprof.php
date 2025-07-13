@@ -9,11 +9,13 @@
 	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','deptid'));
+
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit.name;",'deptid',$_POST['deptid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh') );	
+	formsceneryselect();	
 	echo '</form>';
 
 	
@@ -27,12 +29,12 @@
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
 
 
-	$q = "SELECT prof.* FROM prof,unit WHERE prof.dept_id = unit.id AND unit.id = '".$_POST['deptid']."' ORDER BY prof.name;";
+	$q = "SELECT DISTINCT prof.* FROM prof,unit,profkind WHERE prof.dept_id = unit.id  AND prof.profkind_id = profkind.id AND profkind.acronym <> '-none-' AND unit.id = '".$_POST['deptid']."' ORDER BY prof.name;";
 	$profsql = $GBLmysqli->dbquery($q);
 	while ($profrow = $profsql->fetch_assoc()) {
 	   echo '<br>';	
 	   $q = "SELECT DISTINCT `discipline`.`name` AS `discname`, `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* " . 
-		 " FROM `classsegment` , `class`, `semester`,`unit`,`discipline`,`prof` " . $qscentbl . " WHERE " . 
+		 " FROM `classsegment` , `class`, `semester`,`unit`,`discipline`,`prof`  $qscentbl  WHERE " . 
 		 "`class`.`discipline_id` = `discipline`.`id` AND `class`.`sem_id` = `semester`.`id` AND " . 
 		 "`classsegment`.`class_id` = `class`.`id` AND `classsegment`.`prof_id` = `prof`.`id` AND " . 
 		 "`unit`.`id` = '".$_POST['deptid']."' AND `semester`.`id` = '".$_POST['semid']."' AND " . 

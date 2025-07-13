@@ -7,7 +7,8 @@
 
 <?php 
 	$GBLmysqli->postsanitize();
-
+        formretainvalues(array('semid','allscenery','sceneryid'));
+        
 	echo formpost($thisform);
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	echo " Todos ? ";

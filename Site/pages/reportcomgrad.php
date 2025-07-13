@@ -9,6 +9,8 @@
 	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','courseid','deptid'));
+
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	
 	echo 'Curso:'; 
@@ -23,14 +25,9 @@
 	
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh') );
+	formsceneryselect();
 	echo '</form>';
 
-
-//	$in = "'0'";
-//	foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//		$in .= " , '".$scenid."'";
-//	}
 
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
@@ -62,8 +59,8 @@
 				//echo $temp; 
 				$emailbody .= $temp;
 
-				$q = "SELECT DISTINCT class.* , `vac`.`askednum` FROM  `class` , `vacancies` AS `vac` " . $qscentbl . " WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .
-				"`class`.`sem_id` = '" . $_POST['semid'] . "' AND `vac`.`class_id` = `class`.`id` AND `vac`.`askednum` > '0' AND `vac`.`course_id` = '" . $_POST['courseid'] . "' " . 
+				$q = "SELECT DISTINCT class.* , (`vac`.`askednum` + `vac`.`askedreservnum` ) as `askednum`  , `vac`.`askedreservnum` FROM  `class` , `vacancies` AS `vac` " . $qscentbl . " WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .
+				"`class`.`sem_id` = '" . $_POST['semid'] . "' AND `vac`.`class_id` = `class`.`id` AND (`vac`.`askednum` > '0' OR `vac`.`askedreservnum` > '0') AND `vac`.`course_id` = '" . $_POST['courseid'] . "' " . 
 				$qscensql . " ORDER BY `class`.`name`"	 ;
 				
 				$classsql = $GBLmysqli->dbquery($q);
@@ -73,6 +70,10 @@
 					 $temp = 'Turma: ' . $classrow['name'] . ' ('. $classrow['askednum'] . ' vaga'.$p.')';
 					 //echo $temp; 
 					 $emailbody .= $temp;
+                                        if ($classrow['askedreservnum'] > 0) {
+                                                $temp = ' das quais ' . $classrow['askedreservnum'] . ' serão para calouros.';
+                                                $emailbody .= $temp;
+                                        }
 					 if ($classrow['agreg']) {
 						 $temp = spanformat('','darkorange',' (agregadora)');
 						 //echo $temp; 

@@ -29,8 +29,8 @@ $GBLSemIDs = array();
 	function fixvacancies(){
 		global $GBLmysqli;
 		
-		$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) " .
-		"SELECT `class`.`id` , `cdisc`.`course_id`, '0' , '0'  FROM `coursedisciplines` AS `cdisc`,`class` " . 
+		$q = "INSERT INTO `vacancies` (`class_id`,`course_id`) " .
+		"SELECT `class`.`id` , `cdisc`.`course_id` FROM `coursedisciplines` AS `cdisc`,`class` " . 
 			"where `cdisc`.`discipline_id` = `class`.`discipline_id` AND " .
 				"NOT EXISTS (SELECT * FROM `vacancies` AS `vac` WHERE `vac`.`class_id` = `class`.`id` AND `vac`.`course_id` = `cdisc`.`course_id`); ";
 		$GBLmysqli->dbquery($q);
@@ -54,7 +54,7 @@ $GBLSemIDs = array();
 		fclose($fhandler);		
 	}
 
-	function ftabledump($fname,$q) {
+	function ftableexport($fname,$q) {
 		global $GBLmysqli;
 		
 		$fhandler = fopen('csv/'.$fname,'w');
@@ -197,6 +197,60 @@ function roomset($roomtypeid,$roomcap,$buildingid,$roomacronym) {
 	global $GBLmysqli;
 	$q = "UPDATE `room` SET `roomtype_id` = '".$roomtypeid."' , `capacity` = '".$roomcap."' WHERE `building_id` = '".$buildingid."' AND `acronym` = '".$roomacronym."' ";
 	$GBLmysqli->dbquery($q);
+}
+
+
+$dbcntE = 0;
+function DBinsertreserv($grpAcro,$sem,$DiscCode,$DiscName,$Class,$ClassReserv,$ClassUsedReserv) {
+	global $dbcntE;
+    global $GBLmysqli;
+	
+	global $GBLClassIDs;
+	global $GBLDiscIDs;
+	global $GBLVacIDs;
+	global $GBLSemIDs;
+	
+	$PreSem = '';
+	$PreDiscCode = '';
+	$PreClass = '';
+    $dbcntE +=1;
+	echo "Ecnt:$dbcntE &nbsp;&nbsp;&nbsp;\n";
+	 
+        if ( ($ClassReserv == 0) & ($ClassUsedReserv == 0)) {
+                echo '(skipping) ';
+                return;
+        }
+	
+	if (!($semID  = $GBLSemIDs[$sem])) {
+                echo "<br>ERR !! Term: $sem not there ! skipping<br>";
+                return;
+	}
+        
+	if (!($discID  = $GBLDiscIDs[$DiscCode])) {
+                echo "<br>ERR !! Discipline: $DiscCode not there ! skipping<br>";
+                return;
+	}
+
+        if (!($classID = $GBLClassIDs[$semID][$discID][$Class])) {
+                $result = $GBLmysqli->dbquery("SELECT `class`.`id` FROM `class` WHERE `discipline_id` = '$discID' AND `sem_id` = '$semID' AND `name` = '$Class' ");
+                $classrow = $result->fetch_assoc();
+                if(!($classID = $classrow['id'])) {
+                        echo "<br>ERR !! Class: $Class not there ! skipping<br>";
+                        return;
+                };
+                $GBLClassIDs[$semID][$discID][$Class] = $classID;
+        }
+        
+	if (!($grpID = $_SESSION['unitbyacronym'][$grpAcro]['id'])) {
+                        echo "<br>ERR !! Unit: $grpAcro not there ! skipping<br>";
+                        return;
+        } elseif ($_SESSION['unitbyacronym'][$grpAcro]['iscourse']) {
+			$GBLmysqli->dbquery("UPDATE `vacancies` SET `askedreservnum` = '$ClassReserv' , `givenreservnum` = '$ClassReserv' , `usedreservnum` = '$ClassUsedReserv' WHERE `class_id` = '$classID' AND `course_id` = '$grpID'; ");
+                        echo "$sem($semID) $grpAcro($grpID) $DiscCode($discID) $Class($classID) $ClassReserv $ClassUsedReserv <br>";
+        } else {
+                        echo "<br>ERR !! Unit: $grpAcro isn't a course ! skipping<br>";
+                        return;
+        }        
 }
 
 

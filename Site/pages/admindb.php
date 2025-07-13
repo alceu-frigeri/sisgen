@@ -97,6 +97,22 @@
 			}
 		break;
 
+                case 'Import Term Reserv Data':
+			if($_POST['termreservdata']) {
+				echo '<h3>Importing Term Reserv Data</h3>';
+				echo 'going over it...<br>';
+					if(!($file = fopen('csv/TERMreserv.csv','r')))	{
+						echo 'TERMreserv.csv file not found...';
+					};
+					$line = fgetcsv($file,512,',','"','"');
+					while ($line = fgetcsv($file,512,',','"','"')) {
+						DBinsertreserv($line[0],$line[1],$line[2],$line[3],$line[4],$line[5],$line[6]);
+					}
+					fclose($file);
+				echo 'done<p>';
+			}
+                break;
+
 		case 'Import Course Data':
 			if($_POST['coursedata']) {
 				echo '<h3>Importing Course Data</h3>';
@@ -127,16 +143,16 @@
 				echo 'done<br>';
 			}
 		break;
-		case 'Dump acc/unit tables':
-			if($_POST['dumptables']) {
-				echo '<h3>Dumping acc/unit tables</h3>';
-				ftabledump('accounts.csv',"SELECT * FROM `account` ORDER BY `id`;");
-				ftabledump('roles.csv',"SELECT `role`.*, `unit`.`acronym` FROM `role`,`unit` WHERE `role`.`unit_id` = `unit`.`id` ORDER BY `role`.`id`;");
-				ftabledump('accroles.csv',"SELECT `account`.`email` , `role`.`rolename` FROM `accrole`,`account`,`role` WHERE `accrole`.`account_id` = `account`.`id` AND `accrole`.`role_id` = `role`.`id`  ORDER BY `accrole`.`id`;"); 
-				ftabledump('units.csv',"SELECT * FROM `unit` ORDER BY `id`;");
+		case 'Export acc/unit tables':
+			if($_POST['exporttables']) {
+				echo '<h3>Exporting acc/unit tables</h3>';
+				ftableexport('accounts.csv',"SELECT * FROM `account` ORDER BY `id`;");
+				ftableexport('roles.csv',"SELECT `role`.*, `unit`.`acronym` FROM `role`,`unit` WHERE `role`.`unit_id` = `unit`.`id` ORDER BY `role`.`id`;");
+				ftableexport('accroles.csv',"SELECT `account`.`email` , `role`.`rolename` FROM `accrole`,`account`,`role` WHERE `accrole`.`account_id` = `account`.`id` AND `accrole`.`role_id` = `role`.`id`  ORDER BY `accrole`.`id`;"); 
+				ftableexport('units.csv',"SELECT * FROM `unit` ORDER BY `id`;");
 
-				ftabledump('scenery.csv',"SELECT * FROM `scenery` ORDER BY `id`;");
-				ftabledump('sceneryroles.csv',"SELECT `scenery`.`name` , `role`.`rolename` FROM `scenery`,`role`,`sceneryrole` WHERE `sceneryrole`.`scenery_id` = `scenery`.`id` AND `sceneryrole`.`role_id` = `role`.`id` ORDER BY `sceneryrole`.`id`;");
+				ftableexport('scenery.csv',"SELECT * FROM `scenery` ORDER BY `id`;");
+				ftableexport('sceneryroles.csv',"SELECT `scenery`.`name` , `role`.`rolename` FROM `scenery`,`role`,`sceneryrole` WHERE `sceneryrole`.`scenery_id` = `scenery`.`id` AND `sceneryrole`.`role_id` = `role`.`id` ORDER BY `sceneryrole`.`id`;");
 				echo 'done<br>';
 			}
 		break;
@@ -416,12 +432,14 @@
 	echo formsubmit('act','Fix Vacancies') . '</form><p>';
 
 	echo formpost($thisform);
-	formselectsession('dumptables','bool',0);
-	echo formsubmit('act','Dump acc/unit tables') . '</form><p>';
+	formselectsession('exporttables','bool',0);
+	echo formsubmit('act','Export acc/unit tables') . '</form><p>';
 
-	echo formpost($thisform);
-	formselectsession('restoretables','bool',0);
-	echo formsubmit('act','Restore acc/unit tables') . '</form><p>';	
+        if ($sisgenfullsetup) {
+        	echo formpost($thisform);
+        	formselectsession('restoretables','bool',0);
+        	echo formsubmit('act','Restore acc/unit tables') . '</form><p>';	
+        }
 
         if ($sisgenDBsetupHacks) {
         	echo formpost($thisform);
@@ -432,6 +450,20 @@
 	echo formpost($thisform);
 	formselectsession('termdata','bool',0);
 	echo formsubmit('act','Import Term Data') . '</form><p>';
+
+	echo formpost($thisform);
+	formselectsession('termreservdata','bool',0);
+	echo formsubmit('act','Import Term Reserv Data') . '</form><p>';
+
+	echo formpost($thisform);
+	formselectsession('expreservdata','bool',0);
+        formselectsql($anytmp,  "SELECT * FROM `semester`  ORDER BY `name` DESC;"  ,'semid',$_POST['semid'],'id','name');
+	echo formsubmit('act','Export Reserv Data') . '</form><p>';
+
+	echo formpost($thisform);
+	formselectsession('impreservdata','bool',0);
+        formselectsql($anytmp,  "SELECT * FROM `semester` WHERE `readonly` = '0' ORDER BY `name` DESC;"  ,'semid',$_POST['semid'],'id','name');
+	echo formsubmit('act','Import Reserv Data') . '</form><p>';
 
 	echo formpost($thisform);
 	formselectsession('coursedata','bool',0);

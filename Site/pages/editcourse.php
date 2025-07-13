@@ -75,6 +75,8 @@
 		echo formsubmit('act','Cancel');
 		echo '</form>';
 	} else {
+                formretainvalues(array('courseid','termid','orederby'));
+                
 		formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
 		formselectsql($anytmp,"SELECT * FROM term ORDER BY term.name;",'termid',$_POST['termid'],'id','name');
 		echo "Ordenado por:  "; 

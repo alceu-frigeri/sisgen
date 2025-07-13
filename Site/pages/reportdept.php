@@ -12,11 +12,13 @@
 	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','deptid'));
+        
 	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name` DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
+	formsceneryselect();
 	
 	echo '</form>';
 
@@ -76,8 +78,13 @@
 				"`grade`.`discipline_id` = '" . $discrow['id'] . "' AND `vac`.`class_id` = '" . $classrow['id'] . "' ORDER BY `unit`.`acronym`";
 			 $vacsql = $GBLmysqli->dbquery($q);
 			 while ($vacrow = $vacsql->fetch_assoc()) {
-				 if ($vacrow['givennum']==1) { $p=''; } else { $p='s'; };			 
-				 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $vacrow['acronym'] . ' : ' . $vacrow['givennum'] . ' Vaga'.$p. ' ('.$vacrow['disckind'] .')<br>';
+				 if (($vacrow['givennum'] + $vacrow['givenreservnum'])==1) { $p=''; } else { $p='s'; };			 
+				 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $vacrow['acronym'] . ' : ' . 
+                                        ($vacrow['givennum'] + $vacrow['givenreservnum']) . ' Vaga'.$p . ' ('.$vacrow['disckind'] .')';
+                                if ($vacrow['givenreservnum'] > 0) {
+                                        echo spanformat('','gray', "  das quais $vacrow[givenreservnum] p/calouros");
+                                }
+                                echo '<br>';
 			 }
 			 
 		}

@@ -58,6 +58,8 @@
 		echo formsubmit('act','Cancel');
 		echo '</form>';
 	} else {
+                formretainvalues(array('unitid'));
+
 		formselectsql($anytmp,"SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit.acronym;",'unitid',$_POST['unitid'],'id','acronym');
 	}
 	

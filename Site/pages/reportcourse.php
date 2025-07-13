@@ -6,6 +6,8 @@
 	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','courseid','termid'));
+        
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
 	formselectsql($anytmp,"SELECT * FROM term ORDER BY term.name;",'termid',$_POST['termid'],'id','name');
@@ -14,7 +16,7 @@
 	echo " Nome Profs ? ";
 	formselectsession('profnicks','bool',$_POST['profnicks'],false,true);
 	echo  '<br>';	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh')); 
+	formsceneryselect(); 
 	echo '</form>';
 	
 // semester, course, term

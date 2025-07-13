@@ -56,6 +56,8 @@
 		echo formsubmit('act','Cancel');
 		echo '</form>';
 	} else {
+                formretainvalues(array('buildingid'));
+
 		formselectsql($anytmp,"SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
 	}
 		

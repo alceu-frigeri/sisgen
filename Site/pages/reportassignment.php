@@ -13,11 +13,13 @@
 	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 	
 	echo formpost($thisform);
+        formretainvalues(array('semid','deptid'));
+        
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit.name;",'deptid',$_POST['deptid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));	
+	formsceneryselect();	
 	echo '</form>';
 
 	echo "<button onclick=\"printContent('Encargos')\">Print</button>";

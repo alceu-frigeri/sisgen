@@ -53,6 +53,8 @@
 		echo formsubmit('act','Cancel');
 		echo '</form>';
 	} else {
+                formretainvalues(array('unitid','orederby'));
+
 		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
 		echo "Ordenado por:  ";
 		formselectsession('orderby','orderby',$_POST['orderby'],false,true);

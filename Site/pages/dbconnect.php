@@ -170,7 +170,7 @@ class DBclass extends mysqli {
 	public function set_rolesessionvalues() {
 		unset($_SESSION['role']);
 
-		$q = "SELECT role.* , unit.acronym, unit.code, unit.iscourse, unit.isdept FROM role , unit  , accrole accr , account  WHERE " . 
+		$q = "SELECT DISTINCT role.* , unit.acronym, unit.code, unit.iscourse, unit.isdept FROM role , unit  , accrole accr , account  WHERE " . 
 			"role.unit_id = unit.id AND role.id = accr.role_id AND account.id = accr.account_id AND account.id = '".$_SESSION['userid']."';";
 		$result = $this->dbquery($q);
 		$boolkeys  = array('can_edit','can_dupsem','can_vacancies','can_class','can_addclass','can_disciplines','can_coursedisciplines','can_prof','can_viewlog','can_scenery');
@@ -189,6 +189,9 @@ class DBclass extends mysqli {
 			} else {
 				$_SESSION['role'][$sqlrow['unit_id']] = $sqlrow;
 			}
+                        if($sqlrow['can_scenery']) {
+                                $_SESSION['sceneryroles'][$sqlrow['id']]=$sqlrow['description'];
+                        }
 		}
 		$result->close();
 
@@ -245,6 +248,21 @@ class DBclass extends mysqli {
 //		sort($_SESSION['scen.hidden']);
 //		sort($_SESSION['scen.acc.view']);
 //		sort($_SESSION['scen.acc.edit']);
+		$result->close();
+
+
+                
+                $result = $this->dbquery("SELECT * FROM `role` WHERE `role`.`can_scenery` = '1' AND `role`.`isadmin` = '0' ORDER BY `description`;");
+		while ($sqlrow = $result->fetch_assoc()) {
+                        $_SESSION['scen.editroles'][$sqlrow['id']] = $sqlrow['description'];//$sqlrow['id'];
+//                        $_SESSION['scen.roles.desc'][$sqlrow['id']] = $sqlrow['description'];
+                        
+                        $scenresult = $this->dbquery("SELECT DISTINCT scenery.* FROM `scenery`,`sceneryrole` WHERE `sceneryrole`.`role_id` = '$sqlrow[id]' AND `sceneryrole`.`scenery_id` = `scenery`.`id` ORDER BY `name`;");
+		        while ($sceneryrow = $scenresult->fetch_assoc()) {
+                                $_SESSION['scen.byroles'][$sqlrow['id']][$sceneryrow['id']] = $sceneryrow['name'];
+                        }                  
+		}
+                
 		$result->close();
 	}
 	

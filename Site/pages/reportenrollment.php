@@ -12,11 +12,13 @@
 	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 
 	echo formpost($thisform);
+//        formretainvalues(array('deptid'));
+
 //	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
+	formsceneryselect();
 	
 	echo '</form>';
 
@@ -97,4 +99,4 @@
  ?>
     
  
-</div>
+</div> 

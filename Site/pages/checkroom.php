@@ -9,11 +9,13 @@
 	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','buildingid'));
+
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY semester.name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM building WHERE mark = 1 ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh') );	
+	formsceneryselect();	
 	
 	echo '</form>';
    

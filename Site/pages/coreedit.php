@@ -200,7 +200,7 @@
 		
 		$courseHL=false;
 		if ($_POST['courseHL']) {
-			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$classrow['id']."' AND `course_id` = '".$_POST['courseHL']."';";
+			$q = "SELECT (`askednum` + `askedreservnum`+ `givennum` + `givenreservnum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$classrow['id']."' AND `course_id` = '".$_POST['courseHL']."';";
 			$xresult = $GBLmysqli->dbquery($q);
 			$xrow = $xresult->fetch_assoc();
 			if($xrow['total']) {
@@ -208,6 +208,7 @@
 			}
 		}
 		
+
 		echo 'Turma:<b>' . $classrow['name'] . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 		echo $_SESSION['bool'][$classrow['agreg']];
 		if ($classrow['partof']) {
@@ -248,7 +249,9 @@
 		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
 		$vacsql = $GBLmysqli->dbquery($q);
 		if ($vacedit && !$classrow['agreg']) {
+    		echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
 			formvacedit($vacsql);
+		echo '</td></tr></table>';
 		} else {
 			formvacdisplay($vacsql);
 		}
@@ -257,7 +260,6 @@
 			echo '</td></tr></table>';
 		}
 
-	
 		
 	}
 	
@@ -279,25 +281,45 @@
 			$vacid = 'vac'.$vacrow['id'];
 			if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
-				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' . formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'asked',$vacrow['askednum']) . '&nbsp;&nbsp;' .spanformat('','',$GBLvackind[$vacrow['courseid']]) . '&nbsp;&nbsp;';
+				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' . 
+                                        formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'asked',$vacrow['askednum']) ;
+                                echo '&nbsp;reserv: ' . 
+                                        formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'askedreserv',$vacrow['askedreservnum']) . 
+                                        '&nbsp;&nbsp;' .
+                                        spanformat('','',$GBLvackind[$vacrow['courseid']]) . '&nbsp;&nbsp;';
 				formselectsession($vacid.'askedstatusid','status',$vacrow['askedstatus_id']);
 				echo '</td>';
 			} else {
 				echo formhiddenval($vacid.'asked',$vacrow['askednum']);
+                                echo formhiddenval($vacid.'askedreserv',$vacrow['askedreservnum']);
 				echo formhiddenval($vacid.'askedstatusid',$vacrow['askedstatus_id']);
-				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller','',$GBLvackind[$vacrow['courseid']]). '</sub>' . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['askedstatus_id']] , '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
+				echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . 
+                                        ' (+' . $vacrow[askedreservnum] . ') ' .
+                                        '<sub>'.
+                                                spanformat('smaller','',$GBLvackind[$vacrow['courseid']]). 
+                                        '</sub>' . 
+                                        '&nbsp;&nbsp;&nbsp;&nbsp;' . 
+                                        spanformat('', $_SESSION['statuscolor'][$vacrow['askedstatus_id']] , '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . 
+                                        '</td>';
 			}
 			if (($_SESSION['role'][$_POST['unitid']]['can_vacancies'] | $_SESSION['role']['isadmin']) & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
 				echo '<td>&nbsp;&nbsp;Vagas concedidas: ' .	formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'given',$vacrow['givennum']);
+                                echo '&nbsp;reserv: ' . formpatterninput(3,1,'[0-9]+','Núm.',$vacid.'givenreserv',$vacrow['givenreservnum']);
 				formselectsession($vacid.'givenstatusid','status',$vacrow['givenstatus_id']);
 				echo '</td>';
 			} else {
 				echo formhiddenval($vacid.'given',$vacrow['givennum']);
+                                echo formhiddenval($vacid.'givenreserv',$vacrow['givenreservnum']);
 				echo formhiddenval($vacid.'givenstatusid',$vacrow['givenstatus_id']);
-				echo '<td>&nbsp;&nbsp;Vagas concedidas: ' . $vacrow['givennum'] . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']]  , '(' .  $_SESSION['status'][$vacrow['givenstatus_id']] . ')') . '</td>';
+				echo '<td>&nbsp;&nbsp;Vagas concedidas: ' . 
+                                        $vacrow['givennum'] . ' (+' . $vacrow[givenreservnum] . ') ' . 
+                                        '&nbsp;&nbsp;&nbsp;&nbsp;' . 
+                                        spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']]  , '(' .  
+                                                $_SESSION['status'][$vacrow['givenstatus_id']] . ')') . 
+                                        '</td>';
 			}
-			echo '<td>&nbsp;&nbsp;Vagas Ocupadas: ' . $vacrow['usednum'] . '</td>';
+			echo '<td>&nbsp;&nbsp;Vagas Ocupadas: ' . $vacrow['usednum'] . ' (+' . $vacrow['usedreservnum'] . ')</td>';
 			echo '</tr>';
 			if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
 				$_SESSION['vacancies'][$vacrow['id']] = $vacid;
@@ -323,7 +345,11 @@
 		
 		echo '<table>';
 		$totalasked = 0;
+                $totalreserv = 0;
 		$totalgiven = 0;
+		$totalgivenreserv = 0;
+		$totalused = 0;
+		$totalusedreserv = 0;
 		while ($vacrow = $vacsql->fetch_assoc()) {
 			echo '<tr>';
 			if ($GBLvackind[$vacrow['courseid']] == 'OB') {
@@ -333,19 +359,35 @@
 				$coursecolor=null;
 				$coursebold=false;
 			}
-			echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  $vacrow['askednum'] . '<sub>'.spanformat('smaller',$coursecolor,$GBLvackind[$vacrow['courseid']],null,$coursebold). '</sub>'. '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('',$_SESSION['statuscolor'][$vacrow['askedstatus_id']], '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . '</td>';
-			echo '<td>&nbsp;&nbsp;Vagas concedidas: ' . $vacrow['givennum'] . '&nbsp;&nbsp;&nbsp;&nbsp;' . spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']] , '(' .  $_SESSION['status'][$vacrow['givenstatus_id']] . ')') .  '</td>';
-			echo '<td>&nbsp;&nbsp;Vagas Ocupadas: ' . $vacrow['usednum'] . '</td>';
+			echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  
+                                $vacrow['askednum'] . ' (+' . $vacrow['askedreservnum'] . ') ' . '<sub>'.spanformat('smaller',$coursecolor,$GBLvackind[$vacrow['courseid']],null,$coursebold). '</sub>'. 
+                                '&nbsp;&nbsp;&nbsp;&nbsp;' . 
+                                spanformat('',$_SESSION['statuscolor'][$vacrow['askedstatus_id']], '(' .  
+                                        $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . 
+                                '</td>';
+			echo '<td>&nbsp;&nbsp;Vagas concedidas: ' . 
+                                $vacrow['givennum'] .  ' (+' . $vacrow['givenreservnum'] . ') ' . 
+                                '&nbsp;&nbsp;&nbsp;&nbsp;' . 
+                                spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']] , '(' .  
+                                        $_SESSION['status'][$vacrow['givenstatus_id']] . ')') .  
+                                '</td>';
+                                
+			echo '<td>Vagas Ocupadas: ' . $vacrow['usednum'] .  ' (+' . $vacrow['usedreservnum'] . ') ' . '</td>';
+
 			echo '</tr>';
 			if(!(($_SESSION['status'][$vacrow['askedstatus_id']] == 'dup') | ($_SESSION['status'][$vacrow['givenstatus_id']] == 'dup'))) {
 				$totalasked += $vacrow['askednum'];
+                                $totalreserv += $vacrow['askedreservnum'];
 				$totalgiven += $vacrow['givennum'];			
+				$totalgivenreserv += $vacrow['givenreservnum'];			
+				$totalused += $vacrow['usednum'];			
+				$totalusedreserv += $vacrow['usedreservnum'];			
 			}
 			if ($vacrow['comment']) {
 				echo '<tr><td>'.'&nbsp;&nbsp;&nbsp;'.spanformat('smaller',$GBLcommentcolor,$vacrow['comment']) . '</td><td></td></tr>';
 			}
 		}
-		echo '<tr><td>' . spanformat('','darkblue','Total: ' . $totalasked) . '</td><td>&nbsp;&nbsp;' . spanformat('','darkblue','Total: ' . $totalgiven) . '</td></tr>';
+		echo '<tr><td>' . spanformat('','darkblue','Total: ' . $totalasked .' (+' . $totalreserv . ')') . '</td><td>&nbsp;&nbsp;' . spanformat('','darkblue','Total: ' . $totalgiven.' (+' . $totalgivenreserv . ')') . '</td><td>' . spanformat('','darkblue','Total: ' . $totalused.' (+' . $totalusedreserv . ')') . '</td></tr>';
 		echo '</table>';
 		
 	}

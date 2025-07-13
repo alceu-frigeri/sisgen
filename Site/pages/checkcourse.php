@@ -8,11 +8,13 @@
 	$GBLmysqli->postsanitize();
 
 	echo formpost($thisform);
+        formretainvalues(array('semid','courseid'));
+
 	formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit.name;",'courseid',$_POST['courseid'],'id','acronym');
 	echo  '<br>';
 	
-	formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
+	formsceneryselect();
 
 	echo '</form>';
 	

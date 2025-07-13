@@ -107,11 +107,17 @@ function agregupdt($aclassid) {
 	$q="SELECT `cd`.`course_id` FROM `coursedisciplines` AS `cd` WHERE `cd`.`discipline_id` = '".$_POST['discid']."' ";
 	$aclasssql=$GBLmysqli->dbquery($q);
 	while($aclassrow=$aclasssql->fetch_assoc()) {
-		$q = "SELECT  SUM(`vac`.`givennum`) AS `givensum`, SUM(`vac`.`askednum`) AS `askedsum` FROM `vacancies` AS `vac`,`class` " .
+		$q = "SELECT  SUM(`vac`.`givennum`) AS `givensum`, SUM(`vac`.`givenreservnum`) AS `givenreservsum`, SUM(`vac`.`askednum`) AS `askedsum` , SUM(`vac`.`askedreservnum`) AS `askedreservsum`FROM `vacancies` AS `vac`,`class` " .
 		"WHERE `vac`.`class_id` = `class`.`id` AND `class`.`partof` = '".$aclassid."' AND `vac`.`course_id` = '".$aclassrow['course_id']."';";
 		$sumsql=$GBLmysqli->dbquery($q);
 		$sumrow=$sumsql->fetch_assoc();
-		$q="UPDATE `vacancies`  SET `givennum` = '".$sumrow['givensum']."' , `askednum` = '".$sumrow['askedsum']."' WHERE `class_id` = '".$aclassid."' AND `course_id` = '".$aclassrow['course_id']."';";
+		$q="UPDATE `vacancies`  SET `givennum` = '" . $sumrow['givensum'] . 
+                        "' , `givenreservnum` = '" . $sumrow['givenreservsum'] . 
+                        "' , `askednum` = '" . $sumrow['askedsum'] . 
+                        "' , `askedreservnum` = '" . $sumrow['askedreservsum'] . 
+                        "' WHERE `class_id` = '" . $aclassid . 
+                        "' AND `course_id` = '" . $aclassrow['course_id'] . 
+                        "';" ;
 		$GBLmysqli->dbquery($q);
 	}
 }
@@ -163,9 +169,17 @@ function agregupdt($aclassid) {
 				}
 				$anyone=0;
 				foreach ($_SESSION['vacancies'] as $vacid => $vackey) {
-					if (fieldscompare($vackey,array('asked','askedstatusid','given','givenstatusid','comment'))) {
+					if (fieldscompare($vackey,array('asked','askedreserv','askedstatusid','given','givenreserv','givenstatusid','comment'))) {
 						$anyone=1;
-						$q = "UPDATE `vacancies` SET `askednum` = '" . $_POST[$vackey.'asked']  . "' , `askedstatus_id`= '" . $_POST[$vackey.'askedstatusid'] . "' , `givennum`= '" . $_POST[$vackey.'given']  . "' , `givenstatus_id`= '" . $_POST[$vackey.'givenstatusid'] . "' , `comment`= '" . $_POST[$vackey.'comment'] . "' WHERE `id` = '" . $vacid  . "';";
+						$q = "UPDATE `vacancies` SET `askednum` = '" . $_POST[$vackey.'asked']  . 
+                                                        "' , `askedreservnum`= '" . $_POST[$vackey.'askedreserv'] . 
+                                                        "' , `askedstatus_id`= '" . $_POST[$vackey.'askedstatusid'] . 
+                                                        "' , `givennum`= '" . $_POST[$vackey.'given']  . 
+                                                        "' , `givenreservnum`= '" . $_POST[$vackey.'givenreserv']  . 
+                                                        "' , `givenstatus_id`= '" . $_POST[$vackey.'givenstatusid'] . 
+                                                        "' , `comment`= '" . $_POST[$vackey.'comment'] . 
+                                                        "' WHERE `id` = '" . $vacid  . 
+                                                        "';" ;
 						$classlog['action'] = $classlogaction . 'vac UPDATE';
 							$classlog['dataorg'] = 'asked: ' . $_SESSION['org'][$vackey.'asked'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey.'askedstatusid']] . ') ' .
 													'given: ' . $_SESSION['org'][$vackey.'given'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey.'givenstatusid']] . ') ' .
@@ -214,6 +228,7 @@ function agregupdt($aclassid) {
 								$classlog['datanew'] = 'vac cleanup';								
 								$GBLmysqli->dbquery($q,$classlog);
 							}
+// TODO : REVIEW THIS... might be better to also zero reservs ...
 							if (!$_SESSION['org'][$classkey.'agreg']  & $_POST[$classkey.'agreg']) {
 								$q = "UPDATE `vacancies` SET `givennum` = '0' , `askednum` = '0' WHERE `class_id` = '" . $classid . "';";
 								$classlog['action'] = $classlogaction . 'vac UPDATE';
@@ -300,7 +315,7 @@ function agregupdt($aclassid) {
 							$q = "SELECT * FROM coursedisciplines WHERE discipline_id = '" . $_POST['discid'] . "';";
 							$result = $GBLmysqli->dbquery($q);
 							while ($sqlrow = $result->fetch_assoc()) {
-								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "','0','0');";
+								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "');";
 								$classlog['action'] = $classlogaction . 'vac UPDATE/ADD';
 								$GBLmysqli->dbquery($q,$classlog);
 							}
@@ -324,8 +339,8 @@ function agregupdt($aclassid) {
 								"WHERE `cs`.`class_id` = '" . $_POST['classid'] . "' ;";
 							$GBLmysqli->dbquery($q);
 							
-							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) " . 
-								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`givennum`  " .
+							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`) " . 
+								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`askedreservnum` , `vc`.`givennum`  , `vc`.`givenreservnum` " .
 								"FROM  `vacancies` AS `vc` " . 
 								"WHERE `vc`.`class_id` = '" . $_POST['classid'] . "';";
 							$GBLmysqli->dbquery($q);
@@ -347,7 +362,7 @@ function agregupdt($aclassid) {
 							$q = "SELECT * FROM coursedisciplines WHERE discipline_id = '" . $_POST['discid'] . "';";
 							$result = $GBLmysqli->dbquery($q);
 							while ($sqlrow = $result->fetch_assoc()) {
-								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "','0','0');";
+								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "');"; // defaults are zero.
 								$classlog['action'] = $classlogaction . 'vac UPDATE/ADD';
 								$GBLmysqli->dbquery($q,$classlog);
 							}
@@ -375,8 +390,8 @@ function agregupdt($aclassid) {
 								"WHERE `cs`.`class_id` = '" . $_POST['classid'] . "' ;";
 							$GBLmysqli->dbquery($q);
 							
-							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`) " . 
-								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`givennum`  " .
+							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`) " . 
+								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`askedreservnum` , `vc`.`givennum` , `vc`.`givenreservnum`  " . 
 								"FROM  `vacancies` AS `vc` " . 
 								"WHERE `vc`.`class_id` = '" . $_POST['classid'] . "';";
 							$GBLmysqli->dbquery($q);
@@ -400,10 +415,10 @@ function agregupdt($aclassid) {
 
 function sceneryclasshack($profnicks,$inselect=true) {
 	if($inselect) {
-		formselectscenery('scen.acc.view',formsubmit('act','Refresh'));
+		formsceneryselect();
 	} else {
 		echo '<br>';
-		displayscenerysession();
+		displaysessionselected('Cenário(s)','sceneryselected');
 	}
 	
 	$inselected = inscenery_sessionlst('sceneryselected');
@@ -442,7 +457,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		echo '</b>';
 		echo formsubmit('act','Cancel');
 		echo spanformat('smaller',$GBLcommentcolor, displaysqlitem('&nbsp;&nbsp;','discipline',$_POST['discid'],'comment')) ;
-		//formselectscenery('scen.acc.view');
+		//formsceneryselect();
 		echo formhiddenval('profnicks',$_POST['profnicks']);
 		echo formhiddenval('courseHL',$_POST['courseHL']);
 //		echo formhiddenval('orderby',$_POST['orderby']);
@@ -455,10 +470,12 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		echo  '</form>';
 	} else {
 		echo formpost($thisform);
+                formretainvalues(array('semid','unitid','discid','profnicks','courseHL'));
+
 		formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
 		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
 		formselectsql($anytmp,"SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['unitid']."' ORDER BY name;",'discid',$_POST['discid'],'id','code','name');
-		//formselectscenery('scen.acc.view');
+		//formsceneryselect();
 		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks']);
 		//echo '<br>';
 //		echo "Ordenado por:  ";

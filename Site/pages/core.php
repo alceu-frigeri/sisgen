@@ -206,7 +206,7 @@ function duplicatecourse($courseid,$acronym,$code,$name,$comment) {
 	$q= "SELECT `id` FROM `status` WHERE `status` = 'dup';";
 	$result = $GBLmysqli->dbquery($q);
 	$strow=$result->fetch_assoc();
-	$q = "INSERT INTO `vacancies` (`course_id`,`class_id`,`askednum`,`givennum`,`comment`,`askedstatus_id`,`givenstatus_id`) SELECT '".$newid."' , `vc`.`class_id` , `vc`.`askednum`  , `vc`.`givennum` , '".$comment."' , '".$strow['id']."' , '".$strow['id']."' FROM `vacancies` AS `vc` WHERE `course_id` = '".$courseid."'";
+	$q = "INSERT INTO `vacancies` (`course_id`,`class_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`,`comment`,`askedstatus_id`,`givenstatus_id`) SELECT '".$newid."' , `vc`.`class_id` , `vc`.`askednum`  , `vc`.`askedreservnum`  , `vc`.`givennum` , `vc`.`givenreservnum` ,  '".$comment."' , '".$strow['id']."' , '".$strow['id']."' FROM `vacancies` AS `vc` WHERE `course_id` = '".$courseid."'";
 	$GBLmysqli->dbquery($q);
 }
 
@@ -240,8 +240,8 @@ function duplicatesem($currsemid,$newsemname) {
 		$GBLmysqli->dbquery($qsegment);
 
 
-		$qvacancy = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`givennum`,`usednum`) " . 
-				"SELECT `new`.`id` , `vc`.`course_id` , `vc`.`askednum` , `vc`.`givennum` , `vc`.`usednum`   " .
+		$qvacancy = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`,`usednum`,`usedreservnum`) " . 
+				"SELECT `new`.`id` , `vc`.`course_id` , `vc`.`askednum` , `vc`.`askedreservnum` , `vc`.`givennum` , `vc`.`givenreservnum`, `vc`.`usednum` , `vc`.`usedreservnum`  " .
 				"FROM `class` AS `org`, `class` AS `new` , `vacancies` AS `vc` " . 
 				"WHERE `vc`.`class_id` = `org`.`id` AND `org`.`sem_id` = '".$currsemid."' AND `new`.`name` = `org`.`name` AND `new`.`discipline_id` = `org`.`discipline_id` AND `new`.`sem_id` = '".$newsemid."';";
 		//echo "<br> $qvacancy";
@@ -279,13 +279,13 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 		//}
 		if (!$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
 			if($courseid) {
-				$q = "SELECT `askednum`  AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
+				$q = "SELECT `askednum` AS `totalA` , `askedreservnum`  AS `totalB` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
 			} else {
-				$q = "SELECT SUM(givennum) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
+				$q = "SELECT SUM(givennum) AS `totalA` , SUM(givenreservnum) AS `totalB` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
 			}
 			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
-			$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] = $vacrow['total'];
+			$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] = $vacrow['totalA'] + $vacrow['totalB'];
 		}
 		if ($vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
 			for ($i=0; $i < $sqlrow['length']; $i++) {
@@ -376,16 +376,16 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 
 		if (!$vac[$classindex]) {
 			if($courseid) {
-				$q = "SELECT `askednum`  AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
+				$q = "SELECT `askednum` AS `totalA` , `askedreservnum`  AS `totalB` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
 			} else {
-				$q = "SELECT SUM(givennum) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
+				$q = "SELECT SUM(givennum) AS `totalA` , SUM(givenreservnum) AS `totalB` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."';";
 			}
 			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
-			$vac[$classindex] = $vacrow['total'];	
+			$vac[$classindex] = $vacrow['totalA'] + $vacrow['totalB'];	;	
 		}
 		if(!$vacHL[$classindex] && $courseHL) {
-			$q = "SELECT (`askednum` + `givennum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseHL."';";
+			$q = "SELECT (`askednum` + `askedreservnum` + `givennum` + `givenreservnum`) AS `total` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseHL."';";
 			$vacresult = $GBLmysqli->dbquery($q);
 			$vacrow = $vacresult->fetch_assoc();
 			$vacHL[$classindex] = $vacrow['total'];	
@@ -562,28 +562,6 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 }
 
 
-// auxiliary scenery functions
-function inscenery_sessionlst ($sessionlst) {
-	$in = "0";
-	foreach ($_SESSION[$sessionlst] as $scenid => $scenname) {
-		$in .= " , '".$scenid."'";
-	}
-	return $in;
-}	
-function scenery_sql($inscenery) {
-	global $GBLmysqli;
-	
-   if ($GBLmysqli->scenclass_test()) {
-	   $tbl=' , `sceneryclass` ';
-	   $sql=" AND ( (`class`.`scenery` = '0') OR " .
-		 " (`class`.`scenery` = '1' AND `sceneryclass`.`class_id` = `class`.`id` AND `sceneryclass`.`scenery_id` IN (" .$inscenery. ")) ) "  ;
-	   return (array($tbl,$sql));
-   } else {
-	   return (array(''," AND `class`.`scenery` = '0' " ));
-   }
-}
-
-
 
 	function spanformat($size,$color,$text,$bgcolor=null,$bold=null,$height=null) {
 		$style='';
@@ -696,6 +674,17 @@ function scenery_sql($inscenery) {
 		return "<input type='hidden' name='$field' id='$field' value='$val' />\n";
 	}
 
+        function formretainvalues($fields) {
+                foreach ($fields as $field) {
+                        if ($_POST[$field]) {
+                                $_SESSION['retain'][$field] = $_POST[$field];
+                        } elseif ($_SESSION['retain'][$field]) {
+                                $_POST[$field] = $_SESSION['retain'][$field];
+                        }
+                }
+        }
+                
+
 	function formsubmit($field,$val) {
 		return "<input type='submit' name='$field' value='$val' />\n";
 	}
@@ -722,29 +711,56 @@ function scenery_sql($inscenery) {
 		return 0;
 	}
 
+
+
+
+
+// auxiliary scenery functions
+function inscenery_sessionlst ($sessionlst) {
+	$in = "0";
+	foreach ($_SESSION[$sessionlst] as $scenid => $scenname) {
+		$in .= " , '".$scenid."'";
+	}
+	return $in;
+}	
+
+function scenery_sql($inscenery) {
+	global $GBLmysqli;
 	
-	function formselectscenery($scenlst,$xtra=null) {
-		if ($_POST['sceneryselect']) {
-			unset($_SESSION['sceneryselected']);
-			foreach ($_SESSION['scen.all'] as $scenid => $scenname) {
-				if ($_POST['scenselect'.$scenid]) {
-					$_SESSION['sceneryselected'][$scenid] = $scenid;
+   if ($GBLmysqli->scenclass_test()) {
+	   $tbl=' , `sceneryclass` ';
+	   $sql=" AND ( (`class`.`scenery` = '0') OR " .
+		 " (`class`.`scenery` = '1' AND `sceneryclass`.`class_id` = `class`.`id` AND `sceneryclass`.`scenery_id` IN (" .$inscenery. ")) ) "  ;
+	   return (array($tbl,$sql));
+   } else {
+	   return (array(''," AND `class`.`scenery` = '0' " ));
+   }
+}
+
+
+
+
+        function formsessionselectinit($fieldname,$fieldlist) {
+		if ($_POST[$fieldname]) {
+			unset($_SESSION[$fieldname]);
+			foreach ($_SESSION[$fieldlist] as $selectid => $selectname) {
+				if ($_POST[$fieldname.$selectid]) {
+					$_SESSION[$fieldname][$selectid] = $selectname;
 				}
-			}
-			
+			}	
 		}
-		echo formhiddenval('sceneryselect','true');
-		
-		echo '<details>';
-		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> ';
-		displayscenerysession();
-		echo '</summary>';
-		$cnt = 0;
-		echo '<table><tr>';
-		foreach ($_SESSION[$scenlst] as $scenid => $scenname) {
+		echo formhiddenval($fieldname,'true');
+        }
+
+
+
+
+
+        function formsessionselect($session,$fieldname,&$cnt,$desc=null) {
+		foreach ($session as $selectid => $selectname) {
 			$checked='';
 			$style='';
-			if ($_SESSION['sceneryselected'][$scenid]) {
+			if ($_SESSION[$fieldname][$selectid]) {
 				$checked=' checked';
 				$style=';background-color: lightgray';
 			};
@@ -753,44 +769,71 @@ function scenery_sql($inscenery) {
 				$cnt = 1;
 				echo '</tr><tr>';
 			}
-			echo '<th style="width:170px'.$style.'">' . '<input type="checkbox" name="scenselect' . $scenid . '" value="'. $scenid .'"' .$checked. ' > <label for="scenselect'. $scenid .'">'  . $scenname .'</label></th>';
+                        if ($desc) {
+                               echo '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
+                        } else {
+        			echo '<th style="width:170px' . $style . '">' . 
+                                        '<input type="checkbox" name="' . 
+                                        $fieldname . $selectid . 
+                                        '" value="' . $selectid . 
+                                        '"' . $checked . 
+                                        ' > <label for="' . 
+                                        $fieldname . $selectid .
+                                        '">' . 
+                                        $selectname . 
+                                        '</label></th>';
+                        }
 
 		}
-		echo '</tr></table>';
+        }
+
+	
+	function formsceneryselect() {
+                formsessionselectinit('sceneryselected','scen.all');
+                formsessionselectinit('sceneryroles','scen.editroles');
+                		
+		echo '<details>';
+        		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> ';
+        		displaysessionselected('Cenário(s)','sceneryselected');
+        		echo '</summary>';
+                		$cnt = 0;
+                		echo '<table><tr>';
+                                foreach ($_SESSION['sceneryroles'] as $roleid => $roledesc) {
+                                        formsessionselect($_SESSION['scen.byroles'][$roleid],'sceneryselected',$cnt);
+                                }
+                		echo '</tr></table>';        
+        
+                        
         		echo '<details>';
-        		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> Legenda: ';
-                        echo '</summary>';
-		$cnt = 0;
-		echo '<table><tr>';
-		foreach ($_SESSION[$scenlst] as $scenid => $scenname) {
-			$cnt++;
-			if ($cnt == 7) {
-				$cnt = 1;
-				echo '</tr><tr>';
-			}
-                        $style = '';
-			if ($_SESSION['sceneryselected'][$scenid]) {
-				$style=';background-color: lightgray';
-			};
-                        echo '<td style="width:170px' . $style . '"><b>' . $scenname .':</b> '. $_SESSION['scen.desc'][$scenid].'</td>';
-                
-                }
+                		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> Legenda: ';
+                                echo '</summary>';
+                        		$cnt = 0;
+                        		echo '<table><tr>';
+                                        foreach ($_SESSION['sceneryroles'] as $roleid => $roledesc) {
+                                                formsessionselect($_SESSION['scen.byroles'][$roleid],'sceneryselected',$cnt,'scen.desc');
+                                        }
+                        		echo '</tr></table>';        
+        		echo '</details>';       
 
-		echo '</tr></table>';
-        		echo '</details>';
-		if ($xtra) {
-			echo $xtra;
-		}
-		echo '</details>';
-		
-		// onchange="this.form.submit()"
+        		echo '<details>';
+        		echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> ';
+                        displaysessionselected('Perfil(is)','sceneryroles');
+        		echo '</summary>';
+                        		$cnt = 0;
+                        		echo '<table><tr>';
+                                        formsessionselect($_SESSION['scen.editroles'],'sceneryroles',$cnt);
+                        		echo '</tr></table>';        
+        		echo '</details>';       
+                        
+                        echo formsubmit('act','Refresh');
+        	echo '</details>';
 	}
 	
-	function displayscenerysession(){
-		echo 'Cenário(s): ';
+	function displaysessionselected($label,$fieldname){
+                echo $label.': ';
 		$comma='';
-		foreach ($_SESSION['sceneryselected'] as $scenid => $aux) {
-			echo $comma . '<b> ' . $_SESSION['scen.all'][$scenid] . '</b>';
+		foreach ($_SESSION[$fieldname] as $id => $name) {
+			echo $comma . '<b> ' . $name . '</b>';
 			$comma = ', ';
 		}
 	}
