@@ -9,7 +9,6 @@
 	
 <?php 
 	$can_coursedisciplines = ($_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['courseid']] & $_SESSION['role'][$_POST['courseid']]['can_coursedisciplines']));
-	//$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert') | ($_POST['act'] == 'Reload'));
 	
 	$GBLmysqli->postsanitize();
 	
@@ -153,7 +152,7 @@
 		formselectsql($anyone,$q,'discid',$_POST['discid'],'id','code','name');
 		
 		formselectsession('newdisckind','disckind',1);
-		//echo formsubmit('act','Reload');
+
 		if ($anyone) {
 			echo formsubmit('act','Insert');
 		}
@@ -171,10 +170,9 @@
 
 	if ($postedit & $can_coursedisciplines) {
 	} else {
-	if ($anyone & $can_coursedisciplines) {
-		echo formsubmit('act','Edit');
-	}
-	//echo formsubmit('act','Refresh');
+        	if ($anyone & $can_coursedisciplines) {
+        		echo formsubmit('act','Edit');
+        	}
 	}
 
 	echo '</form>';

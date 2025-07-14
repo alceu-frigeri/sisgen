@@ -9,7 +9,6 @@
 	
 <?php 
 	$can_edit = $_SESSION['role']['isadmin'] || ($_SESSION['usercanedit']);
-//	$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
 
 	$GBLmysqli->postsanitize();
 

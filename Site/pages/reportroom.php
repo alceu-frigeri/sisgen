@@ -33,10 +33,6 @@
 	  echo ' (cap.: '. $sqlrow['capacity'] .' vagas)';
 	  }
 	  echo '<p>';
-//	$in = "'0'";
-//	foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//		$in .= " , '".$scenid."'";
-//	}
 
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
@@ -56,7 +52,6 @@
 	  "`semester`.`id` = '".$_POST['semid']."' AND " . 
 	  "`room`.`id` = '".$_POST['roomid']."' AND `building`.`id` = '".$_POST['buildingid']."' " . $qscensql  . " ORDER BY `discipline`.`name` , `class`.`name`";
 
- //vardebug($q);
  
    dbweekmatrix($q,$inselected);
   }

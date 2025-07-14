@@ -2,7 +2,6 @@
 <?php 
 	$thisform=$GBLbasepage.'?q=edits&sq=Disciplines'; 
 	$can_discipline = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
-	//$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert'));
 	
 	$GBLmysqli->postsanitize();
 	
@@ -58,12 +57,9 @@
 		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
 		echo "Ordenado por:  ";
 		formselectsession('orderby','orderby',$_POST['orderby'],false,true);
-		//echo formsubmit('act','Refresh');
+
                 $firstofmany=true;
-//		if ($can_discipline) {
-//			echo formsubmit('act','Edit');
-//		}
-//		echo '</form>';
+
 	}
 			
 
@@ -154,15 +150,6 @@
 	  }
   }
 
-//  if ($postedit & $can_discipline) {
-//  } else {
-//  	if ($anyone & $can_discipline) {
-//		echo formsubmit('act','Edit');
-//	}
-//	echo formsubmit('act','Refresh');
- // }
-
-//	echo '</form>';
 	
 
  ?>

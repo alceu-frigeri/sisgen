@@ -24,8 +24,6 @@
 						$q = $q  . " , `can_" . $key . "` = '" . $_POST['can'.$key] . "'";
 					}
 					$q = $q .  " WHERE `id` = '".$_POST['roleid']."';";
-					//echo $q.'<br>';
-			//		$q = "UPDATE `accrole` SET `role_id` = '" . $_POST['newroleid'] . "' WHERE `id` = '" . $_POST['accroleid'] . "';";
 					$GBLmysqli->dbquery($q);
 				$_POST['roleid'] = null;
 			break;

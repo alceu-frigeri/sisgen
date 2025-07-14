@@ -6,10 +6,6 @@
         foreach ($_SESSION['role.scen'] as $roleid => $rolecanscen) {
                 $can_scenery |= $rolecanscen;
         }
-//        vardebug($can_scenery);
-//        vardebug($_SESSION);
-//        vardebug($_POST);
-        //$can_scenery  | ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_scenery']);
 	
 	$GBLmysqli->postsanitize();
 	
@@ -29,8 +25,6 @@
 
 
 	if ($postedit) {
-//                        vardebug($_POST);
-//                        vardebug($_SESSION);
 
 		switch($_POST['act']) {
 			case 'Delete':
@@ -101,7 +95,6 @@
                 			echo spanformat('','red',formsubmit('act','Delete'),null,true);
                 			echo '</form><br>';			
                 		} else {
-                //			echo formpost($thisform.'#scen'.$sceneryrow['id'].'div') . formhiddenval('sceneryid',$sceneryrow['id']) . formsubmit('act','Edit');
                 			echo formpost($thisform.targetdivkey('scen',$sceneryrow['id'])) . formhiddenval('sceneryid',$sceneryrow['id']) . formsubmit('act','Edit');
                 			echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
                 				if ($sceneryrow['hide']) {
@@ -139,7 +132,7 @@
         
         
   }
-        //vardebug($_SESSION);
+        
 ?>
 
 		

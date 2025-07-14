@@ -46,6 +46,7 @@ class DBclass extends mysqli {
 //$log['action'] action being executed, to be recorded, like login,dbupdate...
 //$log['str'] 
 //$log['xtra']
+
 	public function eventlog($logdata) {
 		$trace=debug_backtrace();
 		$callerA=$trace[1]['function'];  // who called us (we are 0)
@@ -199,10 +200,9 @@ class DBclass extends mysqli {
 	
 	public function set_scenerysessionvalues() {
 		unset($_SESSION['scen.all']);
-		unset($_SESSION['scen.unhidden']);
-		unset($_SESSION['scen.hidden']);
 		unset($_SESSION['scen.acc.view']);
 		unset($_SESSION['scen.acc.edit']);
+                unset($_SESSION['sceneryroles']);
 
 		$q = "SELECT * FROM `scenery` WHERE '1' ORDER BY `name`;";
 		$result = $this->dbquery($q);
@@ -215,20 +215,16 @@ class DBclass extends mysqli {
 
 			if ($sqlrow['hide']) {
 				$_SESSION['scen.all'][$sqlrow['id']] = $sqlrow['name'] ; // all  
-				$_SESSION['scen.hidden'][$sqlrow['id']] = $sqlrow['name'] ; // all 'hidden'
 				if ($_SESSION['role']['isadmin']) {
 					$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; 
 				}
 			} else {
-				$_SESSION['scen.unhidden'][$sqlrow['id']] = $sqlrow['name'] ; // all 'unhidden' => that's for reports
-				$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; // all accounts can view
+				$_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; // all accounts can view.... used @ editclass.php
 				$_SESSION['scen.all'][$sqlrow['id']] = $sqlrow['name'] ; // all 
 			}
 		}
 		$result->close();
 
-//		$q = "SELECT DISTINCT scenery.* FROM `scenery` , `sceneryrole` , `accrole`  " . 
-//			"WHERE `scenery`.`id` = `sceneryrole`.`scenery_id` AND `sceneryrole`.`role_id` = `accrole`.`role_id` AND  `accrole`.`account_id` = '" . $_SESSION['userid'] . "';";
 
 		$q = "SELECT DISTINCT scenery.* , role.can_scenery , sceneryrole.role_id FROM `scenery` , `sceneryrole` , `accrole`  , `role` " . 
 			"WHERE `scenery`.`id` = `sceneryrole`.`scenery_id` AND `sceneryrole`.`role_id` = `accrole`.`role_id` AND `accrole`.`role_id` = `role`.`id` AND  `accrole`.`account_id` = '" . $_SESSION['userid'] . "';";
@@ -244,26 +240,26 @@ class DBclass extends mysqli {
                                 $_SESSION['scen.role'][$sqlrow['id']] = $sqlrow['can_scenery'];
                         }
 		}
-//		sort($_SESSION['scen.all']);
-//		sort($_SESSION['scen.hidden']);
-//		sort($_SESSION['scen.acc.view']);
-//		sort($_SESSION['scen.acc.edit']);
 		$result->close();
 
 
                 
                 $result = $this->dbquery("SELECT * FROM `role` WHERE `role`.`can_scenery` = '1' AND `role`.`isadmin` = '0' ORDER BY `description`;");
 		while ($sqlrow = $result->fetch_assoc()) {
-                        $_SESSION['scen.editroles'][$sqlrow['id']] = $sqlrow['description'];//$sqlrow['id'];
-//                        $_SESSION['scen.roles.desc'][$sqlrow['id']] = $sqlrow['description'];
+                        $_SESSION['scen.editroles'][$sqlrow['id']] = $sqlrow['description'];
                         
                         $scenresult = $this->dbquery("SELECT DISTINCT scenery.* FROM `scenery`,`sceneryrole` WHERE `sceneryrole`.`role_id` = '$sqlrow[id]' AND `sceneryrole`.`scenery_id` = `scenery`.`id` ORDER BY `name`;");
 		        while ($sceneryrow = $scenresult->fetch_assoc()) {
                                 $_SESSION['scen.byroles'][$sqlrow['id']][$sceneryrow['id']] = $sceneryrow['name'];
                         }                  
 		}
-                
 		$result->close();
+
+                $q = "SELECT DISTINCT r.* FROM role , role AS r , accrole WHERE `role`.`id` = `accrole`.`role_id` AND `accrole`.`account_id` = $_SESSION[userid] AND `role`.`unit_id` = `r`.`unit_id` AND `r`.`can_scenery` = '1' ;";
+                $result = $this->dbquery($q);
+                while ($sqlrow = $result->fetch_assoc()) {
+                        $_SESSION['sceneryroles'][$sqlrow['id']]=$sqlrow['description'];
+                }
 	}
 	
 	

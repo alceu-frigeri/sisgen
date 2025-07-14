@@ -9,7 +9,6 @@
 	
 <?php 
     $can_prof = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_prof']) ;
-	//$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert'));
 
 	$GBLmysqli->postsanitize();
 
@@ -126,13 +125,6 @@
 
 
 
-//  if ($postedit & $can_prof) {
-//  } else {
-//  	if ($anyone & $can_prof) {
-//		echo formsubmit('act','Edit');
-//	}
-	//echo formsubmit('act','Refresh');
-//  }
 
 	echo '</form>';
 	

@@ -22,10 +22,6 @@
 // semester, course, term
 	if ($_POST['termid']) {
 		echo '<p>';
-//		$in = "'0'";
-//		foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//			$in .= " , '".$scenid."'";
-//		}
 
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);

@@ -9,8 +9,6 @@
 	
 <?php 
 	$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_room']);
-	//$postedit = (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit'));
-
 
 	$GBLmysqli->postsanitize();
 
@@ -51,7 +49,6 @@
 
 	if ($postedit & $can_room) {
 		echo formhiddenval('buildingid',$_POST['buildingid']);
-		// displaysqlitem($str,$sqltable,$sqlid,$sqlitem,$sqlitemB=null)
 		echo displaysqlitem('','building',$_POST['buildingid'],'acronym','name');
 		echo formsubmit('act','Cancel');
 		echo '</form>';
@@ -117,7 +114,7 @@
   	if ($anyone & $can_room) {
 		echo formsubmit('act','Edit');
 	}
-	//echo formsubmit('act','Refresh');
+
   }
 
 	echo '</form>';

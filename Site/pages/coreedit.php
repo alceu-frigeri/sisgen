@@ -80,7 +80,7 @@
 		
 		$segformid = 'seg'.$segrow['id'];
 		$_SESSION['segments'][$segrow['id']] = $segformid;
-//		formhiddenval('','')
+
 		formselectrange($segformid.'day',2,8,$segrow['day'],'',$_SESSION['weekday']);
 		formselectrange($segformid.'start',7,21,$segrow['start'],':30');
 		formselectrange($segformid.'length',1,6,$segrow['length']);
@@ -102,12 +102,9 @@
 		global $GBLcommentpattern;
 		global $GBLclasspattern;
 
-		//thisformpost();
 		$classkey = 'class'.$classrow['id'];
 		$_SESSION['classes'][$classrow['id']] = $classkey;
 		
-		//echo 'Turma:<b>' . $classrow['name'] . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
-		//echo '<span style="color:#8000B0;">';
 		echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
 		echo 'Turma:<b>' . formpatterninput(3,1,$GBLclasspattern,' Turma',$classkey.'classname',$classrow['name']) . '</b>&nbsp;&nbsp;&nbsp;&nbsp;agregadora:';
 
@@ -147,7 +144,6 @@
 				$_SESSION['org'][$classkey.'scenerybool'] = $classrow['scenery'];				
 			}
 			
-//			if ($classrow['scenery']) {
 				unset ($_SESSION['org']['sceneryclass']);
 				unset ($_SESSION['org']['sceneryusr']);
 				echo '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -173,10 +169,6 @@
 				}
 				echo '</tr></table>';
 
-				//vardebug($_SESSION['scen.acc.edit']);
-				//vardebug($_SESSION['org']['sceneryusr']);
-				//vardebug($_SESSION['org']['sceneryclass']);
-	//		}
 		}
 
 		$q = "SELECT vacancies.* , unit.acronym , unit.id AS courseid FROM vacancies,unit WHERE vacancies.course_id = unit.id AND vacancies.class_id = '". $classrow['id'] . "' ORDER BY unit.acronym;";
@@ -187,7 +179,6 @@
 			formvacedit($vacsql);
 		}
 		
-		//echo '</span>';
 		echo '</td></tr></table>';
 	}
 	

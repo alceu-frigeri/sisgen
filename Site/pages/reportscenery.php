@@ -31,7 +31,7 @@
 	echo '</form>';
    
 
-  //vardebug($_POST);
+
   if (($_POST['semid'] != 0 )& ($_POST['sceneryid'] != 0 )) {
         echo '<h3>' . $_SESSION['scen.all'][$_POST['sceneryid']] . ' ( ' . $_SESSION['scen.desc'][$_POST['sceneryid']] . ' ) </h3>';
         

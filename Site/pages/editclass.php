@@ -10,16 +10,6 @@
 
 
 <?php 
-    //vardebug($_POST);
-
-//				vardebug($_SESSION);
-				//vardebug($_SESSION['org'][sceneryusr]);
-				//vardebug($_SESSION['org'][sceneryclass]);
-				//vardebug($_POST);
-//				vardebug($_POST['class7387scenlst']);
-
-
-
 	
 	$q = "SELECT readonly FROM semester WHERE id = '" . $_POST['semid'] . "';";
 	$result = $GBLmysqli->dbquery($q);
@@ -32,17 +22,9 @@
 	$can_addclass=($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
 	
 	$GBLmysqli->postsanitize();
-//				vardebug($_POST);
-//                                vardebug($can_class);
-//                                vardebug($can_addclass);
-//                                vardebug($_SESSION['role']);
 
 
-//$can_class = true;
-//$can_addclass = false;
-
-
-// TO BE REVIEWED !!! 
+// TODO , TO BE REVIEWED !!! 
 // LOGIC ERROR !!!
 
 
@@ -85,21 +67,10 @@
 
 	}
 	
-//	$incanview = "'0'";
-//	foreach ($_SESSION['scen.acc.view'] as $scenid => $scenname) {
-//		$incanview .= " , '".$scenid."'";
-//	}
 	$incanview = inscenery_sessionlst('scen.acc.view');
-	list($qscentbl,$qscensql) = scenery_sql($incanview);
+	list($qscentbl,$qscensql) = scenery_sql($incanview);   //TODO HERE... acc.view
 
-
-//	$incanedit = "'0'";
-//	foreach ($_SESSION['scen.acc.edit'] as $scenid => $scenname) {
-//		$incanedit .= " , '".$scenid."'";
-//	}
 	$incanedit = inscenery_sessionlst('scen.acc.edit');
-
-////
 
 function agregupdt($aclassid) {
 	global $GBLmysqli;
@@ -122,12 +93,6 @@ function agregupdt($aclassid) {
 	}
 }
 
-
-/////
-
-
-
-	//vardebug($_POST);
 	if (!$readonly) {
 		$classlogaction = 'class edit ('.$_POST['act'].') ';
 		$classlog = array('level'=>'INFO','action'=> $classlogaction,'str'=>displaysqlitem('','semester',$_POST['semid'],'name').displaysqlitem('','discipline',$_POST['discid'],'code'),'xtra'=>'editclass.php');
@@ -135,6 +100,7 @@ function agregupdt($aclassid) {
 			case 'Submit':
 //				$GBLmysqli->eventlog(array('level'=>'INFO','action'=>'class edit','str'=>displaysqlitem('','semester',$_POST['semid'],'name').displaysqlitem('','discipline',$_POST['discid'],'code'),'xtra'=>'editclass.php'));
 				//vardebug($_POST);
+
 				foreach ($_SESSION['segments'] as $segid => $segkey) {
 					if (($_POST[$segkey.'delete'])) {
 						$q = "DELETE FROM `classsegment` WHERE `id` = '" . $segid . "';";
@@ -191,8 +157,7 @@ function agregupdt($aclassid) {
 					}
 				}
 				$segadded = 0;
-				//vardebug($_SESSION['classes']);
-				//vardebug($_POST['class7387scenlst']);
+
 				foreach ($_SESSION['classes'] as $classid => $classkey) {
 					if (($_POST[$classkey.'delete'])) {
 						$q = "DELETE FROM `class` WHERE `id` = '" . $classid . "';";
@@ -237,9 +202,7 @@ function agregupdt($aclassid) {
 								$GBLmysqli->dbquery($q,$classlog);
 							}
 						}
-						//echo 'and...'.$classkey.'<br>';
-						//vardebug($_POST);
-						//vardebug($_SESSION['org']);
+
 						if ($_POST[$classkey.'scenerybool']) {
 							//echo 'here<br>';
 							foreach ($_SESSION['org']['sceneryusr'] as $session_sceneryid => $session_sceneryclassid) {
@@ -267,8 +230,7 @@ function agregupdt($aclassid) {
 								$GBLmysqli->dbquery($q,$classlog);
 							}
 						}
-						//vardebug($q);
-						//vardebug($_POST);
+
 						if (($_POST[$classkey.'addsegment'])) {
 							reset($_SESSION['deptprof'.$_POST['unitid']]);
 							$q = "INSERT INTO `classsegment` (`day`,`start`,`length`,`room_id`,`prof_id`,`class_id`) VALUES ('2','7','2','1','" . key($_SESSION['deptprof'.$_POST['unitid']]) . "','" . $classid . "');";
@@ -430,7 +392,6 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		$qnicks='';
 	}
 
-//	$qqscentbl = ""; //nothing by now
 	$qq = "SELECT DISTINCT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid` , `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid` " . $qnicks .
 		 " FROM `classsegment` , `class`, `semester`,`unit`,`discipline`,`prof` , `unit` AS `discdept`  " . $qqscentbl . " WHERE " . 
 		 "`class`.`discipline_id` = `discipline`.`id` AND `class`.`sem_id` = `semester`.`id` AND " . 
@@ -440,10 +401,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		 "`discipline`.`id` = '".$_POST['discid'] . "' " . $qqscensql . " ORDER BY `discipline`.`name` , `class`.`name`";
 
 	return [$inselected,$qq];
-		//echo '<details>';
-		//echo '<summary>&nbsp;&nbsp;&nbsp;<b>&rArr;</b> Matriz Horários</summary>';
-		//dbweekmatrix($qq,$inselected,null,null,false,true);
-		//echo '</details>';
+
 }
 
 
@@ -457,10 +415,10 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		echo '</b>';
 		echo formsubmit('act','Cancel');
 		echo spanformat('smaller',$GBLcommentcolor, displaysqlitem('&nbsp;&nbsp;','discipline',$_POST['discid'],'comment')) ;
-		//formsceneryselect();
+
 		echo formhiddenval('profnicks',$_POST['profnicks']);
 		echo formhiddenval('courseHL',$_POST['courseHL']);
-//		echo formhiddenval('orderby',$_POST['orderby']);
+
 
 		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks'],false);
 		if($_POST['courseHL']) {
@@ -478,8 +436,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		//formsceneryselect();
 		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks']);
 		//echo '<br>';
-//		echo "Ordenado por:  ";
-//		formselectsession('orderby','orderby',$_POST['orderby']);
+
 		
 	echo "Nome Profs? ";
 	formselectsession('profnicks','bool',$_POST['profnicks'],false,true);
@@ -500,8 +457,6 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	}
 	dbweekmatrix($SCquery,$SCinselected,null,null,false,true,$_POST['courseHL']);
 	echo '<hr>';
-   	$inselected = inscenery_sessionlst('sceneryselected');
-	list($qqscentbl,$qqscensql) = scenery_sql($inselected);
 
 
 
@@ -512,6 +467,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	while ($sqlrow = $result->fetch_assoc()) {
 		$_SESSION['agreg'][$sqlrow['id']] = $sqlrow['name'];
 	}	
+        
 	if ($can_class) {
 		$q = "SELECT DISTINCT class.* FROM `class` , `discipline` " . 
 			"WHERE class.discipline_id = discipline.id AND class.discipline_id = '" . $_POST['discid'] . "' AND class.sem_id = '" . $_POST['semid'] . "' AND " . 
@@ -526,11 +482,7 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	$result = $GBLmysqli->dbquery($q);
 	
 	$anyone = 0;
-				//vardebug($_SESSION['scenery']);
-				//vardebug($_SESSION['org'][sceneryusr]);
-				//vardebug($_SESSION['org'][sceneryclass]);
-				//vardebug($_POST);
-				//vardebug($_POST['class7387scenlst']);
+
 
 	while ($classrow = $result->fetch_assoc()) {
 		$anyone = 1;

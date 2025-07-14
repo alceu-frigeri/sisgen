@@ -40,7 +40,7 @@
 		$emailbodyhdr = '';
 		if($sqlrow['acronym']) {
 			$temp = '<h4>'.$sqlrow['acronym'] . ' -- ' . $sqlrow['name'] . '</h4>';
-			//echo $temp; 
+			
 			$emailbodyhdr .= $temp;
 		}
 		$q = "SELECT * FROM `term` ORDER BY `id`";
@@ -50,13 +50,13 @@
 			$discsql = $GBLmysqli->dbquery($q);
 			if($discsql->num_rows) {
 				$temp = '<hr><b>'.$termrow['name'].'</b><br>';
-				//echo $temp; 
+
 				$emailbody .= $temp;
 			}
 			while ($discrow = $discsql->fetch_assoc()) {
 				$flag = 0;
 				$temp = '<br><b>'. spanformat('','darkblue',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
-				//echo $temp; 
+
 				$emailbody .= $temp;
 
 				$q = "SELECT DISTINCT class.* , (`vac`.`askednum` + `vac`.`askedreservnum` ) as `askednum`  , `vac`.`askedreservnum` FROM  `class` , `vacancies` AS `vac` " . $qscentbl . " WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .
@@ -68,7 +68,7 @@
 					if ($classrow['askednum']>1) { $p='s'; } else { $p=''; };
 					 $flag = 1;
 					 $temp = 'Turma: ' . $classrow['name'] . ' ('. $classrow['askednum'] . ' vaga'.$p.')';
-					 //echo $temp; 
+
 					 $emailbody .= $temp;
                                         if ($classrow['askedreservnum'] > 0) {
                                                 $temp = ' das quais ' . $classrow['askedreservnum'] . ' serão para calouros.';
@@ -76,7 +76,7 @@
                                         }
 					 if ($classrow['agreg']) {
 						 $temp = spanformat('','darkorange',' (agregadora)');
-						 //echo $temp; 
+
 						 $emailbody .= $temp;
 					 } else {
 						 if($classrow['partof']) {
@@ -84,25 +84,25 @@
 							 $partsql=$GBLmysqli->dbquery($q);
 							 $partrow=$partsql->fetch_assoc();
 							 $temp = spanformat('','darkorange',' (agregada à '.$partrow['name'].')');
-							 //echo $temp; 
+
 							 $emailbody .= $temp;
 						 }
 					 }					 
 					 $temp = '<br>';
-					 //echo $temp; 
+
 					 $emailbody .= $temp;
 					 $q = "SELECT * FROM `classsegment` AS `seg` WHERE `seg`.`class_id` = '" . $classrow['id'] . "';";
 					 $segsql = $GBLmysqli->dbquery($q);
 					 while ($segrow = $segsql->fetch_assoc()) {
 						 if ($segrow['length']>1) { $p='s'; } else { $p=''; };
 						 $temp = '&nbsp;&nbsp;&nbsp;' . spanformat('','gray',$_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora'.$p.'-Aula<br>'); 
-						 //echo $temp; 
+
 						 $emailbody .= $temp;
 					 }
 				}
 				if(!$flag) {
 					$temp = '&nbsp;&nbsp;&nbsp;' . spanformat('','gray',' -- sem demandas --<br>'); 
-					//echo $temp; 
+
 					$emailbody .= $temp;
 				}
 			}

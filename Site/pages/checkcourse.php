@@ -18,11 +18,6 @@
 
 	echo '</form>';
 	
-//	$in = "'0'";
-//	foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//		$in .= " , '".$scenid."'";
-//	}
-
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
 
@@ -30,8 +25,6 @@
 // semester, course, term
     $q = "SELECT * FROM `term` ORDER BY `id`;";
 	$termsql = $GBLmysqli->dbquery($q);
-	
-//	list($qscentbl,$qscensql) = scenery_sql($in);
 	
 	while ($termrow = $termsql->fetch_assoc()) {
 	  $q = "SELECT DISTINCT `discipline`.`name` AS `discname`, `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `disciplinekind`.`code` AS `disckind` " . 

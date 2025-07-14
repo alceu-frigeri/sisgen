@@ -12,9 +12,7 @@
 	formjavaprint(displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos ','semester',$_POST['semid'],'name'));
 
 	echo formpost($thisform);
-//        formretainvalues(array('deptid'));
 
-//	formselectsql($anytmp,"SELECT * FROM `semester` ORDER BY `name`;",'semid',$_POST['semid'],'id','name');
 	formselectsql($anytmp,"SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;",'deptid',$_POST['deptid'],'id','acronym');
 	echo  '<br>';
 	
@@ -44,13 +42,13 @@
 
 	while ($discrow = $discsql->fetch_assoc()) {
 		$enrollpage .= '<br><b>'. spanformat('','darkblue',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
-//  		list($qscentbl,$qscensql) = scenery_sql($in);
+
 
 		$q = "SELECT DISTINCT class.* , `semester`.`name` as `sem_name` FROM  `class` , `semester` " . $qscentbl . "    WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .  
 		"`class`.`sem_id` = `semester`.`id` AND `semester`.`imported` = '1' " . $qscensql . 
 		 " ORDER BY `semester`.`name` ASC, `class`.`name` ASC; " ;
 		 
-		 //vardebug($q);
+
 		$classsql = $GBLmysqli->dbquery($q);
 		while($classrow = $classsql->fetch_assoc()) {
 			 $enrollpage .=  'Turma: ' . $classrow['name'] . ' - ' . $classrow['sem_name'];

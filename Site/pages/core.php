@@ -74,10 +74,11 @@ function writeLogFile($msg) {
      }
 }
 
-function vardebug($var) {
+function vardebug($var,$name=null) {
 	global $GBLdebug;
 	if($GBLdebug) {
 		echo '<pre>';
+                if($name){echo $name.': ';}
 		var_dump($var);
 		echo '</pre>';
 	}
@@ -274,9 +275,7 @@ function checkweek($q,$qscen=null,$courseid=null,$termid=null) {
 	while ($sqlrow = $result->fetch_assoc()) {
 		$disccodes[$sqlrow['code']] = $sqlrow['code'];
 		$disc[$sqlrow['code']] = $sqlrow['discname'];
-		//if (!isset($scen[$sqlrow['classid']])) {
-			
-		//}
+
 		if (!$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
 			if($courseid) {
 				$q = "SELECT `askednum` AS `totalA` , `askedreservnum`  AS `totalB` FROM `vacancies` WHERE `class_id` = '".$sqlrow['classid']."' AND `course_id` = '".$courseid."';";
@@ -518,7 +517,6 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 			} else {
 				$bgcolor = null;
 			};
-			//$bgcolor=null;
 
 			if ($edit) {
 				echo hiddendiscform($_POST['semid'],$discdept[$d],$discid[$d],$profnicks,$courseHL,'') . formsubmit('submit','go edit');			
@@ -528,7 +526,6 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 				echo	spanformat('',$disccolor[$d], $d . ' - ' . $disc[$d] ,$bgcolor,true) . $kind . '<br>';
 			}
 			
-			//echo '</br>';
 		}
 		if ($hiddencoursekeys) {
 			foreach ($hiddencoursekeys as $cid => $acid) {
@@ -544,7 +541,7 @@ function dbweekmatrix($q,$qscen=null,$courseid=null,$termid=null,$edit=true,$mat
 				"`disc`.`dept_id` = `discdept`.`id` AND " .
 				"`cd`.`term_id` = '".$termid."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND " . 
 				"`cd`.`discipline_id` = `disc`.`id`; " ;
-				//"AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
+//				"AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
 			$termsql = $GBLmysqli->dbquery($q);
 			$title = '<h5><b>Disciplina(s) não ofertada(s)</b></h5>';
 			while ($termrow = $termsql->fetch_assoc()) {
@@ -903,7 +900,8 @@ function scenery_sql($inscenery) {
 		}
 		echo '</select>';
 	}
-//	$GBLhighlightstyle
+
+
 	function highlightbegin() {
 		global $GBLhighlightstyle;
 		echo '<table '.$GBLhighlightstyle.'><tr><td>';

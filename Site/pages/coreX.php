@@ -87,7 +87,7 @@ function DBinsertgrade($Course,$Term,$DiscCode,$DiscName,$DiscCred,$DiscKind) {
 			$GBLmysqli->dbquery($q);
 			$discid = $GBLDiscIDs[$DiscCode] = $GBLmysqli->insert_id;
 		} else {
-			// ERR
+			// TODO : ERR
 			echo "<br>ERR !! Dept.: $DiscDeptCode not there !<br>";
 		}
 	}

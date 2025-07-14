@@ -38,7 +38,6 @@
 	echo '<h2>' . displaysqlitem('','unit',$_POST['deptid'],'acronym') . displaysqlitem(' - Encargos p/ ','semester',$_POST['semid'],'name') . '</h2>';
 	while ($discrow = $discsql->fetch_assoc()) {
 		echo '<br><b>'. spanformat('','darkblue',$discrow['code'].' -- '.$discrow['name']) .'</b><br>';
-//  		list($qscentbl,$qscensql) = scenery_sql($in);
 
 		$q = "SELECT DISTINCT class.*  FROM  `class` " . $qscentbl . "  WHERE `class`.`discipline_id` = '" . $discrow['id'] . "' AND " .  
 		"`class`.`sem_id` = '" . $_POST['semid'] . "' " . $qscensql . 

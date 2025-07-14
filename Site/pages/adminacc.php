@@ -95,7 +95,6 @@
 		$q = "SELECT `role`.* , `accrole`.`id` AS `accroleid` FROM `accrole`,`role` WHERE `accrole`.`role_id` = `role`.`id` AND `accrole`.`account_id` = '" . $usrrow['id'] . "' ;";
 		$sqlrole = $GBLmysqli->dbquery($q);
 		while ($rolerow = $sqlrole->fetch_assoc()) {
-			//echo formpost($thisform.'#acc'.$usrrow['id'].'div');
                         echo formpost($thisform.targetdivkey('acc',$usrrow['id']));
 			echo formhiddenval('accroleid',$rolerow['accroleid']);
 			echo formhiddenval('usrid',$usrrow['id']);

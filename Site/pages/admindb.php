@@ -207,9 +207,7 @@
 						unset($line[14]);						
 						unset($line[15]);		
 						unset($line[16]);						
-						
-//						$q = "INSERT INTO `role` (`rolename`, `description`,  `isadmin`, `can_edit`, `can_dupsem`, `can_class`, `can_addclass`, `can_scenery` , `can_vacancies`, `can_disciplines`, `can_coursedisciplines`, `can_prof`, `can_room`, `can_viewlog`, `unit_id`) VALUES " .
-//						"('". implode("','",$line) . "','".$unitrow['id']."');";
+					
 
 						$q = "INSERT INTO `role` (`rolename`, `description`,  `isadmin`, `can_edit`, `can_dupsem`, `can_class`, `can_addclass`,  `can_vacancies`, `can_disciplines`, `can_coursedisciplines`, `can_prof`, `can_room`, `can_viewlog`, `unit_id`) VALUES " .
 						"('". implode("','",$line) . "','".$unitrow['id']."');";
@@ -290,9 +288,7 @@
 		break;
 		case 'Courses Adjust':
 		if($_POST['courseadjust'] & $sisgenDBsetupHacks){
-			// $q = "SELECT `id` FROM `unit` WHERE `acronym` = 'CCA';";
-			// $result = $GBLmysqli->dbquery($q);
-			// $oldcourse = $result->fetch_assoc();
+
 			echo 'Adjusting CCA<br>';
 			$courseid=$_SESSION['unitbycode']['CCA99']['id'];
 			duplicatecourse($courseid,'oCCA','CCA98','Antiga Grade CCA','dup. from CCA');

@@ -19,12 +19,6 @@
 	echo '</form>';
 
 	
-//	$in = "'0'";
-//	foreach ($_SESSION['sceneryselected'] as $scenid => $scenname) {
-//		$in .= " , '".$scenid."'";
-//	}
-//	list($qscentbl,$qscensql) = scenery_sql($in);
-
 	$inselected = inscenery_sessionlst('sceneryselected');
 	list($qscentbl,$qscensql) = scenery_sql($inselected);
 

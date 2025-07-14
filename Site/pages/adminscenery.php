@@ -60,7 +60,6 @@
 			echo spanformat('','red',formsubmit('act','Delete'),null,true);
 			echo '</form><br><hr>';			
 		} else {
-//			echo formpost($thisform.'#scen'.$sceneryrow['id'].'div') . formhiddenval('sceneryid',$sceneryrow['id']) . formsubmit('act','Edit');
 			echo formpost($thisform.targetdivkey('scen',$sceneryrow['id'])) . formhiddenval('sceneryid',$sceneryrow['id']) . formsubmit('act','Edit');
 			echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
 				if ($sceneryrow['hide']) {
