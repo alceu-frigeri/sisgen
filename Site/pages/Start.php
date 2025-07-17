@@ -2,8 +2,8 @@
 //    global $regpage;
 
 //    $defaultpage = ;
-    $emailcheck="onkeyup='emailcheck()' onchange='emailcheck()' onblur='emailcheck()'";
-    $passcheck="onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
+    $emailcheck = "onkeyup='emailcheck()' onchange='emailcheck()' onblur='emailcheck()'";
+    $passcheck = "onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
 ?>
     
 <h2>Login</h2>
@@ -11,8 +11,8 @@
 
 <h4>Se o seu Email já estiver cadastrado, efetue o login. Caso contrário, preencha o formulário de cadastro.</h4>
 
-<div class='row'>
-<div class='col-sm-8'>
+<div class = 'row'>
+<div class = 'col-sm-8'>
 
      <input type='radio' name='type' id='type' value='login' checked onclick="formtype('login')">Já estou cadastrado</input><br>
      <input type='radio' name='type' id='type' value='new-account' onclick="formtype('new-account')">Meu Email não está cadastrado</input><br>
@@ -108,7 +108,7 @@ Você receberá um Email de confirmação, caso sua conta esteja cadastrada mas 
 
 <script type='text/javascript'>
 
-function check(fieldA,fieldB,diffA,diffB) {
+function check(fieldA , fieldB , diffA , diffB) {
 var valA = document.getElementById(fieldA).value;
 var valB = document.getElementById(fieldB).value;
 if (valA == valB) {
@@ -152,11 +152,11 @@ function formtype(type) {
 }
 
 function emailcheck() {
-  return check('emailA','emailB','emailAdiff','emailBdiff');
+  return check('emailA' , 'emailB' , 'emailAdiff' , 'emailBdiff');
 }
 
 function passcheck() {
-  return check('passA','passB','passAdiff','passBdiff');
+  return check('passA' , 'passB' , 'passAdiff' , 'passBdiff');
 }
 
 function validate() {

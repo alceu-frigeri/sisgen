@@ -1,5 +1,5 @@
 <?php
-    $passcheck="onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
+    $passcheck = "onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
 ?>
 
 
@@ -34,7 +34,7 @@
 
 <script type='text/javascript'>
 
-function check(fieldA,fieldB,diffA,diffB) {
+function check(fieldA , fieldB , diffA , diffB) {
 var valA = document.getElementById(fieldA).value;
 var valB = document.getElementById(fieldB).value;
 if (valA == valB) {
@@ -51,7 +51,7 @@ if (valA == valB) {
 
 
 function passcheck() {
-  return check('passA','passB','passAdiff','passBdiff');
+  return check('passA' , 'passB' , 'passAdiff' , 'passBdiff');
 }
 
 function validate() {

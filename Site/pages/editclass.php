@@ -1,9 +1,9 @@
 
 
-<?php $thisform=$GBLbasepage.'?q=edits&sq=classes'; 
+<?php $thisform = $GBLbasepage.'?q=edits&sq=classes'; 
 ?>
 
-<div class="row">
+<div class = "row">
         <h2>Turmas</h2>
         <hr>
 
@@ -18,8 +18,8 @@
 	$hiddenprofdeptid = null;
 	$hiddenroombuildingid = null;
 
-	$can_class=($_SESSION['role'][$_POST['unitid']]['can_class'] | $_SESSION['role']['isadmin']) & !$readonly;
-	$can_addclass=($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
+	$can_class = ($_SESSION['role'][$_POST['unitid']]['can_class'] | $_SESSION['role']['isadmin']) & !$readonly;
+	$can_addclass = ($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
 	
 	$GBLmysqli->postsanitize();
 
@@ -49,40 +49,40 @@
 	include 'coreedit.php';
 	//$GBLclasspattern = '[A-Z][A-Za-z0-9\*]*';
 
-    $GBLvackind=array();
-	$q="SELECT `kind`.`code` , `cd`.`course_id` , `term`.`code` AS `trm` , `term`.`id` AS `termid` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `term` WHERE `cd`.`discipline_id` = '".$_POST['discid']."' AND `cd`.`disciplinekind_id` = `kind`.`id` AND `cd`.`term_id` = `term`.`id`;";
-	$kindsql=$GBLmysqli->dbquery($q);
-	while($kindrow=$kindsql->fetch_assoc()) {
+    $GBLvackind = array();
+	$q = "SELECT `kind` . `code` , `cd` . `course_id` , `term` . `code` AS `trm` , `term` . `id` AS `termid` FROM `disciplinekind` AS `kind` , `coursedisciplines` AS `cd` , `term` WHERE `cd` . `discipline_id` = '$_POST[discid]' AND `cd` . `disciplinekind_id` = `kind` . `id` AND `cd` . `term_id` = `term` . `id`;";
+	$kindsql = $GBLmysqli->dbquery($q);
+	while($kindrow = $kindsql->fetch_assoc()) {
 		if ($kindrow['code'] == 'OB') {
 			$kba = '<b>';
 			$kbb = '</b>';
 		} else {
-			$kba=null;
-			$kbb=null;
+			$kba = null;
+			$kbb = null;
 		}
-		$GBLvackind[$kindrow['course_id']]=$kba . hiddenformlnk(hiddencoursekey($_POST['semid'],$kindrow['course_id'],$kindrow['termid']) , $kindrow['code'].'-'.$kindrow['trm']) . $kbb;
+		$GBLvackind[$kindrow['course_id']] = $kba . hiddenformlnk(hiddencoursekey($_POST['semid'] , $kindrow['course_id'] , $kindrow['termid']) , $kindrow['code'] . '-' . $kindrow['trm']) . $kbb;
 		
-		echo hiddencourseform($_POST['semid'],$kindrow['course_id'],$kindrow['termid']);
+		echo hiddencourseform($_POST['semid'] , $kindrow['course_id'] , $kindrow['termid']);
 		
 
 	}
 	
 	$incanview = inscenery_sessionlst('scen.acc.view');
-	list($qscentbl,$qscensql) = scenery_sql($incanview);   //TODO HERE... acc.view
+	list($qscentbl , $qscensql) = scenery_sql($incanview);   //TODO HERE... acc.view
 
 	$incanedit = inscenery_sessionlst('scen.acc.edit');
 
 function agregupdt($aclassid) {
 	global $GBLmysqli;
 
-	$q="SELECT `cd`.`course_id` FROM `coursedisciplines` AS `cd` WHERE `cd`.`discipline_id` = '".$_POST['discid']."' ";
-	$aclasssql=$GBLmysqli->dbquery($q);
-	while($aclassrow=$aclasssql->fetch_assoc()) {
-		$q = "SELECT  SUM(`vac`.`givennum`) AS `givensum`, SUM(`vac`.`givenreservnum`) AS `givenreservsum`, SUM(`vac`.`askednum`) AS `askedsum` , SUM(`vac`.`askedreservnum`) AS `askedreservsum`FROM `vacancies` AS `vac`,`class` " .
-		"WHERE `vac`.`class_id` = `class`.`id` AND `class`.`partof` = '".$aclassid."' AND `vac`.`course_id` = '".$aclassrow['course_id']."';";
-		$sumsql=$GBLmysqli->dbquery($q);
-		$sumrow=$sumsql->fetch_assoc();
-		$q="UPDATE `vacancies`  SET `givennum` = '" . $sumrow['givensum'] . 
+	$q = "SELECT `cd` . `course_id` FROM `coursedisciplines` AS `cd` WHERE `cd` . `discipline_id` = '" . $_POST['discid'] . "' ";
+	$aclasssql = $GBLmysqli->dbquery($q);
+	while($aclassrow = $aclasssql->fetch_assoc()) {
+		$q = "SELECT  SUM(`vac` . `givennum`) AS `givensum` , SUM(`vac` . `givenreservnum`) AS `givenreservsum` , SUM(`vac` . `askednum`) AS `askedsum` , SUM(`vac` . `askedreservnum`) AS `askedreservsum`FROM `vacancies` AS `vac` , `class` "  . 
+		"WHERE `vac` . `class_id` = `class` . `id` AND `class` . `partof` = '" . $aclassid . "' AND `vac` . `course_id` = '" . $aclassrow['course_id'] . "';";
+		$sumsql = $GBLmysqli->dbquery($q);
+		$sumrow = $sumsql->fetch_assoc();
+		$q = "UPDATE `vacancies`  SET `givennum` = '" . $sumrow['givensum'] . 
                         "' , `givenreservnum` = '" . $sumrow['givenreservsum'] . 
                         "' , `askednum` = '" . $sumrow['askedsum'] . 
                         "' , `askedreservnum` = '" . $sumrow['askedreservsum'] . 
@@ -94,181 +94,192 @@ function agregupdt($aclassid) {
 }
 
 	if (!$readonly) {
-		$classlogaction = 'class edit ('.$_POST['act'].') ';
-		$classlog = array('level'=>'INFO','action'=> $classlogaction,'str'=>displaysqlitem('','semester',$_POST['semid'],'name').displaysqlitem('','discipline',$_POST['discid'],'code'),'xtra'=>'editclass.php');
+		$classlogaction = 'class edit (' . $_POST['act'] . ') ';
+		$classlog = array('level'=>'INFO' , 'action'=> $classlogaction , 'str'=>displaysqlitem('' , 'semester' , $_POST['semid'] , 'name') . displaysqlitem('' , 'discipline' , $_POST['discid'] , 'code') , 'xtra'=>'editclass.php');
 		switch ($_POST['act']){
 			case 'Submit':
-//				$GBLmysqli->eventlog(array('level'=>'INFO','action'=>'class edit','str'=>displaysqlitem('','semester',$_POST['semid'],'name').displaysqlitem('','discipline',$_POST['discid'],'code'),'xtra'=>'editclass.php'));
+//				$GBLmysqli->eventlog(array('level'=>'INFO' , 'action'=>'class edit' , 'str'=>displaysqlitem('' , 'semester' , $_POST['semid'] , 'name') . displaysqlitem('' , 'discipline' , $_POST['discid'] , 'code') , 'xtra'=>'editclass.php'));
 				//vardebug($_POST);
 
 				foreach ($_SESSION['segments'] as $segid => $segkey) {
-					if (($_POST[$segkey.'delete'])) {
+					if (($_POST[$segkey . 'delete'])) {
 						$q = "DELETE FROM `classsegment` WHERE `id` = '" . $segid . "';";
 						$classlog['action'] = $classlogaction . 'segment DELETE';
-							$classlog['dataorg'] = $_SESSION['weekday'][$_SESSION['org'][$segkey.'day']] . ' ' . 
-													$_SESSION['org'][$segkey.'start'] . ':30 (' . $_SESSION['org'][$segkey.'length'] . ') sala: ' . 
-													$_SESSION['rooms'][$_SESSION['org'][$segkey.'room']]['txt'] . ' - ' . 
-													$_SESSION['deptprof'.$_POST['unitid']][$_SESSION['org'][$segkey.'prof']] . ' (' . 
-													$_SESSION['status'][$_SESSION['org'][$segkey.'status']] .')';
-							$classlog['datanew']='';
-						$GBLmysqli->dbquery($q,$classlog);
+							$classlog['dataorg'] = $_SESSION['weekday'][$_SESSION['org'][$segkey . 'day']] . ' ' . 
+													$_SESSION['org'][$segkey . 'start'] . ':30 (' . $_SESSION['org'][$segkey . 'length'] . ') sala: ' . 
+													$_SESSION['rooms'][$_SESSION['org'][$segkey . 'room']]['txt'] . ' - ' . 
+													$_SESSION['deptprof' . $_POST['unitid']][$_SESSION['org'][$segkey . 'prof']] . ' (' . 
+													$_SESSION['status'][$_SESSION['org'][$segkey . 'status']]  . ')';
+							$classlog['datanew'] = '';
+						$GBLmysqli->dbquery($q , $classlog);
 					} else {
-						if (fieldscompare($segkey,array('day','start','length','room','prof','status'))) {
-							$q = "UPDATE `classsegment` SET `day` = '" . $_POST[$segkey.'day']  . "' , `start` = '" . $_POST[$segkey.'start']  . 
-								"' , `length` = '" . $_POST[$segkey.'length']  . "' , `room_id` = '" . $_POST[$segkey.'room']  . 
-								"' , `prof_id` = '" . $_POST[$segkey.'prof']  . "' , `status_id` = '" . $_POST[$segkey.'status'] . "' WHERE `id` = '" . $segid  . "';";
+						if (fieldscompare($segkey , array('day' , 'start' , 'length' , 'room' , 'prof' , 'status'))) {
+							$q = "UPDATE `classsegment` SET `day` = '" . $_POST[$segkey . 'day']  . "' , `start` = '" . $_POST[$segkey . 'start']  . 
+								"' , `length` = '" . $_POST[$segkey . 'length']  . "' , `room_id` = '" . $_POST[$segkey . 'room']  . 
+								"' , `prof_id` = '" . $_POST[$segkey . 'prof']  . "' , `status_id` = '" . $_POST[$segkey . 'status'] . "' WHERE `id` = '" . $segid  . "';";
 							$classlog['action'] = $classlogaction . 'segment UPDATE';
-							$classlog['dataorg'] = $_SESSION['weekday'][$_SESSION['org'][$segkey.'day']] . ' ' . 
-													$_SESSION['org'][$segkey.'start'] . ':30 (' . $_SESSION['org'][$segkey.'length'] . ') sala: ' . 
-													$_SESSION['rooms'][$_SESSION['org'][$segkey.'room']]['txt'] . ' - ' . 
-													$_SESSION['deptprof'.$_POST['unitid']][$_SESSION['org'][$segkey.'prof']] . ' (' . 
-													$_SESSION['status'][$_SESSION['org'][$segkey.'status']] .')';
-							$classlog['datanew'] = $_SESSION['weekday'][$_POST[$segkey.'day']] . ' ' . 
-													$_POST[$segkey.'start'] . ':30 (' . 
-													$_POST[$segkey.'length'] . ') sala: ' . 
-													$_SESSION['rooms'][$_POST[$segkey.'room']]['txt'] . ' - ' . 
-													$_SESSION['deptprof'.$_POST['unitid']][$_POST[$segkey.'prof']] . ' (' . 
-													$_SESSION['status'][$_POST[$segkey.'status']] .')';
-							$GBLmysqli->dbquery($q,$classlog);
+							$classlog['dataorg'] = $_SESSION['weekday'][$_SESSION['org'][$segkey . 'day']] . ' ' . 
+													$_SESSION['org'][$segkey . 'start'] . ':30 (' . $_SESSION['org'][$segkey . 'length'] . ') sala: ' . 
+													$_SESSION['rooms'][$_SESSION['org'][$segkey . 'room']]['txt'] . ' - ' . 
+													$_SESSION['deptprof' . $_POST['unitid']][$_SESSION['org'][$segkey . 'prof']] . ' (' . 
+													$_SESSION['status'][$_SESSION['org'][$segkey . 'status']]  . ')';
+							$classlog['datanew'] = $_SESSION['weekday'][$_POST[$segkey . 'day']] . ' ' . 
+													$_POST[$segkey . 'start'] . ':30 (' . 
+													$_POST[$segkey . 'length'] . ') sala: ' . 
+													$_SESSION['rooms'][$_POST[$segkey . 'room']]['txt'] . ' - ' . 
+													$_SESSION['deptprof' . $_POST['unitid']][$_POST[$segkey . 'prof']] . ' (' . 
+													$_SESSION['status'][$_POST[$segkey . 'status']]  . ')';
+							$GBLmysqli->dbquery($q , $classlog);
 						}
 					}
 				}
-				$anyone=0;
+				$anyone = 0;
 				foreach ($_SESSION['vacancies'] as $vacid => $vackey) {
-					if (fieldscompare($vackey,array('asked','askedreserv','askedstatusid','given','givenreserv','givenstatusid','comment'))) {
-						$anyone=1;
-						$q = "UPDATE `vacancies` SET `askednum` = '" . $_POST[$vackey.'asked']  . 
-                                                        "' , `askedreservnum`= '" . $_POST[$vackey.'askedreserv'] . 
-                                                        "' , `askedstatus_id`= '" . $_POST[$vackey.'askedstatusid'] . 
-                                                        "' , `givennum`= '" . $_POST[$vackey.'given']  . 
-                                                        "' , `givenreservnum`= '" . $_POST[$vackey.'givenreserv']  . 
-                                                        "' , `givenstatus_id`= '" . $_POST[$vackey.'givenstatusid'] . 
-                                                        "' , `comment`= '" . $_POST[$vackey.'comment'] . 
+					if (fieldscompare($vackey , array('asked' , 'askedreserv' , 'askedstatusid' , 'given' , 'givenreserv' , 'givenstatusid' , 'comment'))) {
+						$anyone = 1;
+						$q = "UPDATE `vacancies` SET `askednum` = '" . $_POST[$vackey . 'asked']  . 
+                                                        "' , `askedreservnum`= '" . $_POST[$vackey . 'askedreserv'] . 
+                                                        "' , `askedstatus_id`= '" . $_POST[$vackey . 'askedstatusid'] . 
+                                                        "' , `givennum`= '" . $_POST[$vackey . 'given']  . 
+                                                        "' , `givenreservnum`= '" . $_POST[$vackey . 'givenreserv']  . 
+                                                        "' , `givenstatus_id`= '" . $_POST[$vackey . 'givenstatusid'] . 
+                                                        "' , `comment`= '" . $_POST[$vackey . 'comment'] . 
                                                         "' WHERE `id` = '" . $vacid  . 
                                                         "';" ;
 						$classlog['action'] = $classlogaction . 'vac UPDATE';
-							$classlog['dataorg'] = 'asked: ' . $_SESSION['org'][$vackey.'asked'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey.'askedstatusid']] . ') ' .
-													'given: ' . $_SESSION['org'][$vackey.'given'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey.'givenstatusid']] . ') ' .
-													$_SESSION['org'][$vackey.'comment'] ;
-							$classlog['datanew'] = 'asked: ' . $_POST[$vackey.'asked'] . ' (' . $_SESSION['status'][$_POST[$vackey.'askedstatusid']] . ') ' .
-													'given: ' . $_POST[$vackey.'given'] . ' (' . $_SESSION['status'][$_POST[$vackey.'givenstatusid']] . ') ' .
-													$_POST[$vackey.'comment'] ;
-						$GBLmysqli->dbquery($q,$classlog);
+							$classlog['dataorg'] = 'asked: ' . $_SESSION['org'][$vackey . 'asked'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey . 'askedstatusid']] . ') '  . 
+													'given: ' . $_SESSION['org'][$vackey . 'given'] . ' (' . $_SESSION['status'][$_SESSION['org'][$vackey . 'givenstatusid']] . ') '  . 
+													$_SESSION['org'][$vackey . 'comment'] ;
+							$classlog['datanew'] = 'asked: ' . $_POST[$vackey . 'asked'] . ' (' . $_SESSION['status'][$_POST[$vackey . 'askedstatusid']] . ') '  . 
+													'given: ' . $_POST[$vackey . 'given'] . ' (' . $_SESSION['status'][$_POST[$vackey . 'givenstatusid']] . ') '  . 
+													$_POST[$vackey . 'comment'] ;
+						$GBLmysqli->dbquery($q , $classlog);
 					}
 				}
 				$segadded = 0;
 
 				foreach ($_SESSION['classes'] as $classid => $classkey) {
-					if (($_POST[$classkey.'delete'])) {
+					if (($_POST[$classkey . 'delete'])) {
 						$q = "DELETE FROM `class` WHERE `id` = '" . $classid . "';";
 						$classlog['action'] = $classlogaction . 'class DELETE';
 						  $classlog['dataorg'] = 'Turma : ' . $_POST['classname'] . ' deleted';
 						  $classlog['datanew'] = '';
-						$GBLmysqli->dbquery($q,$classlog);
+						$GBLmysqli->dbquery($q , $classlog);
 					} else {
-						if($_POST[$classkey.'agreg']) {$_POST[$classkey.'partof']=0;}
-						if (fieldscompare($classkey,array('classname'))) {
-							$q = "UPDATE `class` SET `name`= '" . $_POST[$classkey.'classname'] . "' WHERE `id`= '" . $classid . "';";
+						if($_POST[$classkey . 'agreg']) {$_POST[$classkey . 'partof'] = 0;}
+						if (fieldscompare($classkey , array('classname'))) {
+							$q = "UPDATE `class` SET `name`= '" . $_POST[$classkey . 'classname'] . "' WHERE `id`= '" . $classid . "';";
 							$GBLmysqli->dbquery($q);
 						}
-						if (fieldscompare($classkey,array('agreg','status','comment','partof','scenerybool'))) {
+						if (fieldscompare($classkey , array('agreg' , 'status' , 'comment' , 'partof' , 'scenerybool'))) {
 							//echo 'tjam<br>';
-							if ($_POST[$classkey.'partof']) {
-								$part = "`partof`= '" . $_POST[$classkey.'partof'] . "' ";
+							if ($_POST[$classkey . 'partof']) {
+								$part = "`partof`= '" . $_POST[$classkey . 'partof'] . "' ";
 							} else {
 								$part = "`partof`= NULL ";
 							}
-							$q = "UPDATE `class` SET `agreg`= '" . $_POST[$classkey.'agreg'] . "' , `status_id`= '" . $_POST[$classkey.'status'] . "' , `comment`= '" . $_POST[$classkey.'comment'] . "' , `scenery`= '" . $_POST[$classkey.'scenerybool'] . "' , $part WHERE `id`= '" . $classid . "';";
+							$q = "UPDATE `class` SET `agreg`= '" . $_POST[$classkey . 'agreg'] . "' , `status_id`= '" . $_POST[$classkey . 'status'] . "' , `comment`= '" . $_POST[$classkey . 'comment'] . "' , `scenery`= '" . $_POST[$classkey . 'scenerybool'] . "' , $part WHERE `id`= '" . $classid . "';";
 							$classlog['action'] = $classlogaction . 'class agreg UPDATE';
-							$classlog['dataorg'] = 'agreg: ' . $_SESSION['bool'][$_SESSION['org'][$classkey.'agreg']] . ' (' . $_SESSION['status'][$_SESSION['org'][$classkey.'statusid']] . ') ' .
-													$_SESSION['org'][$classkey.'comment'] ;
-							$classlog['datanew'] = 'agreg: ' . $_SESSION['bool'][$_POST[$classkey.'agreg']] . ' (' . $_SESSION['status'][$_POST[$classkey.'statusid']] . ') ' .
-													$_POST[$classkey.'comment'] ;
+							$classlog['dataorg'] = 'agreg: ' . $_SESSION['bool'][$_SESSION['org'][$classkey . 'agreg']] . ' (' . $_SESSION['status'][$_SESSION['org'][$classkey . 'statusid']] . ') '  . 
+													$_SESSION['org'][$classkey . 'comment'] ;
+							$classlog['datanew'] = 'agreg: ' . $_SESSION['bool'][$_POST[$classkey . 'agreg']] . ' (' . $_SESSION['status'][$_POST[$classkey . 'statusid']] . ') '  . 
+													$_POST[$classkey . 'comment'] ;
 		
-							$GBLmysqli->dbquery($q,$classlog);
-							if ($_SESSION['org'][$classkey.'agreg']  & !$_POST[$classkey.'agreg']) {
+							$GBLmysqli->dbquery($q , $classlog);
+							if ($_SESSION['org'][$classkey . 'agreg']  & !$_POST[$classkey . 'agreg']) {
 								$q = "UPDATE `class` SET `partof` = NULL WHERE `partof` = '" . $classid . "';";
 								$classlog['action'] = $classlogaction . 'class partof UPDATE';
 								$classlog['dataorg'] = '';
 								$classlog['datanew'] = 'vac cleanup';								
-								$GBLmysqli->dbquery($q,$classlog);
+								$GBLmysqli->dbquery($q , $classlog);
 							}
 // TODO : REVIEW THIS... might be better to also zero reservs ...
-							if (!$_SESSION['org'][$classkey.'agreg']  & $_POST[$classkey.'agreg']) {
+							if (!$_SESSION['org'][$classkey . 'agreg']  & $_POST[$classkey . 'agreg']) {
 								$q = "UPDATE `vacancies` SET `givennum` = '0' , `askednum` = '0' WHERE `class_id` = '" . $classid . "';";
 								$classlog['action'] = $classlogaction . 'vac UPDATE';
 								$classlog['dataorg'] = '';
 								$classlog['datanew'] = 'vac cleanup';								
-								$GBLmysqli->dbquery($q,$classlog);
+								$GBLmysqli->dbquery($q , $classlog);
 							}
 						}
 
-						if ($_POST[$classkey.'scenerybool']) {
+						if ($_POST[$classkey . 'scenerybool']) {
 							//echo 'here<br>';
 							foreach ($_SESSION['org']['sceneryusr'] as $session_sceneryid => $session_sceneryclassid) {
 								
-								$postscenery = $_POST[$classkey.'scenery'.$session_sceneryid];
+								$postscenery = $_POST[$classkey . 'scenery' . $session_sceneryid];
 								//echo 'id:' . $session_sceneryid . 'clsid:' . $session_sceneryclassid . 'post:' . $postscenery. '<br>';
 								if ($session_sceneryclassid && !$postscenery) {
 									//echo 'delete<br>';
-									$q = "DELETE FROM `sceneryclass` WHERE `id` = '".$session_sceneryclassid."';";
-									$GBLmysqli->dbquery($q,$classlog);
+									$q = "DELETE FROM `sceneryclass` WHERE `id` = '" . $session_sceneryclassid . "';";
+									$GBLmysqli->dbquery($q , $classlog);
 									//remove
 								}
 								if (!$session_sceneryclassid && $postscenery) {
 									//echo 'insert<br>';
-									$q = "INSERT INTO `sceneryclass` (`class_id`,`scenery_id`) VALUES ('" . $classid  . "' , '" . $postscenery . "');";
-									$GBLmysqli->dbquery($q,$classlog);
+									$q = "INSERT INTO `sceneryclass` (`class_id` , `scenery_id`) VALUES ('" . $classid  . "' , '" . $postscenery . "');";
+									$GBLmysqli->dbquery($q , $classlog);
 									// insert 
 								}
 							}
 						} else {
 							//echo '...<br>';
-							if ($_SESSION['org'][$classkey.'scenerybool']) {
-								//echo $classid.'<br>';
-								$q = "DELETE FROM `sceneryclass` WHERE class_id = '".$classid."';";
-								$GBLmysqli->dbquery($q,$classlog);
+							if ($_SESSION['org'][$classkey . 'scenerybool']) {
+								//echo $classid . '<br>';
+								$q = "DELETE FROM `sceneryclass` WHERE class_id = '" . $classid . "';";
+								$GBLmysqli->dbquery($q , $classlog);
 							}
 						}
 
-						if (($_POST[$classkey.'addsegment'])) {
-							reset($_SESSION['deptprof'.$_POST['unitid']]);
-							$q = "INSERT INTO `classsegment` (`day`,`start`,`length`,`room_id`,`prof_id`,`class_id`) VALUES ('2','7','2','1','" . key($_SESSION['deptprof'.$_POST['unitid']]) . "','" . $classid . "');";
+						if (($_POST[$classkey . 'addsegment'])) {
+							reset($_SESSION['deptprof' . $_POST['unitid']]);
 							$classlog['action'] = $classlogaction . 'segment ADD';
 							$classlog['dataorg'] = '';
 							$classlog['datanew'] = 'default segment added';								
-							$GBLmysqli->dbquery($q,$classlog);
+                                                        $segday = 2;
+                                                        $segstart = 7;
+                                                        $addsegcnt = $_POST[$classkey . 'addsegment'];
+                                                        while ($addsegcnt > 0 ) {
+                                                                do {
+        							 $q = "INSERT INTO `classsegment` (`day` , `start` , `length` , `room_id` , `prof_id` , `class_id`) VALUES ('" . $segday . "' , '" . $segstart .  "' , '2' , '1' , '" . key($_SESSION['deptprof' . $_POST['unitid']]) . "' , '" . $classid . "');";
+                                                                $segstart += 1;
+                                                                } while (!	$GBLmysqli->trydbquery($q , $classlog));
+                                                                $segday++;
+                                                                $segstart = 7;
+                                                                echo ' cnt: ' . $addsegcnt;
+                                                                $addsegcnt--;
+                                                        };
 							$segadded = 1;
 						}
 					}
-					if($_POST[$classkey.'delete'] ) {
-						if($_SESSION['org'][$classkey.'partof']) {
-								agregupdt($_SESSION['org'][$classkey.'partof']);
+					if($_POST[$classkey . 'delete'] ) {
+						if($_SESSION['org'][$classkey . 'partof']) {
+								agregupdt($_SESSION['org'][$classkey . 'partof']);
 						}
 					} else {
-						if ($_POST[$classkey.'partof'] == $_SESSION['org'][$classkey.'partof']) {
+						if ($_POST[$classkey . 'partof'] == $_SESSION['org'][$classkey . 'partof']) {
 							if($anyone) {
-								agregupdt($_SESSION['org'][$classkey.'partof']);
+								agregupdt($_SESSION['org'][$classkey . 'partof']);
 							}
 						} else {
-							if($_POST[$classkey.'partof']) {
+							if($_POST[$classkey . 'partof']) {
 								// vacancie adjust ...'new' partof 
-								agregupdt($_POST[$classkey.'partof']);
+								agregupdt($_POST[$classkey . 'partof']);
 							}
-							if($_SESSION['org'][$classkey.'partof']) {
-								agregupdt($_SESSION['org'][$classkey.'partof']);
+							if($_SESSION['org'][$classkey . 'partof']) {
+								agregupdt($_SESSION['org'][$classkey . 'partof']);
 							}
 						}
 					}
 				}
 				if(!$segadded) {
-					$_POST['classid']=null;
+					$_POST['classid'] = null;
 				}
 			break;
 			case 'Add Class':
 				if ($_POST['addclass']) {
 					if ($_POST['newclassname']) {
-						$q = "INSERT INTO `class` (`name`,`sem_id`,`discipline_id`) VALUES ('".$_POST['newclassname']."','".$_POST['semid']."','".$_POST['discid']."');";
+						$q = "INSERT INTO `class` (`name` , `sem_id` , `discipline_id`) VALUES ('" . $_POST['newclassname'] . "' , '" . $_POST['semid'] . "' , '" . $_POST['discid'] . "');";
 						$classlog['action'] = $classlogaction . 'class ADD';
 						$classlog['datanew'] = 'Turma : ' . $_POST['newclassname']  . ' added';
 						if($GBLmysqli->dbquery($q)) {
@@ -277,9 +288,10 @@ function agregupdt($aclassid) {
 							$q = "SELECT * FROM coursedisciplines WHERE discipline_id = '" . $_POST['discid'] . "';";
 							$result = $GBLmysqli->dbquery($q);
 							while ($sqlrow = $result->fetch_assoc()) {
-								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "');";
+								$q = "INSERT INTO `vacancies` (`class_id` , `course_id`) VALUES ('" . $newclassid . "' , '" . $sqlrow['course_id'] . "');";
 								$classlog['action'] = $classlogaction . 'vac UPDATE/ADD';
-								$GBLmysqli->dbquery($q,$classlog);
+								$GBLmysqli->dbquery($q , $classlog);
+        						       $_POST['classid'] = $newclassid;
 							}
 						}
 					}
@@ -288,25 +300,25 @@ function agregupdt($aclassid) {
 			case 'Replicate Class':
 				if ($_POST['addclass']) {
 					if ($_POST['newclassname']) {
-						$q = "INSERT INTO `class` (`name`,`sem_id`,`discipline_id`) VALUES ('".$_POST['newclassname']."','".$_POST['semid']."','".$_POST['discid']."');";
+						$q = "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `comment`) VALUES ('" . $_POST['newclassname'] . "' , '" . $_POST['semid'] . "' , '" . $_POST['discid'] . "' , 'cópia de " . $_POST['orgclassname']  . "');";
 						$classlog['action'] = $classlogaction . 'class ADD';
 						$classlog['datanew'] = 'Turma : ' . $_POST['newclassname']  . ' added';
 						if($GBLmysqli->dbquery($q)) {
 							$newclassid = $GBLmysqli->insert_id;
 							$GBLmysqli->eventlog($classlog);
 							
-							$q = "INSERT INTO `classsegment` (`class_id`,`day`,`start`,`length`,`room_id`,`prof_id`) " . 
-								"SELECT '".$newclassid."' , `cs`.`day` , `cs`.`start` , `cs`.`length` , `cs`.`room_id` , `cs`.`prof_id` " . 
+							$q = "INSERT INTO `classsegment` (`class_id` , `day` , `start` , `length` , `room_id` , `prof_id`) " . 
+								"SELECT '" . $newclassid . "' , `cs` . `day` , `cs` . `start` , `cs` . `length` , `cs` . `room_id` , `cs` . `prof_id` " . 
 								"FROM  `classsegment` AS `cs` " . 
-								"WHERE `cs`.`class_id` = '" . $_POST['classid'] . "' ;";
+								"WHERE `cs` . `class_id` = '" . $_POST['classid'] . "' ;";
 							$GBLmysqli->dbquery($q);
 							
-							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`) " . 
-								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`askedreservnum` , `vc`.`givennum`  , `vc`.`givenreservnum` " .
+							$q = "INSERT INTO `vacancies` (`class_id` , `course_id` , `askednum` , `askedreservnum` , `givennum` , `givenreservnum`) " . 
+								"SELECT '" . $newclassid . "' , `vc` . `course_id` , `vc` . `askednum` , `vc` . `askedreservnum` , `vc` . `givennum`  , `vc` . `givenreservnum` "  . 
 								"FROM  `vacancies` AS `vc` " . 
-								"WHERE `vc`.`class_id` = '" . $_POST['classid'] . "';";
+								"WHERE `vc` . `class_id` = '" . $_POST['classid'] . "';";
 							$GBLmysqli->dbquery($q);
-							
+						       $_POST['classid'] = $newclassid;
 						}
 					}
 				}
@@ -315,7 +327,7 @@ function agregupdt($aclassid) {
 			case 'Add Class in Scenery':
 				if ($_POST['addclass']) {
 					if ($_POST['newclassname']) {
-						$q = "INSERT INTO `class` (`name`,`sem_id`,`discipline_id`,`scenery`) VALUES ('".$_POST['newclassname']."','".$_POST['semid']."','".$_POST['discid']."','1');";
+						$q = "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `scenery`) VALUES ('" . $_POST['newclassname'] . "' , '" . $_POST['semid'] . "' , '" . $_POST['discid'] . "' , '1');";
 						$classlog['action'] = $classlogaction . 'class ADD';
 						$classlog['datanew'] = 'Turma : ' . $_POST['newclassname']  . ' added';
 						if($GBLmysqli->dbquery($q)) {
@@ -324,12 +336,13 @@ function agregupdt($aclassid) {
 							$q = "SELECT * FROM coursedisciplines WHERE discipline_id = '" . $_POST['discid'] . "';";
 							$result = $GBLmysqli->dbquery($q);
 							while ($sqlrow = $result->fetch_assoc()) {
-								$q = "INSERT INTO `vacancies` (`class_id`,`course_id`) VALUES ('" . $newclassid . "','" . $sqlrow['course_id'] . "');"; // defaults are zero.
+								$q = "INSERT INTO `vacancies` (`class_id` , `course_id`) VALUES ('" . $newclassid . "' , '" . $sqlrow['course_id'] . "');"; // defaults are zero . 
 								$classlog['action'] = $classlogaction . 'vac UPDATE/ADD';
-								$GBLmysqli->dbquery($q,$classlog);
+								$GBLmysqli->dbquery($q , $classlog);
 							}
-							$q = "INSERT INTO `sceneryclass` (`class_id`,`scenery_id`) VALUES ('".$newclassid."','".$_POST['addscenery']."');";
+							$q = "INSERT INTO `sceneryclass` (`class_id` , `scenery_id`) VALUES ('" . $newclassid . "' , '" . $_POST['addscenery'] . "');";
 							$GBLmysqli->dbquery($q);
+						       $_POST['classid'] = $newclassid;
 						}
 					}
 				}
@@ -339,27 +352,28 @@ function agregupdt($aclassid) {
 			case 'Replicate Class in Scenery':
 				if ($_POST['addclass']) {
 					if ($_POST['newclassname']) {
-						$q = "INSERT INTO `class` (`name`,`sem_id`,`discipline_id`,`scenery`) VALUES ('".$_POST['newclassname']."','".$_POST['semid']."','".$_POST['discid']."','1');";
+						$q = "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `scenery` , `comment`) VALUES ('" . $_POST['newclassname'] . "' , '" . $_POST['semid'] . "' , '" . $_POST['discid'] . "' , '1' , 'cópia de " . $_POST['orgclassname'] . "');";
 						$classlog['action'] = $classlogaction . 'class ADD';
 						$classlog['datanew'] = 'Turma : ' . $_POST['newclassname']  . ' added';
 						if($GBLmysqli->dbquery($q)) {
 							$newclassid = $GBLmysqli->insert_id;
 							$GBLmysqli->eventlog($classlog);
 							
-							$q = "INSERT INTO `classsegment` (`class_id`,`day`,`start`,`length`,`room_id`,`prof_id`) " . 
-								"SELECT '".$newclassid."' , `cs`.`day` , `cs`.`start` , `cs`.`length` , `cs`.`room_id` , `cs`.`prof_id` " . 
+							$q = "INSERT INTO `classsegment` (`class_id` , `day` , `start` , `length` , `room_id` , `prof_id`) " . 
+								"SELECT '" . $newclassid . "' , `cs` . `day` , `cs` . `start` , `cs` . `length` , `cs` . `room_id` , `cs` . `prof_id` " . 
 								"FROM  `classsegment` AS `cs` " . 
-								"WHERE `cs`.`class_id` = '" . $_POST['classid'] . "' ;";
+								"WHERE `cs` . `class_id` = '" . $_POST['classid'] . "' ;";
 							$GBLmysqli->dbquery($q);
 							
-							$q = "INSERT INTO `vacancies` (`class_id`,`course_id`,`askednum`,`askedreservnum`,`givennum`,`givenreservnum`) " . 
-								"SELECT '".$newclassid."' , `vc`.`course_id` , `vc`.`askednum` , `vc`.`askedreservnum` , `vc`.`givennum` , `vc`.`givenreservnum`  " . 
+							$q = "INSERT INTO `vacancies` (`class_id` , `course_id` , `askednum` , `askedreservnum` , `givennum` , `givenreservnum`) " . 
+								"SELECT '" . $newclassid . "' , `vc` . `course_id` , `vc` . `askednum` , `vc` . `askedreservnum` , `vc` . `givennum` , `vc` . `givenreservnum`  " . 
 								"FROM  `vacancies` AS `vc` " . 
-								"WHERE `vc`.`class_id` = '" . $_POST['classid'] . "';";
+								"WHERE `vc` . `class_id` = '" . $_POST['classid'] . "';";
 							$GBLmysqli->dbquery($q);
 							
-							$q = "INSERT INTO `sceneryclass` (`class_id`,`scenery_id`) VALUES ('".$newclassid."','".$_POST['addscenery']."');";
+							$q = "INSERT INTO `sceneryclass` (`class_id` , `scenery_id`) VALUES ('" . $newclassid . "' , '" . $_POST['addscenery'] . "');";
 							$GBLmysqli->dbquery($q);
+						       $_POST['classid'] = $newclassid;
 						}
 					}
 				}
@@ -375,32 +389,32 @@ function agregupdt($aclassid) {
 	unset($_SESSION['agreg']);
 	unset($_SESSION['org']);
 
-function sceneryclasshack($profnicks,$inselect=true) {
+function sceneryclasshack($profnicks , $inselect = true) {
 	if($inselect) {
 		formsceneryselect();
 	} else {
 		echo '<br>';
-		displaysessionselected('Cenário(s)','sceneryselected');
+		displaysessionselected('Cenário(s)' , 'sceneryselected');
 	}
 	
 	$inselected = inscenery_sessionlst('sceneryselected');
-	list($qqscentbl,$qqscensql) = scenery_sql($inselected);
+	list($qqscentbl , $qqscensql) = scenery_sql($inselected);
 
 	if($profnicks) {
-		$qnicks = " , `prof`.`nickname` AS `profnick`, `prof`.`id` AS `profid`, `prof`.`dept_id` AS `profdeptid`  ";
+		$qnicks = " , `prof` . `nickname` AS `profnick` , `prof` . `id` AS `profid` , `prof` . `dept_id` AS `profdeptid`  ";
 	} else {
-		$qnicks='';
+		$qnicks = '';
 	}
 
-	$qq = "SELECT DISTINCT `discipline`.`name` AS `discname` ,  `discipline`.`id` AS `discid` , `discipline`.* , `class`.`id` AS `classid` , `class`.* , `classsegment`.* , `discdept`.`id` AS `discdeptid` " . $qnicks .
-		 " FROM `classsegment` , `class`, `semester`,`unit`,`discipline`,`prof` , `unit` AS `discdept`  " . $qqscentbl . " WHERE " . 
-		 "`class`.`discipline_id` = `discipline`.`id` AND `class`.`sem_id` = `semester`.`id` AND " . 
-		 "`classsegment`.`class_id` = `class`.`id` AND `classsegment`.`prof_id` = `prof`.`id` AND " .
-		 "`discipline`.`dept_id` = `discdept`.`id` AND " .
-		 "`unit`.`id` = '".$_POST['unitid']."' AND `semester`.`id` = '".$_POST['semid']."' AND " . 
-		 "`discipline`.`id` = '".$_POST['discid'] . "' " . $qqscensql . " ORDER BY `discipline`.`name` , `class`.`name`";
+	$qq = "SELECT DISTINCT `discipline` . `name` AS `discname` ,  `discipline` . `id` AS `discid` , `discipline` . * , `class` . `id` AS `classid` , `class` . * , `classsegment` . * , `discdept` . `id` AS `discdeptid` " . $qnicks  . 
+		 " FROM `classsegment` , `class` , `semester` , `unit` , `discipline` , `prof` , `unit` AS `discdept`  " . $qqscentbl . " WHERE " . 
+		 "`class` . `discipline_id` = `discipline` . `id` AND `class` . `sem_id` = `semester` . `id` AND " . 
+		 "`classsegment` . `class_id` = `class` . `id` AND `classsegment` . `prof_id` = `prof` . `id` AND "  . 
+		 "`discipline` . `dept_id` = `discdept` . `id` AND "  . 
+		 "`unit` . `id` = '" . $_POST['unitid'] . "' AND `semester` . `id` = '" . $_POST['semid'] . "' AND " . 
+		 "`discipline` . `id` = '" . $_POST['discid'] . "' " . $qqscensql . " ORDER BY `discipline` . `name` , `class` . `name`";
 
-	return [$inselected,$qq];
+	return [$inselected , $qq];
 
 }
 
@@ -408,44 +422,44 @@ function sceneryclasshack($profnicks,$inselect=true) {
 
 	if ($postedit) {
 		thisformpost();
-		echo displaysqlitem('Semestre: ','semester',$_POST['semid'],'name');
-		echo displaysqlitem('&nbsp;&nbsp;&nbsp;&nbsp;Dept.: ','unit',$_POST['unitid'],'acronym');
+		echo displaysqlitem('Semestre: ' , 'semester' , $_POST['semid'] , 'name');
+		echo displaysqlitem($GBL_Dspc . 'Dept . : ' , 'unit' , $_POST['unitid'] , 'acronym');
 		echo '<br><b>';
-		echo displaysqlitem('&nbsp;&nbsp;','discipline',$_POST['discid'],'code','name');
+		echo displaysqlitem($GBL_Dspc , 'discipline' , $_POST['discid'] , 'code' , 'name');
 		echo '</b>';
-		echo formsubmit('act','Cancel');
-		echo spanformat('smaller',$GBLcommentcolor, displaysqlitem('&nbsp;&nbsp;','discipline',$_POST['discid'],'comment')) ;
+		echo formsubmit('act' , 'Cancel');
+		echo spanformat('smaller' , $GBLcommentcolor, displaysqlitem($GBL_Dspc , 'discipline' , $_POST['discid'] , 'comment')) ;
 
-		echo formhiddenval('profnicks',$_POST['profnicks']);
-		echo formhiddenval('courseHL',$_POST['courseHL']);
+		echo formhiddenval('profnicks' , $_POST['profnicks']);
+		echo formhiddenval('courseHL' , $_POST['courseHL']);
 
 
-		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks'],false);
+		[$SCinselected , $SCquery] = sceneryclasshack($_POST['profnicks'] , false);
 		if($_POST['courseHL']) {
-			echo displaysqlitem('<br>Realçando: ','unit',$_POST['courseHL'],'name');
+			echo displaysqlitem('<br>Realçando: ' , 'unit' , $_POST['courseHL'] , 'name');
 		}
 
 		echo  '</form>';
 	} else {
 		echo formpost($thisform);
-                formretainvalues(array('semid','unitid','discid','profnicks','courseHL'));
+                formretainvalues(array('semid' , 'unitid' , 'discid' , 'profnicks' , 'courseHL'));
 
-		formselectsql($anytmp,"SELECT * FROM semester ORDER BY name DESC;",'semid',$_POST['semid'],'id','name');
-		formselectsql($anytmp,"SELECT * FROM unit  ORDER BY unit.mark DESC , unit.iscourse ASC, unit.acronym ASC;",'unitid',$_POST['unitid'],'id','acronym');
-		formselectsql($anytmp,"SELECT * FROM discipline WHERE discipline.dept_id = '".$_POST['unitid']."' ORDER BY name;",'discid',$_POST['discid'],'id','code','name');
+		formselectsql($anytmp , "SELECT * FROM semester ORDER BY name DESC;" , 'semid' , $_POST['semid'] , 'id' , 'name');
+		formselectsql($anytmp , "SELECT * FROM unit  ORDER BY unit . mark DESC , unit . iscourse ASC , unit . acronym ASC;" , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
+		formselectsql($anytmp , "SELECT * FROM discipline WHERE discipline . dept_id = '" . $_POST['unitid'] . "' ORDER BY name;" , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
 		//formsceneryselect();
-		[$SCinselected,$SCquery] = sceneryclasshack($_POST['profnicks']);
+		[$SCinselected , $SCquery] = sceneryclasshack($_POST['profnicks']);
 		//echo '<br>';
 
 		
 	echo "Nome Profs? ";
-	formselectsession('profnicks','bool',$_POST['profnicks'],false,true);
+	formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 	echo "Realçar curso: ";
-	formselectsql($anytmp,"SELECT `course`.* FROM `unit` AS `course`, coursedisciplines AS `cdisc` WHERE `cdisc`.`discipline_id` = '".$_POST['discid']."' AND `cdisc`.`course_id` = `course`.`id` ORDER BY name;",'courseHL',$_POST['courseHL'],'id','name');
+	formselectsql($anytmp , "SELECT `course` . * FROM `unit` AS `course` , coursedisciplines AS `cdisc` WHERE `cdisc` . `discipline_id` = '" . $_POST['discid'] . "' AND `cdisc` . `course_id` = `course` . `id` ORDER BY name;" , 'courseHL' , $_POST['courseHL'] , 'id' , 'name');
 	
 		if (!$readonly) {
 			if ($_POST['semid'] && $_POST['unitid'] && $_POST['discid']) {
-				echo  formsubmit('act','Edit') . '</form>';
+				echo  formsubmit('act' , 'Edit') . '</form>';
 			} else {
 				echo  '</form>';
 			}
@@ -455,13 +469,13 @@ function sceneryclasshack($profnicks,$inselect=true) {
 		}
 
 	}
-	dbweekmatrix($SCquery,$SCinselected,null,null,false,true,$_POST['courseHL']);
+	dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
 	echo '<hr>';
 
 
 
 
-	$q = "SELECT class.* FROM class,discipline WHERE class.discipline_id = discipline.id AND class.discipline_id = '" . $_POST['discid'] . "' AND class.sem_id = '" . $_POST['semid'] . "' AND discipline.dept_id = '" . $_POST['unitid'] . "' AND class.agreg = '1' ORDER BY class.name;";
+	$q = "SELECT class . * FROM class , discipline WHERE class . discipline_id = discipline . id AND class . discipline_id = '" . $_POST['discid'] . "' AND class . sem_id = '" . $_POST['semid'] . "' AND discipline . dept_id = '" . $_POST['unitid'] . "' AND class . agreg = '1' ORDER BY class . name;";
 	$result = $GBLmysqli->dbquery($q);
 	unset($_SESSION['agreg']);
 	while ($sqlrow = $result->fetch_assoc()) {
@@ -469,15 +483,15 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	}	
         
 	if ($can_class) {
-		$q = "SELECT DISTINCT class.* FROM `class` , `discipline` " . 
-			"WHERE class.discipline_id = discipline.id AND class.discipline_id = '" . $_POST['discid'] . "' AND class.sem_id = '" . $_POST['semid'] . "' AND " . 
-			"discipline.dept_id = '" . $_POST['unitid'] . "'" . 
-			 " ORDER BY  `class`.`name`"
+		$q = "SELECT DISTINCT class . * FROM `class` , `discipline` " . 
+			"WHERE class . discipline_id = discipline . id AND class . discipline_id = '" . $_POST['discid'] . "' AND class . sem_id = '" . $_POST['semid'] . "' AND " . 
+			"discipline . dept_id = '" . $_POST['unitid'] . "'" . 
+			 " ORDER BY  `class` . `name`"
 			 ;
 	} else {
-		$q = "SELECT DISTINCT class.* FROM `class` , `discipline` " . $qscentbl . 
-			"WHERE class.discipline_id = discipline.id AND class.discipline_id = '" . $_POST['discid'] . "' AND class.sem_id = '" . $_POST['semid'] . "' AND " . 
-			"discipline.dept_id = '" . $_POST['unitid'] . "' " . $qscensql ;
+		$q = "SELECT DISTINCT class . * FROM `class` , `discipline` " . $qscentbl . 
+			"WHERE class . discipline_id = discipline . id AND class . discipline_id = '" . $_POST['discid'] . "' AND class . sem_id = '" . $_POST['semid'] . "' AND " . 
+			"discipline . dept_id = '" . $_POST['unitid'] . "' " . $qscensql ;
 	}
 	$result = $GBLmysqli->dbquery($q);
 	
@@ -487,46 +501,54 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	while ($classrow = $result->fetch_assoc()) {
 		$anyone = 1;
 		if ($postedit) {
-                        echo hiddendivkey('class',$classrow['id']);
-			thisformpost('class'.$classrow['id'].'div');
-			echo formhiddenval('classid',$classrow['id']);
-			echo formhiddenval('classname',$classrow['name']);
+                        echo hiddendivkey('class' , $classrow['id']);
+                        if($classrow['id'] == $newclassid) {
+                                echo hiddendivkey('class' , 'NEW');
+                        }
+			thisformpost('class' . $classrow['id'] . 'div');
+			echo formhiddenval('classid' , $classrow['id']);
+			echo formhiddenval('classname' , $classrow['name']);
 			if ($classrow['id'] == $_POST['classid']) {
 				if($can_class) {
-					formclassedit($classrow,$incanedit);
+					formclassedit($classrow , $incanedit);
 				} else {
 					// TODO: verify if 'can edit scenery
-					$qtestsql = "SELECT * FROM `sceneryclass` WHERE `sceneryclass`.`class_id` = '".$classrow['id']."' AND `sceneryclass`.`scenery_id` IN (".$incanedit.");";
+					$qtestsql = "SELECT * FROM `sceneryclass` WHERE `sceneryclass` . `class_id` = '" . $classrow['id'] . "' AND `sceneryclass` . `scenery_id` IN (" . $incanedit . ");";
 					$qtestresult = $GBLmysqli->dbquery($qtestsql);
 					if ($qtestresult->num_rows) {
-						formclassedit($classrow,$incanedit,true);
+						formclassedit($classrow , $incanedit , true);
 					} else {
-						formclassdisplay($classrow,true);
+						formclassdisplay($classrow , true);
 					}
 				}
-				echo formsubmit('act','Submit');
-				echo formsubmit('act','Cancel');
+				echo formsubmit('act' , 'Submit');
+				echo formsubmit('act' , 'Cancel');
 			} else {
-				echo formsubmit('act','Cancel');
-				echo formsubmit('act','Edit');
+				echo formsubmit('act' , 'Cancel');
+				echo formsubmit('act' , 'Edit');
 				formclassdisplay($classrow);
 			}
 			echo '</form>';
 			
 			if ($can_addclass) {
-				thisformpost();
-				echo 'Replicar esta Turma como:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
-				echo formhiddenval('classid',$classrow['id']);
-				formselectsession('addclass','bool',0);
-				echo formsubmit('act','Replicate Class') . '</form>';
+				thisformpost('classNEWdiv');
+                                echo '<p style="line-height:0px;"></p>';
+                                
+				echo spanstartformat('' , 'green' , null , true) . 'Replicar esta Turma como:' . formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!');
+				echo formhiddenval('classid' , $classrow['id']);
+                                echo formhiddenval('orgclassname' , $classrow['name']);
+				formselectsession('addclass' , 'bool' , 0);
+				echo formsubmit('act' , 'Replicate Class') . '</form>' . spanendformat();
 			} else {
 				if ($incanedit) {
-					thisformpost();
-					echo 'Replicar Turma:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
-					echo formhiddenval('classid',$classrow['id']);
-					formselectsession('addscenery','scen.acc.edit',0);
-					formselectsession('addclass','bool',0);
-					echo formsubmit('act','Replicate Class in Scenery') . '</form>';				
+					thisformpost('classNEWdiv');
+                                        echo '<p style="line-height:0px;"></p>';
+					echo spanstartformat('' , 'green' , null , true) . 'Replicar esta Turma como:' . formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!');
+					echo formhiddenval('classid' , $classrow['id']);
+                                        echo formhiddenval('orgclassname' , $classrow['name']);
+					formselectsession('addscenery' , 'scen.acc.edit' , 0);
+					formselectsession('addclass' , 'bool' , 0);
+					echo formsubmit('act' , 'Replicate Class in Scenery') . '</form>' . spanendformat();				
 				}
 			}
 			
@@ -538,27 +560,27 @@ function sceneryclasshack($profnicks,$inselect=true) {
 	echo '</p>';
 	if ($hiddenprofdeptid) {
 		foreach ($hiddenprofdeptid as $profid => $hidprofdeptid ) { // '_blank'
-			echo hiddenprofform($_POST['semid'],$hidprofdeptid,$profid);	
+			echo hiddenprofform($_POST['semid'] , $hidprofdeptid , $profid);	
 		}
 	}
 	if ($hiddenroombuildingid) {
 		foreach ($hiddenroombuildingid as $roomid => $buildingid) {
-			echo hiddenroomform($_POST['semid'],$buildingid,$roomid);
+			echo hiddenroomform($_POST['semid'] , $buildingid , $roomid);
 		}
 	}
 	if ($postedit) {
 		if ($can_addclass) {
-			thisformpost();
-			echo 'Adicionar Turma:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
-			formselectsession('addclass','bool',0);
-			echo formsubmit('act','Add Class') . '</form>';
+			thisformpost('classNEWdiv');
+			echo spanstartformat('' , 'brown' , null , true) .  'Adicionar Turma:' . formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!');
+			formselectsession('addclass' , 'bool' , 0);
+			echo formsubmit('act' , 'Add Class') . '</form>' . spanendformat();
 		} else {
 			if ($incanedit) {
-				thisformpost();
-				echo 'Adicionar Turma:' . formpatterninput(3,1,$GBLclasspattern,'Nova Turma','newclassname','!');
-				formselectsession('addscenery','scen.acc.edit',0);
-				formselectsession('addclass','bool',0);
-				echo formsubmit('act','Add Class in Scenery') . '</form>';				
+				thisformpost('classNEWdiv');
+				echo spanstartformat('' , 'brown' , null , true) . 'Adicionar Turma:' . formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!');
+				formselectsession('addscenery' , 'scen.acc.edit' , 0);
+				formselectsession('addclass' , 'bool' , 0);
+				echo formsubmit('act' , 'Add Class in Scenery') . '</form>' . spanendformat();				
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 
-<?php $thisform=$GBLbasepage.'?q=edits&sq=rooms'; ?>
-<div class="row">
+<?php $thisform = $GBLbasepage . '?q=edits&sq=rooms'; ?>
+<div class = "row">
     
         <h2>Salas</h2>
         <hr>
@@ -8,6 +8,8 @@
 
 	
 <?php 
+// TODO: LOL error in logic. no unitid...
+
 	$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_room']);
 
 	$GBLmysqli->postsanitize();
@@ -16,7 +18,7 @@
 	if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit')) & $can_room) {
 		$postedit = true;
 	} else {
-		$_POST['act']='Cancel';
+		$_POST['act'] = 'Cancel';
 	}
 
 	echo formpost($thisform);
@@ -48,14 +50,14 @@
 	}
 
 	if ($postedit & $can_room) {
-		echo formhiddenval('buildingid',$_POST['buildingid']);
-		echo displaysqlitem('','building',$_POST['buildingid'],'acronym','name');
-		echo formsubmit('act','Cancel');
+		echo formhiddenval('buildingid' , $_POST['buildingid']);
+		echo displaysqlitem('' , 'building' , $_POST['buildingid'] , 'acronym' , 'name');
+		echo formsubmit('act' , 'Cancel');
 		echo '</form>';
 	} else {
                 formretainvalues(array('buildingid'));
 
-		formselectsql($anytmp,"SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;",'buildingid',$_POST['buildingid'],'id','acronym');
+		formselectsql($anytmp , "SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;" , 'buildingid' , $_POST['buildingid'] , 'id' , 'acronym');
 	}
 		
 	?>
@@ -69,26 +71,26 @@
 
 
 // course, term
-  $q = "SELECT * FROM   `room` WHERE `building_id` = '".$_POST['buildingid']."' ORDER BY `name`;";
+  $q = "SELECT * FROM   `room` WHERE `building_id` = '" . $_POST['buildingid'] . "' ORDER BY `name`;";
 
-  $result=$GBLmysqli->dbquery($q);
+  $result = $GBLmysqli->dbquery($q);
   $anyone = 0;
   if ($postedit & $can_room) {
-	  while ($sqlrow=$result->fetch_assoc()) {
+	  while ($sqlrow = $result->fetch_assoc()) {
 	  	echo formpost($thisform);
-		echo formhiddenval('buildingid',$_POST['buildingid']);
+		echo formhiddenval('buildingid' , $_POST['buildingid']);
 		if ($_POST['roomid'] == $sqlrow['id']) {
-			echo formhiddenval('roomid',$sqlrow['id']);
-			echo '&nbsp;&nbsp; ' . $sqlrow['name'];
-			formselectsession('roomtype','roomtype',$sqlrow['roomtype_id']);
-			echo '  Capacidade:  ' . formpatterninput(3,1,'[0-9]+','Capacidade','capacity',$sqlrow['capacity']);
-			echo formsubmit('act','Submit');
+			echo formhiddenval('roomid' , $sqlrow['id']);
+			echo $GBL_Dspc . ' ' . $sqlrow['name'];
+			formselectsession('roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
+			echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , 'capacity' , $sqlrow['capacity']);
+			echo formsubmit('act' , 'Submit');
 		} else {
-			echo formsubmit('act','Edit');
-			echo formhiddenval('roomid',$sqlrow['id']);
-			echo $sqlrow['name'].'&nbsp;&nbsp;'.$_SESSION['roomtype'][$sqlrow['roomtype_id']].'&nbsp;&nbsp;';
+			echo formsubmit('act' , 'Edit');
+			echo formhiddenval('roomid' , $sqlrow['id']);
+			echo $sqlrow['name'] . $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
 			if ($sqlrow['capacity']) {
-				echo ' (cap.:'.$sqlrow['capacity'].')';
+				echo ' (cap . :' . $sqlrow['capacity'] . ')';
 			}
 			echo '<br>';			
 		}
@@ -98,11 +100,11 @@
  
 
   } else {
-	  while ($sqlrow=$result->fetch_assoc()) {
+	  while ($sqlrow = $result->fetch_assoc()) {
 		  $anyone = 1;
-		  echo $sqlrow['name']. '&nbsp;&nbsp;'.$_SESSION['roomtype'][$sqlrow['roomtype_id']].'&nbsp;&nbsp;';
+		  echo $sqlrow['name']. $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
 			if ($sqlrow['capacity']) {
-				echo ' (cap.:'.$sqlrow['capacity'].')';
+				echo ' (cap.:' . $sqlrow['capacity'] . ')';
 			}
 			echo '<br>';			
 	  }
@@ -112,7 +114,7 @@
   if ($postedit & $can_room) {
   } else {
   	if ($anyone & $can_room) {
-		echo formsubmit('act','Edit');
+		echo formsubmit('act' , 'Edit');
 	}
 
   }

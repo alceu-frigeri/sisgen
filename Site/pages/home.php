@@ -1,23 +1,23 @@
-<div class="row">
-    <div class="col-sm-8">
+<div class = "row">
+    <div class = "col-sm-8">
         <h2>Bem vindo ao SISGEN </h2>
         <hr>
         <h4><B>Apresentação</B></h4>
-        <p align="justify">
+        <p align = "justify">
 	    Work to be tone
-	</p>     <p align="justify">
-	</p>     <p align="justify">
+	</p>     <p align = "justify">
+	</p>     <p align = "justify">
 
-		<h5><a href="<?php echo $GBLbasepage; ?>?st=logout">logout</a></h5>
+		<h5><a href = "<?php echo $GBLbasepage; ?>?st=logout">logout</a></h5>
     </div>
     
-    <div class="col-sm-4">
+    <div class = "col-sm-4">
         <h2>Notícias</h2>
         <hr>
-        <table width="100%" id="news" style="border-spacing: 15px; padding:10px">
+        <table width = "100%" id = "news" style = "border-spacing: 15px; padding:10px">
 
             <tr>
-                <th style="float:left;">Nothing:</th>
+                <th style = "float:left;">Nothing:</th>
                 <td ></td>
                 <td ></td>
             </tr>
@@ -25,7 +25,7 @@
     </div>
     
 
-    <div class="col-sm-4">
+    <div class = "col-sm-4">
 	<h2>Contato</h2>
 	<hr>
 	<address>

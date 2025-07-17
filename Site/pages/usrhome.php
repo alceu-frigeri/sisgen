@@ -1,32 +1,32 @@
 <?php
 
-	$thisform=$GBLbasepage.'?q=home';
-	$logout=$GBLbasepage.'?st=logout';
+	$thisform = $GBLbasepage . '?q=home';
+	$logout = $GBLbasepage . '?st=logout';
 
 function usrdata() {
-	echo "<div id='currentdata'><h3>Dados Atuais</h3><hr>" .
-		'Nome: ' . $_SESSION['userdisplayname'] . '<br>' .
+	echo "<div id = 'currentdata'><h3>Dados Atuais</h3><hr>"  . 
+		'Nome: ' . $_SESSION['userdisplayname'] . '<br>'  . 
 		'Nome Completo: ' . $_SESSION['username'] . '<br></div>';
 	echo formpost($thisform);
-	echo formsubmit('act','Mudar Senha');
-	echo formsubmit('act','Editar Dados');
+	echo formsubmit('act' , 'Mudar Senha');
+	echo formsubmit('act' , 'Editar Dados');
 	echo '</form>';
 }
 
 ?>
 
 
-<div class="row">
-    <div class="col-sm-8">
+<div class = "row">
+    <div class = "col-sm-8">
         <h2>Bem vindo <b><?php echo $_SESSION['userdisplayname'];?></b> ao SISGEN </h2>
         <hr>
         <h4><B>Apresentação</B></h4>
-        <p align="justify">
+        <p align = "justify">
 	    Work to be tone
-	</p>     <p align="justify">
-	</p>     <p align="justify">
+	</p>     <p align = "justify">
+	</p>     <p align = "justify">
 
-		<h5><a href="<?php echo $logout; ?>">logout</a></h5>
+		<h5><a href = "<?php echo $logout; ?>">logout</a></h5>
 		<p><p>
 		
 	<?php 
@@ -38,7 +38,7 @@ function usrdata() {
 				$passwd = $GBLmysqli->real_escape_string($_POST['passORG']);
 				$newpasswd = $GBLmysqli->real_escape_string($_POST['passA']);
 				if ($GBLmysqli->hashpasswdcheck($passwd)) {
-				  $q = "UPDATE `account` SET `chgpasswd` = '0' ,  `password` =  '".$newpasswd."' WHERE `id` = '" . $_SESSION['userid'] . "';";
+				  $q = "UPDATE `account` SET `chgpasswd` = '0' ,  `password` =  '" . $newpasswd . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
 				  $GBLmysqli->dbquery($q);
 				  echo 'Senha Atualizada.<br>';
 				  if ($_SESSION['userchgpasswd']) {
@@ -58,16 +58,16 @@ function usrdata() {
 			case 'Editar Dados':
 				echo formpost($thisform);
 				echo '<table>';
-				echo '<tr><td>Nome: </td><td>' . formpatterninput(16,16,$GBLnamepattern,'Nome Abreviado','usrdisplayname',$_SESSION['userdisplayname']) . '</td></tr>';
-				echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128,48,$GBLnamepattern,'Nome Completo','usrname',$_SESSION['username']) . '</td></tr>';
-				echo '<tr><td></td><td>' .formsubmit('act','Atualizar Dados') . '</td></tr>';
+				echo '<tr><td>Nome: </td><td>' . formpatterninput(16 , 16 , $GBLnamepattern , 'Nome Abreviado' , 'usrdisplayname' , $_SESSION['userdisplayname']) . '</td></tr>';
+				echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128 , 48 , $GBLnamepattern , 'Nome Completo' , 'usrname' , $_SESSION['username']) . '</td></tr>';
+				echo '<tr><td></td><td>'  . formsubmit('act' , 'Atualizar Dados') . '</td></tr>';
 				echo '</table>';
 				echo '</form>';
 			    break;
 			case 'Atualizar Dados':
 				$_SESSION['username'] = $_POST['usrname']; 
 				$_SESSION['userdisplayname'] = $_POST['usrdisplayname']; 
-				$q = "UPDATE `account` SET `name` =  '" . $GBLmysqli->real_escape_string($_POST['usrname'])  ."' , `displayname` =  '" . $GBLmysqli->real_escape_string($_POST['usrdisplayname'])  . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
+				$q = "UPDATE `account` SET `name` =  '" . $GBLmysqli->real_escape_string($_POST['usrname'])   . "' , `displayname` =  '" . $GBLmysqli->real_escape_string($_POST['usrdisplayname'])  . "' WHERE `id` = '" . $_SESSION['userid'] . "';";
 				$GBLmysqli->dbquery($q);
 				usrdata();
 				break;
@@ -86,7 +86,7 @@ function usrdata() {
 		
     </div>
     
-    <div class="col-sm-4">
+    <div class = "col-sm-4">
         <h2>Notícias</h2>
         <hr>
         <table width="100%" id="news" style="border-spacing: 15px; padding:10px">
@@ -100,7 +100,7 @@ function usrdata() {
     </div>
     
 
-    <div class="col-sm-4">
+    <div class = "col-sm-4">
 	<h2>Contato</h2>
 	<hr>
 	<address>
