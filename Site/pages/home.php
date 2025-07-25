@@ -4,11 +4,11 @@
         <hr>
         <h4><B>Apresentação</B></h4>
         <p align = "justify">
-	    Work to be tone
-	</p>     <p align = "justify">
-	</p>     <p align = "justify">
+      Work to be tone
+  </p>     <p align = "justify">
+  </p>     <p align = "justify">
 
-		<h5><a href = "<?php echo $GBLbasepage; ?>?st=logout">logout</a></h5>
+    <h5><a href = "<?php echo $GBLbasepage; ?>?st=logout">logout</a></h5>
     </div>
     
     <div class = "col-sm-4">
@@ -26,14 +26,14 @@
     
 
     <div class = "col-sm-4">
-	<h2>Contato</h2>
-	<hr>
-	<address>
+  <h2>Contato</h2>
+  <hr>
+  <address>
             <strong>Universidade Federal do Rio Grande do Sul</strong>
             <br>Departmento de Sistemas Elétricos de Automação e Energia (DELAE)
             <br>CEP: 90035-190 - Porto Alegre, RS - Brasil
             <br> 
-	</address>
+  </address>
     </div>
 
 </div>

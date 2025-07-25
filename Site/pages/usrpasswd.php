@@ -1,10 +1,12 @@
 <?php
+    include 'bailout.php';
+
     $passcheck = "onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
 ?>
 
 
-		<h3>Trocar Senha</h3>
-		<hr>
+    <h3>Trocar Senha</h3>
+    <hr>
 <form onsubmit='return validate()'  method='post' enctype='multipart/form-data' action='<?php echo $thisform; ?>'>
 <table id='regform'>
 <tr>
@@ -15,15 +17,15 @@
 <tr>
 <td style='text-align:right; width:30%'>
     Nova Senha:</td><td style='text-align:left'>
-	<input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> />
-	<span id='passAdiff' style='color:white'>(diff.)</span></td>
+  <input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
+  <span id='passAdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr>
 <tr>
 <td style='text-align:right; width:30%'>
     Nova Senha (Confirmação):</td><td style='text-align:left'>
-	<input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php $passcheck ?> />
-	<span id='passBdiff' style='color:white'>(diff.)</span></td>
+  <input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
+  <span id='passBdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr><td></td>
 <td>

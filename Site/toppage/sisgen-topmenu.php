@@ -42,7 +42,7 @@
                                                 <?php foreach($value["children"] as $childKey => $childValue): ?> 
 
                                                     <li><a href="<?php echo $GBLbasepage; ?>?q=<?php echo $key; ?>&sq=<?php echo $childKey; ?>"><?php echo $childValue["label"]; ?></a>
-													</li>                                    
+                          </li>                                    
 
                                                 <?php endforeach; ?>                    
                                             </ul>
@@ -75,7 +75,7 @@
                                     <!--<a href="http://www.ifac-control.org/" target="_blank">
                                         <img class="img-responsive img-center logo" src="./images/logo4.png" alt="">
                                     </a>-->
-				                                                <img class="img-responsive img-center logo-congresso" src="./images/logo-delae.png" max-height="35" alt="">
+                                                        <img class="img-responsive img-center logo-congresso" src="./images/logo-delae.png" max-height="35" alt="">
 
                                 </div>
                                 <div class="col-sm-2"> 

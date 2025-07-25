@@ -133,8 +133,10 @@ CREATE TABLE `vacancies` (
   `reservnum` integer unsigned DEFAULT 0 COMMENT 'reserved',
   `askedstatus_id` integer unsigned DEFAULT "1" COMMENT 'course vacancy review status',
   `givennum` integer unsigned DEFAULT 0 COMMENT 'by the dept',
+  `givenreservnum` integer unsigned DEFAULT 0 COMMENT 'reserved by dept',
   `givenstatus_id` integer unsigned DEFAULT "1" COMMENT 'depto vacancy review status',
   `usednum` integer unsigned DEFAULT 0 COMMENT 'effectively used ones by course',
+  `usedreservnum` integer unsigned DEFAULT 0 COMMENT 'effectively used ones by course',
   `comment` varchar(48) DEFAULT null
 );
 
@@ -324,3 +326,6 @@ ALTER TABLE `sceneryrole` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) O
 ALTER TABLE `sceneryclass` ADD FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `sceneryclass` ADD FOREIGN KEY (`scenery_id`) REFERENCES `scenery` (`id`) ON DELETE CASCADE;
+
+
+ALTER TABLE `account` ADD `last_hashcheck` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time since last login or check' AFTER `sessionhash`;

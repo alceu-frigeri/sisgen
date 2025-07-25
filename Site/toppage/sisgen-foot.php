@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-sm-12">
             <hr>
-			<p style="font-size:smaller;"> Gerado por: <?php echo  $_SESSION['username'] . ' as ' . date('H:i:s',time()) . ' de ' . date('d/m/Y',time()) . '.';?></p>
+      <p style="font-size:smaller;"> Gerado por: <?php echo  $_SESSION['username'] . ' as ' . date('H:i:s',time()) . ' de ' . date('d/m/Y',time()) . '.';?></p>
         </div>
     </div>
 
