@@ -10,11 +10,11 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
         $menu['grids'] = array(
             'hasChildren' => true , 'page' => 'home.php', 'label' => 'Grades' , 'visible' => true , 
             'children' => array(
-                'course' => array('page'=> 'reportcourse.php', 'label' => 'Cursos') , 
-                'prof' => array('page'=> 'reportprof.php', 'label' => 'Professores') , 
-                'room' => array('page'=> 'reportroom.php', 'label' => 'Salas') , 
-                'comgrad' => array('page'=> 'reportcomgrad.php', 'label' => 'comgrad') , 
-                'scenery' => array('page'=> 'reportscenery.php', 'label' => 'Cenários') , 
+                'course' => array('page'=> 'gridcourse.php', 'label' => 'Cursos') , 
+                'prof' => array('page'=> 'gridprof.php', 'label' => 'Professores') , 
+                'room' => array('page'=> 'gridroom.php', 'label' => 'Salas') , 
+                'comgrad' => array('page'=> 'gridcomgrad.php', 'label' => 'comgrad') , 
+                'scenery' => array('page'=> 'gridscenery.php', 'label' => 'Cenários') , 
             )
         );
         $menu['reports'] = array(
