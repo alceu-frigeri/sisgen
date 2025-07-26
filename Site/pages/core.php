@@ -88,6 +88,8 @@ function vardebug($var , $name = null) {
     }
 }
 
+
+
 function regacc_create() {
     global $GBLmysqli;
     global $regpage;
@@ -96,47 +98,30 @@ function regacc_create() {
     
     $GBLmysqli->postsanitize();
 
-    $email = $_POST['emailA'];
-    $passwd = $_POST['passA'];
-    $emailhash = md5($email);
+    $emailhash = md5($_POST['emailA']);
     $today = date('Y-m-d');
-    $usrname = $_POST['name'];
-    $usrfullname = $_POST['name'] . ' ' . $_POST['familyname'];
 
-    //    $email = $GBLmysqli->real_escape_string($email);
-    //    $passwd = $GBLmysqli->real_escape_string($passwd);
-    //    $usrname = $GBLmysqli->real_escape_string($usrname);
-    //    $usrfullname = $GBLmysqli->real_escape_string($usrfullname);
+    $Query = "SELECT email , password , activ FROM `account` WHERE `email` = '$_POST[emailA]' ; " ;
+    $result = $GBLmysqli->dbquery($Query) ;
+   
 
-    //    list($usrname , $usrdomain) = explode('@' , $email , 2);
-
-    
-    if (!($stmt = $GBLmysqli->prepare("SELECT email , password , activ FROM `account` WHERE `email` = ?;"))) {
-        echo 'Prepare failed: (' . $GBLmysqli->errno . ') ' . $GBLmysqli->error;
-    }
-    if (!$stmt->bind_param('s' , $email)) {
-        echo 'Binding parameters failed: (' . $stmt->errno . ') ' . $stmt->error;
-    };
-    $result  = $stmt->execute();
-    $stmt->bind_result($mail2 , $pass2 , $activ2);
-
-    if ($stmt->fetch()) {
-        if($activ2) {
-            echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>\n';
-            mymail($mail2 , 'Senha de Acesso' , 'Prezado(a)\n Sua senha é:'. $pass2);
+    if ($sqlrow = $result->fetch_assoc()) {
+        if($sqlrow['activ']) {
+            echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>';
+            mymail($sqlrow['email'] , 'Senha de Acesso' , "Prezado(a)\n Sua senha é: $sqlrow[password]");
         } else {
-            echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>\n';
+            echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email de ativação da sua conta.<br>';
             $msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
                 "${GBLbaseurl}?st=validate&h=$emailhash\n\n";
-            mymail($email , 'Confirmação de Email' , $msg);
+            mymail($sqlrow['email'] , 'Confirmação de Email' , $msg);
         }
-        $stmt->close();
+        $result->close();
     } else {
-        $stmt->close();
+        $result->close();
 
         $sql = 
                 "INSERT INTO `account` (`email` , `password` , `name` , `displayname` , `valhash`) " .
-                "VALUES ('$email' , '$passwd' , '$usrfullname' , '$usrname' , '$emailhash') ; " ;
+                "VALUES ( '$_POST[emailA]' , '$_POST[passA]' , '$_POST[name]  $_POST[familyname]' , '$_POST[name]' , '$emailhash' ) ; " ;
         $result = $GBLmysqli->dbquery($sql);
 
         echo '<h4>Obrigado por criar uma conta.</h4><br>
@@ -144,7 +129,8 @@ Você estará recebendo, em breve, um Email com instruções para ativar a sua c
 
         $msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
             "${GBLbaseurl}?st=validate&h=$emailhash\n\nAtt. sisgen";
-        mymail($email , 'Confirmação de Email' , $msg);
+        mymail($_POST['emailA'] , 'Confirmação de Email' , $msg);
+        
         $msg  = "P/Registro:\n\nConta registrada: $email\n";
         mymail('alceu.frigeri@ufrgs.br' , 'Conta Nova - sisgen' , $msg);
 
@@ -157,7 +143,10 @@ function regacc_validate($gethash) {
     global $regpage;
     
     echo '<h2>Confirmação de Email</h2><hr>';
-    $sql = "SELECT * FROM `account` WHERE `account`.`valhash` = '$gethash'";
+    $sql = 
+        "SELECT * " . 
+        "FROM `account` " . 
+        "WHERE `account`.`valhash` = '$gethash' ; " ;
     $result = $GBLmysqli->dbquery($sql);
     if ($result->num_rows) {
         echo 'Obrigado por confirmar seu Email<br>';
@@ -168,7 +157,7 @@ function regacc_validate($gethash) {
         $result = $GBLmysqli->dbquery($sql);
         echo 'Agora você já pode se logar no sistema !<br>';
     } else {
-        echo '<b>'.spanformat('' , 'red' , 'Link Inválido ou Expirado').'</b><br>';
+        echo '<b>' . spanformat('' , 'red' , 'Link Inválido ou Expirado') . '</b><br>';
     }
 }
 

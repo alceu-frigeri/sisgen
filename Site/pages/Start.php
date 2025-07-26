@@ -1,9 +1,6 @@
 <?php
     include 'bailout.php';
 
-//    global $regpage;
-
-//    $defaultpage = ;
     $emailcheck = "onkeyup='emailcheck()' onchange='emailcheck()' onblur='emailcheck()'";
     $passcheck = "onkeyup='passcheck()' onchange='passcheck()' onblur='passcheck()'";
 ?>

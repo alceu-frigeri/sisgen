@@ -3,12 +3,12 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=reports&sq=comgrad';
+$thisform = $GBLbasepage . '?q=grids&sq=comgrad';
 formretainvalues(array('semid' , 'courseid' , 'deptid'));
   
 
 echo '<div class = "row">' .
-    '<h2>Relatório COMGRAD por Departamento </h2>' .
+    '<h2>Demandas COMGRAD por Departamento </h2>' .
     '<hr>';
 
 echo formpost($thisform);

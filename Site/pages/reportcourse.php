@@ -3,11 +3,11 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=reports&sq=course'; 
+$thisform = $GBLbasepage . '?q=grids&sq=course'; 
 formretainvalues(array('semid' , 'courseid' , 'termid'));
 
 echo  '<div class = "row">' .
-    '<h2>Relatório p/Curso e Etapa </h2>' .
+    '<h2>Grade p/Curso e Etapa </h2>' .
     '<hr>' ;
 
 echo formpost($thisform);
