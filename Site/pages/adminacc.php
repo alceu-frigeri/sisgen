@@ -104,9 +104,11 @@ if($_SESSION['role']['isadmin']) {
     echo $GBL_Dspc . ' Activ?';
     echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
     echo formsubmit('act' , 'Submit') . '<br>';
-    echo spanformat('' , 'red' , $GBL_Dspc . 'Delete?' , null , true);
+    echo spanformatstart('' , 'red' , null , true);
+    echo  $GBL_Dspc . 'Delete?' ;
     echo formselectsession('userdelete' , 'bool' , 0);
-    echo spanformat('' , 'red' , formsubmit('act' , 'Delete User') . '<br>' , null , true);
+    echo formsubmit('act' , 'Delete User');
+    echo spanformatend();
     echo '</form>'. '<br>';
         
         $Query = 
@@ -128,9 +130,11 @@ if($_SESSION['role']['isadmin']) {
       } else {
         echo formsubmit('act' , 'Edit Role');
         echo $GBL_Dspc . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
-        echo spanformat('' , 'red' , $GBL_Dspc . 'Delete?');
+        echo spanformatstart('' , 'red' );
+        echo $GBL_Dspc . 'Delete?';
         echo formselectsession('roledelete' , 'bool' , 0);
-        echo spanformat('' , 'red' , formsubmit('act' , 'Delete Role')  . '<br>');
+        echo formsubmit('act' , 'Delete Role')  . '<br>';
+        echo spanformatend();
       }
       echo '</form>';
     }

@@ -88,7 +88,7 @@ if ($_SESSION['role']['isadmin']) {
         $_POST['act'] = 'Submit';
         break;
             
-    case 'Delete Scenery':
+    case 'Remove Scenery':
         if ($_POST['scenerydelete']) {
             $Query = 
                 "DELETE FROM `sceneryrole` " .
@@ -188,9 +188,11 @@ if($_SESSION['role']['isadmin']) {
             echo '</form>';      
     
             echo formpost($thisform) . formhiddenval('roleid' , $rolerow['id']);
-            echo spanformat('' , 'red' , 'Delete Role &lt;' . $rolerow['rolename']  . '&gt;?' , '' , true);
+            echo spanformatstart('' , 'red' , '' , true);
+            echo 'Delete Role &lt;' . $rolerow['rolename']  . '&gt;?' ;
             echo formselectsession('roledelete' , 'bool' , 0);
-            echo spanformat('' , 'red' , formsubmit('act' , 'Delete') , '' , true);
+            echo formsubmit('act' , 'Delete');
+            echo spanformatend();
             echo '</form><br>';      
             echo highlightend();
             //echo '</td></tr></table>';
@@ -234,9 +236,9 @@ if($_SESSION['role']['isadmin']) {
             } else {
                 echo formsubmit('act' , 'Edit Scenery');
                 echo $GBL_Dspc . ' ' . $sceneryrow['name'] . ' / ' . $sceneryrow['desc'];
-                echo $GBL_Dspc . 'Delete?';
+                echo $GBL_Dspc . 'Remove?';
                 echo formselectsession('scenerydelete' , 'bool' , 0);
-                echo formsubmit('act' , 'Delete Scenery')  . '<br>';
+                echo formsubmit('act' , 'Remove Scenery')  . '<br>';
             }
             echo '</form>';
         }
