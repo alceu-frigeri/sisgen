@@ -49,14 +49,18 @@ if ($_SESSION['role']['isadmin']) {
         echo formpost($thisform);
         echo formhiddenval('courseid' , $sqlrow['id']);
         if(($_POST['courseid'] == $sqlrow['id']) & (($_POST['act'] == 'Edit'))) {
+            echo highlightbegin();
             echo formpatterninput(10 , 3 , '[A-Z]+' , 'acronym' , 'acronym' , $sqlrow['acronym'])  . 
                 formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'code' , $sqlrow['code'])  . 
                 formpatterninput(32 , 16 , $GBLnamepattern , 'nome' , 'name' , $sqlrow['name']);
             echo formsubmit('act' , 'Submit');
+            echo spanformatstart('','red',null,true);
             echo $GBL_Tspc . 'Deletar:';
-            formselectsession('coursedelete' , 'bool' , 0);
+            echo formselectsession('coursedelete' , 'bool' , 0);
             echo formsubmit('act' , 'Delete') . '<br>';
+            echo spanformatend();
             echo '</form>';
+            echo highlightend();
             echo formpost($thisform);
             echo formhiddenval('courseid' , $sqlrow['id']);
             echo formhiddenval('oldcourseacro' , $sqlrow['acronym']);

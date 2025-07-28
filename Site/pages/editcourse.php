@@ -41,23 +41,32 @@ if(!($_SESSION['term'])) {
 switch ($_POST['act']) {
 case 'Insert':
     if ($can_coursedisciplines) {
-        $Qinsert = "INSERT INTO `coursedisciplines` (`course_id` , `term_id` , `discipline_id` , `disciplinekind_id`) " ;
-        $Qvals = "VALUES ( '$_POST[courseid]'  ,  '$_POST[termid]'  ,  '$_POST[discid]'  ,  '$_POST[newdisckind]' ) ; " ;
+        $Query = 
+                "INSERT INTO `coursedisciplines` (`course_id` , `term_id` , `discipline_id` , `disciplinekind_id`) " . 
+                "VALUES ( '$_POST[courseid]'  ,  '$_POST[termid]'  ,  '$_POST[discid]'  ,  '$_POST[newdisckind]' ) ; " ;
 
-        $GBLmysqli->dbquery( $Qinsert . $Qvals );
-        $_POST['coursediscid'] = null;
+        $GBLmysqli->dbquery( $Query );
+        $_POST['coursediscid'] = $GBLmysqli->insert_id;
+        $_POST['act'] = 'Submit';
     }
     break;
 case 'Submit':
     if ($can_coursedisciplines) {
-        if(fieldscompare('' , array('newterm' , 'newkind'))) {
-            $Qupdt = "UPDATE `coursedisciplines` " ;
-            $Qset = "SET `term_id` =  '$_POST[newterm]'  , `disciplinekind_id` =  '$_POST[newkind]'  " ;
-            $Qwhere = "WHERE `id` =  '$_POST[coursediscid]' ; " ;
+        $disckey = 'disc' . $_POST['coursediscid'] ;
+        $compfields = array('newterm' , 'newkind');
+        if(fieldscompare( $disckey , $compfields)) {
+            foreach ($compfields as $field) {
+                $keypost[$field] = $_POST[$disckey . $field] ;
+            }
+            $Query = 
+                "UPDATE `coursedisciplines` " . 
+                "SET `term_id` =  '$keypost[newterm]'  , " . 
+                        "`disciplinekind_id` =  '$keypost[newkind]'  " . 
+                "WHERE `id` =  '$_POST[coursediscid]' ; " ;
 
-            $GBLmysqli->dbquery( $Qupdt . $Qset . $Qwhere );
+            $GBLmysqli->dbquery( $Query );
         }
-        $_POST['coursediscid'] = null;
+        //$_POST['coursediscid'] = null;
     }
     break;
 case 'Delete':
@@ -82,20 +91,20 @@ if($postedit & $can_coursedisciplines) {
     echo '</form>';
 } else {
                 
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
                   'courseid' , 
                   $_POST['courseid'] , 
                   'id' , 
                   'acronym');
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT * FROM term ORDER BY term . name;" , 
                   'termid' , 
                   $_POST['termid'] , 
                   'id' , 
                   'name');
     echo "Ordenado por:  "; 
-    formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
+    echo formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 }
   
 echo '<br>'; 
@@ -107,15 +116,21 @@ if ($_POST['orderby'] == 0) {
 }
 
 // course, term
-$Qselect = "SELECT `discipline` . `code` , `discipline` . `name` , `disciplinekind` . `code` AS disckindcode , `disciplinekind` . `id` AS disckindid , `coursedisciplines` . `id` " ;
-$Qfrom = "FROM   `term` , `coursedisciplines` , `discipline` , `disciplinekind` " ;
-$Qwhere = "WHERE `coursedisciplines` . `course_id` =  '$_POST[courseid]'  AND `coursedisciplines` . `term_id` = `term` . `id` " . 
-    "AND `coursedisciplines` . `discipline_id` = `discipline` . `id` AND `coursedisciplines` . `disciplinekind_id` = `disciplinekind` . `id` " . 
-    "AND `term` . `id` =  '$_POST[termid]'  " ; 
-$Qordby = "ORDER BY $ordby ; " ;
+$Query = 
+        "SELECT `discipline` . `code` , " . 
+                "`discipline` . `name` , " . 
+                "`disciplinekind` . `code` AS disckindcode , " . 
+                "`disciplinekind` . `id` AS disckindid , " . 
+                "`coursedisciplines` . `id` " . 
+        "FROM   `term` , `coursedisciplines` , `discipline` , `disciplinekind` " . 
+        "WHERE `coursedisciplines` . `course_id` =  '$_POST[courseid]'  " . 
+                "AND `coursedisciplines` . `term_id` = `term` . `id` " . 
+                "AND `coursedisciplines` . `discipline_id` = `discipline` . `id` " . 
+                "AND `coursedisciplines` . `disciplinekind_id` = `disciplinekind` . `id` " . 
+                "AND `term` . `id` =  '$_POST[termid]'  " . 
+        "ORDER BY $ordby ; " ;
         
-
-$result = $GBLmysqli->dbquery( $Qselect . $Qfrom . $Qwhere . $Qordby );
+$result = $GBLmysqli->dbquery( $Query );
 $anyone = 0;
 if ($postedit & $can_coursedisciplines) {
     while ($sqlrow = $result->fetch_assoc()) {
@@ -123,22 +138,30 @@ if ($postedit & $can_coursedisciplines) {
     echo formhiddenval('courseid' , $_POST['courseid']);
     echo formhiddenval('termid' , $_POST['termid']);
     echo formhiddenval('coursediscid' , $sqlrow['id']);
-       echo formhiddenval('orderby' , $_POST['orderby']);
+    echo formhiddenval('orderby' , $_POST['orderby']);
+    $disckey = 'disc' . $sqlrow['id'] ;
     if ($_POST['coursediscid'] == $sqlrow['id']) {
-      highlightbegin();
+      if($_POST['act'] == 'Submit') {
+          echo highlightbegin();
+          echo formsubmit('act' , 'Edit');
+          echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
+          echo highlightend();
+      } else {
+      echo highlightbegin();
       echo $sqlrow['code'] . ' -- ' . $sqlrow['name'] . '  ';
-      formselectsession('newterm' , 'term' , $_POST['termid']);
-      formselectsession('newkind' , 'disckind' , $sqlrow['disckindid']);
+      echo formselectsession($disckey . 'newterm' ,  'term' , $_POST['termid']);
+      echo formselectsession($disckey . 'newkind' , 'disckind' , $sqlrow['disckindid']);
       echo formsubmit('act' , 'Submit') . '</form>';
-      highlightend();
+      echo highlightend();
       echo formpost($thisform);
       echo spanformat('' , 'red' , '  ' . $GBL_Tspc . 'remover: ' , '' , true);
-      formselectsession('discdelete' , 'bool' , 0);
+      echo formselectsession('discdelete' , 'bool' , 0);
       echo formhiddenval('courseid' , $_POST['courseid']);
       echo formhiddenval('termid' , $_POST['termid']);
       echo formhiddenval('coursediscid' , $sqlrow['id']);
-        echo formhiddenval('orderby' , $_POST['orderby']);
+      echo formhiddenval('orderby' , $_POST['orderby']);
       echo spanformat('' , 'red' , formsubmit('act' , 'Delete') , '' , true) . '<br>';
+      } 
     } else {
       echo formsubmit('act' , 'Edit');
       echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
@@ -155,12 +178,12 @@ if ($postedit & $can_coursedisciplines) {
     echo formhiddenval('act' , 'Reload');
 
     $q = "SELECT * FROM `unit` ORDER BY `acronym`";
-    formselectsql($anytmp , $q , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
+    echo formselectsql($anytmp , $q , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
 
     $q = "SELECT * FROM `discipline` WHERE `dept_id` =  '$_POST[unitid]'  ORDER BY `name`";
-    formselectsql($anyone , $q , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
+    echo formselectsql($anyone , $q , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
     
-    formselectsession('newdisckind' , 'disckind' , 1);
+    echo formselectsession('newdisckind' , 'disckind' , 1);
 
     if ($anyone) {
         echo formsubmit('act' , 'Insert');

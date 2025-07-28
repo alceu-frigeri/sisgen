@@ -12,13 +12,13 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
               'courseid' , 
               $_POST['courseid'] , 
@@ -26,7 +26,7 @@ formselectsql($anytmp ,
               'acronym');
 echo  '<br>';
   
-formsceneryselect();
+echo formsceneryselect();
 
 echo '</form>';
   

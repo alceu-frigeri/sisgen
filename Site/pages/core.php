@@ -687,7 +687,7 @@ function spanformatend() {
   
 function pagereload($page) {
     return "<script type=\"text/javascript\">
-      setInterval('location.replace(\"" . $page . "\")', 250);
+      setInterval('location.replace(\"" . $page . "\")', 200);
       </script>";
 }
 
@@ -821,6 +821,8 @@ function displaysqlitem($str , $sqltable , $sqlid , $sqlitem , $sqlitemB = null)
   
 function fieldscompare($key , $fields) {
     foreach ($fields as $field) {
+//        vardebug($_POST[$key.$field],$key.$field);
+//        vardebug($_SESSION['org'][$key.$field],'session '.$key.$field);
         if ($_POST[$key.$field] != $_SESSION['org'][$key.$field]) {return 1;}
     }
     return 0;
@@ -864,7 +866,7 @@ function formsessionselectinit($fieldname , $fieldlist) {
             }
         }  
     }
-    echo formhiddenval($fieldname , 'true');
+    return formhiddenval($fieldname , 'true');
 }
 
 
@@ -872,6 +874,7 @@ function formsessionselectinit($fieldname , $fieldlist) {
 
 
 function formsessionselect($session , $fieldname , &$cnt , $desc = null) {
+    $rtntext = '';
     foreach ($session as $selectid => $selectname) {
         $checked = '';
         $style = '';
@@ -882,11 +885,25 @@ function formsessionselect($session , $fieldname , &$cnt , $desc = null) {
         $cnt++;
         if ($cnt == 7) {
             $cnt = 1;
-            echo '</tr><tr>';
+            $rtntext .= '</tr><tr>';
+            //echo '</tr><tr>';
         }
         if ($desc) {
-            echo '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
+            $rtntext .= '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
+            //echo '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
         } else {
+            
+            $rtntext .=  '<th style="width:170px' . $style . '">' . 
+                '<input type="checkbox" name="' . 
+                $fieldname . $selectid . 
+                '" value="' . $selectid . 
+                '"' . $checked . 
+                ' > <label for="' . 
+                $fieldname . $selectid .
+                '">' . 
+                $selectname . 
+                '</label></th>';
+                /*
             echo '<th style="width:170px' . $style . '">' . 
                 '<input type="checkbox" name="' . 
                 $fieldname . $selectid . 
@@ -897,67 +914,73 @@ function formsessionselect($session , $fieldname , &$cnt , $desc = null) {
                 '">' . 
                 $selectname . 
                 '</label></th>';
+                */
         }
 
     }
+    return $rtntext;
 }
 
   
 function formsceneryselect() {
     global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+        
+    $rtntext = '';
 
-    formsessionselectinit('sceneryselected' , 'scen.acc.view');
-    formsessionselectinit('sceneryroles' , 'scen.editroles');
+    $rtntext .=  formsessionselectinit('sceneryselected' , 'scen.acc.view');
+    $rtntext .=  formsessionselectinit('sceneryroles' , 'scen.editroles');
                     
-    echo '<details>';
-    echo '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
-    displaysessionselected('Cenário(s)' , 'sceneryselected');
-    echo '</summary>';
+    $rtntext .=  '<details>';
+    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
+    $rtntext .=  displaysessionselected('Cenário(s)' , 'sceneryselected');
+    $rtntext .=  '</summary>';
     $cnt = 0;
-    echo '<table><tr>';
+    $rtntext .=  '<table><tr>';
     foreach ($_SESSION['sceneryroles'] as $roleid => $roledesc) {
-        formsessionselect($_SESSION['scen.byroles'][$roleid] , 'sceneryselected' , $cnt);
+        $rtntext .=  formsessionselect($_SESSION['scen.byroles'][$roleid] , 'sceneryselected' , $cnt);
     }
-    echo '</tr></table>';        
+    $rtntext .=  '</tr></table>';        
         
                         
-    echo '<details>';
-    echo '<summary>' . $GBL_Tspc . '<b>&rArr;</b> Legenda: ';
-    echo '</summary>';
+    $rtntext .=  '<details>';
+    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> Legenda: ';
+    $rtntext .=  '</summary>';
     $cnt = 0;
-    echo '<table><tr>';
+    $rtntext .=  '<table><tr>';
     foreach ($_SESSION['sceneryroles'] as $roleid => $roledesc) {
-        formsessionselect($_SESSION['scen.byroles'][$roleid] , 'sceneryselected' , $cnt , 'scen.desc');
+        $rtntext .=  formsessionselect($_SESSION['scen.byroles'][$roleid] , 'sceneryselected' , $cnt , 'scen.desc');
     }
-    echo '</tr></table>';        
-    echo '</details>';       
-    echo '<p style="line-height:0px;"></p>';
-    echo '<details>';
-    echo '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
-    displaysessionselected('Perfil(is)' , 'sceneryroles');
-    echo '</summary>';
+    $rtntext .=  '</tr></table>';        
+    $rtntext .=  '</details>';       
+    $rtntext .=  '<p style="line-height:0px;"></p>';
+    $rtntext .=  '<details>';
+    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
+    $rtntext .=  displaysessionselected('Perfil(is)' , 'sceneryroles');
+    $rtntext .=  '</summary>';
     $cnt = 0;
-    echo '<table><tr>';
-    formsessionselect($_SESSION['scen.editroles'] , 'sceneryroles' , $cnt);
-    echo '</tr></table>';        
-    echo '</details>';       
+    $rtntext .=  '<table><tr>';
+    $rtntext .=  formsessionselect($_SESSION['scen.editroles'] , 'sceneryroles' , $cnt);
+    $rtntext .=  '</tr></table>';        
+    $rtntext .=  '</details>';       
                         
-    echo formsubmit('act' , 'Refresh');
-    echo '</details>';
+    $rtntext .=  formsubmit('act' , 'Refresh');
+    $rtntext .=  '</details>';
+    return $rtntext;
 }
   
 function displaysessionselected($label , $fieldname){
-    echo $label.': ';
+    $rtntext = $label.': ' ;
     $comma = '';
     foreach ($_SESSION[$fieldname] as $id => $name) {
-        echo $comma . '<b> ' . $name . '</b>';
+        $rtntext .= $comma . '<b> ' . $name . '</b>';
         $comma = ', ';
     }
+    return $rtntext;
 }
   
 function formselectrange($selectname , $initial , $final , $refval , $trail = null , $disparray = null) {
     $_SESSION['org'][$selectname] = $refval;
-    echo "<select name='".$selectname."'>";
+    $rtntext = "<select name='".$selectname."'>";
     for ($i = $initial;$i<$final;$i++) {
         if ($i == $refval) {
             $selected = ' selected="selected"';
@@ -965,18 +988,19 @@ function formselectrange($selectname , $initial , $final , $refval , $trail = nu
             $selected = '';
         }
         if($disparray) {$val = $disparray[$i];} else {$val = $i;}
-        echo "<option value='$i'$selected>".$val.$trail.'</option>';
+        $rtntext .= "<option value='$i'$selected>".$val.$trail.'</option>';
     }  
-    echo '</select>';
+    $rtntext .= '</select>';
+    return $rtntext;
 }
 
 
 function formselectsession($selectname , $sessionkey , $refval , $nulloption = false , $onchange = false) {
     $_SESSION['org'][$selectname] = $refval;
     if ($onchange) {
-        echo "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
+        $rtntext = "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
     } else {
-        echo "<select name='".$selectname."'>";
+        $rtntext = "<select name='".$selectname."'>";
     }
     if($nulloption) { echo "<option value='0'>--</option>";  }
     foreach ($_SESSION[$sessionkey] as $id => $val) {
@@ -985,9 +1009,10 @@ function formselectsession($selectname , $sessionkey , $refval , $nulloption = f
         } else {
             $selected = '';
         }
-        echo "<option value='$id'$selected>".$val."</option>";
+        $rtntext .= "<option value='$id'$selected>".$val."</option>";
     }  
-    echo '</select>';
+    $rtntext .= '</select>';
+    return $rtntext;
 }
 
 
@@ -997,11 +1022,11 @@ function formselectsql(&$any , $q , $selectname , $refval , $idkey , $valAkey , 
     $_SESSION['org'][$selectname] = $refval;
     $result = $GBLmysqli->dbquery($q);
     if ($onchange) {
-        echo "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
-        echo "<option value='0'>---</option>";
+        $rtntext = "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
+        $rtntext .= "<option value='0'>---</option>";
     } else {
-        echo "<select name='".$selectname."'>";
-        echo "<option value='0'>---</option>";
+        $rtntext = "<select name='".$selectname."'>";
+        $rtntext .= "<option value='0'>---</option>";
     };
     $any = 0;
     while ($sqlrow = $result->fetch_assoc()) {
@@ -1016,24 +1041,25 @@ function formselectsql(&$any , $q , $selectname , $refval , $idkey , $valAkey , 
         } else {
             $val = $sqlrow[$valAkey];
         }
-        echo "<option value='".$sqlrow[$idkey]."'$selected>".$val."</option>";
+        $rtntext .= "<option value='".$sqlrow[$idkey]."'$selected>".$val."</option>";
     }
-    echo '</select>';
+    $rtntext .= '</select>';
+    return $rtntext;
 }
 
 
 function highlightbegin() {
     global $GBLhighlightstyle;
-    echo '<table '.$GBLhighlightstyle.'><tr><td>';
+    return "<table $GBLhighlightstyle ><tr><td>";
 }
   
 function highlightend() {
-    echo '</td></tr></table>';
+    return '</td></tr></table>';
 }
   
 function formjavaprint($title) {
 
-    echo 
+    return
         "<script type=\"text/javascript\">
         function printContent(id){
           str = document.getElementById(id).innerHTML

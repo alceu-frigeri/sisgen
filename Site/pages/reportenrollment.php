@@ -5,7 +5,7 @@ include 'bailout.php';
 $GBLmysqli->postsanitize();
 $thisform = $GBLbasepage . '?q=reports&sq=enrollment'; 
  
-formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));
+echo formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));
 
 echo '<div class = "row">' .
     '<h2>Histórico de Ocupação p/ Disciplina </h2>' .
@@ -13,7 +13,7 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;" , 
               'deptid' , 
               $_POST['deptid'] , 
@@ -21,7 +21,7 @@ formselectsql($anytmp ,
               'acronym');
 echo  '<br>';
   
-formsceneryselect();
+echo formsceneryselect();
 echo '</form>';
   
 echo '<br>';

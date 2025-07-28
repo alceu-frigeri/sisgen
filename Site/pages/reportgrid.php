@@ -12,27 +12,27 @@ echo '<div class = "row">' .
     '<hr>';
 
 echo formpost($thisform);
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY semester . name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit . name;" , 
               'deptid' , 
               $_POST['deptid'] , 
               'id' , 
               'acronym');
 echo "Nome Profs ? ";
-formselectsession('profnicks' , 
+echo formselectsession('profnicks' , 
                   'bool' , 
                   $_POST['profnicks'] , 
                   false , 
                   true);
 echo  '<br>';
   
-formsceneryselect();
+echo formsceneryselect();
 echo '</form>';
    
    

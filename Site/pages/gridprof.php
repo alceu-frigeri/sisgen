@@ -11,19 +11,19 @@ echo '<div class = "row">' .
     '<hr>';
 
 echo formpost($thisform);
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY semester . name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit . name;" , 
               'deptid' , 
               $_POST['deptid'] , 
               'id' , 
               'acronym');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT prof . * FROM prof , unit , profkind WHERE prof . dept_id = unit . id AND prof . profkind_id = profkind . id AND profkind . acronym <> '-none-' AND unit . id = '$_POST[deptid]' ORDER BY prof . name;" , 
               'profid' , 
               $_POST['profid'] , 
@@ -31,7 +31,7 @@ formselectsql($anytmp ,
               'name');
 echo  '<br>';
   
-formsceneryselect();
+echo formsceneryselect();
 echo '</form>';
    
 if ($_POST['profid']) {

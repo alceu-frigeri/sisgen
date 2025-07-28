@@ -38,17 +38,26 @@ case 'Insert':
         "INSERT INTO `prof` (`dept_id` , `profkind_id` , `name` , `nickname`) " .
         "VALUES ('$_POST[deptid]' , '$_POST[profkind]' , '$_POST[profname]' , '$_POST[profnickname]') ; " ;
     $GBLmysqli->dbquery( $Query );
-    $_POST['profid'] = null;
+    $_POST['profid'] = $GBLmysqli->insert_id;
+    $_POST['act'] = 'Submit';
     break;
 case 'Submit':
-    $Query = 
-        "UPDATE `prof` " .
-        "SET `profkind_id` = '$_POST[profkind]' , " .
-        "`name` = '$_POST[profname]' , " .
-        "`nickname` = '$_POST[profnickname]'  " .
-        "WHERE `id` = '$_POST[profid]' ; " ;
-    $GBLmysqli->dbquery( $Query );
-    $_POST['profid'] = null;
+        $profkey = 'prof' . $_POST['profid'] ;
+        $compfields = array('profkind' , 'profname' , 'profnickname');
+        if(fieldscompare( $profkey , $compfields)) {
+            foreach ($compfields as $field) {
+                $keypost[$field] = $_POST[$profkey . $field] ;
+            }
+            $Query = 
+                "UPDATE `prof` " .
+                "SET `profkind_id` = '$keypost[profkind]' , " .
+                "`name` = '$keypost[profname]' , " .
+                "`nickname` = '$keypost[profnickname]'  " .
+                "WHERE `id` = '$_POST[profid]' ; " ;
+            //    vardebug($Query,'query');
+            $GBLmysqli->dbquery( $Query );            
+        }
+    //$_POST['profid'] = null;
     break;
 case 'Delete':
     if ($_POST['profdelete']) {
@@ -68,7 +77,7 @@ if ($postedit & $can_prof) {
     echo '</form>';
 } else {
 
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit . acronym;" , 
                   'deptid' , 
                   $_POST['deptid'] , 
@@ -92,22 +101,30 @@ if ($postedit & $can_prof) {
       echo formpost($thisform . targetdivkey('prof' , $sqlrow['id']));
     echo formhiddenval('deptid' , $_POST['deptid']);
     if ($_POST['profid'] == $sqlrow['id']) {
-      
+      if($_POST['act'] == 'Submit') {
+          echo highlightbegin();
+              echo formsubmit('act' , 'Edit');
+              echo formhiddenval('profid' , $sqlrow['id']);
+              echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBL_Dspc . $sqlrow['name'] . $GBL_Dspc . ' (' . $sqlrow['nickname'] . ')<br>';
+          echo highlightend(); 
+      } else {
+      $profkey = 'prof' . $sqlrow['id'] ;
       echo hiddendivkey('prof' , $sqlrow['id']);
-      highlightbegin();
+      echo highlightbegin();
       echo formhiddenval('profid' , $sqlrow['id']);
-      formselectsession('profkind' , 'profkind' , $sqlrow['profkind_id']);
-            echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , 'profname' , $sqlrow['name']);
-      echo '<br>' . $GBL_Qspc .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , 'profnickname' , $sqlrow['nickname']);
+      echo formselectsession($profkey . 'profkind' , 'profkind' , $sqlrow['profkind_id']);
+            echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , $profkey .  'profname' , $sqlrow['name']);
+      echo '<br>' . $GBL_Qspc .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
       echo formsubmit('act' , 'Submit');
       echo '</form>';
-      highlightend();
+      echo highlightend();
       echo formpost($thisform);
       echo formhiddenval('deptid' , $_POST['deptid']);
       echo formhiddenval('profid' , $sqlrow['id']);
       echo spanformatstart('' , 'red' , null , true) . '  ' . $GBL_Tspc . 'remover: ' ;
-      formselectsession('profdelete' , 'bool' , 0);
+      echo formselectsession('profdelete' , 'bool' , 0);
       echo formsubmit('act' , 'Delete') . spanformatend() ; 
+      }
     } else {
       echo formsubmit('act' , 'Edit');
       echo formhiddenval('profid' , $sqlrow['id']);
@@ -121,7 +138,7 @@ if ($postedit & $can_prof) {
 
     echo formpost($thisform);
     echo formhiddenval('deptid' , $_POST['deptid']);
-    formselectsession('profkind' , 'profkind' , 1);
+    echo formselectsession('profkind' , 'profkind' , 1);
     echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , 'profname' , '-');
     echo $GBL_Dspc . ' ' . formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , 'profnickname' , '-');
     echo formsubmit('act' , 'Insert') ;

@@ -6,20 +6,20 @@ $GBLmysqli->postsanitize();
 $thisform = $GBLbasepage . '?q=reports&sq=dept'; 
 formretainvalues(array('semid' , 'deptid'));
   
-formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));       
+echo formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));       
 
 echo '<div class = "row">' .
     '<h2>Relatório Depto. p/ Disciplina </h2>' .
     '<hr>' ;
 
 echo formpost($thisform);
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM `semester` ORDER BY `name` DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;" , 
               'deptid' , 
               $_POST['deptid'] , 
@@ -27,7 +27,7 @@ formselectsql($anytmp ,
               'acronym');
 
 echo  '<br>';
-formsceneryselect();
+echo formsceneryselect();
 echo '</form>';
 
 echo "<button onclick = \"printContent('Encargos')\">Print</button>";

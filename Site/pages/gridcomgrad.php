@@ -13,7 +13,7 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY semester . name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
@@ -21,7 +21,7 @@ formselectsql($anytmp ,
               'name');
   
 echo 'Curso:'; 
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE `iscourse` = '1' ORDER BY unit . acronym;" , 
               'courseid' , 
               $_POST['courseid'] , 
@@ -36,7 +36,7 @@ $Query = "SELECT DISTINCT `disc` . `dept_id` , `unit` . `acronym` , `unit` . `na
         "ORDER BY `unit` . `acronym` ; " ;
        
 echo $GBL_Tspc . 'Dept.:';
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               $Query  , 
               'deptid' , 
               $_POST['deptid'] , 
@@ -45,7 +45,7 @@ formselectsql($anytmp ,
   
 echo  '<br>';
   
-formsceneryselect();
+echo formsceneryselect();
 echo '</form>';
 
 
@@ -202,7 +202,7 @@ if ($emailbody) {
         "\n\nColocamo-nos, desde já, a disposição para sanar quaisquer dúvidas."  . 
         "\n\nAtenciosamente, \n". $courserow['contactname'] . "\nCOMGRAD/"  . $courserow['acronym']  . "\n". $courserow['name'] . "\n\n</textarea><br>";
     echo 'Really Send it:'; 
-    formselectsession('trulysend' , 'bool' , 0);
+    echo formselectsession('trulysend' , 'bool' , 0);
     echo formsubmit('act' , 'Send Email');
     echo '</form>';
     echo '<p><hr>' . $emailbodyhdr . $emailbody; 

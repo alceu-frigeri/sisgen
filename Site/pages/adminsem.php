@@ -46,13 +46,17 @@ if($_SESSION['role']['isadmin']) {
     while ($semrow = $semsql->fetch_assoc()) {
         echo formpost($thisform) . formhiddenval('semid' , $semrow['id']);
         if (($_POST['semid'] == $semrow['id']) & (($_POST['act'] == 'Edit'))) {
+            echo highlightbegin();
             echo $semrow['name'] . $GBL_Dspc . 'readonly:';
-            formselectsession('readonly' , 'bool' , $semrow['readonly']);
+            echo formselectsession('readonly' , 'bool' , $semrow['readonly']);
             echo formsubmit('act' , 'Submit');
+            echo spanformatstart('','red',null,true);
             echo '  Delete? ';
-            formselectsession('delete' , 'bool' , 0);
+            echo formselectsession('delete' , 'bool' , 0);
             echo formsubmit('act' , 'Delete');
+            echo spanformatend();
             echo '</form>';
+            echo highlightend();
             echo formpost($thisform) . formhiddenval('semid' , $semrow['id']);
             echo formpatterninput(10 , 5 , '[0-9a-zA-Z \-]+' , 'novo semestre' , 'newsem' , '!');
             echo formsubmit('act' , 'Duplicate as');

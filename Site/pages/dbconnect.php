@@ -247,9 +247,11 @@ class DBclass extends mysqli {
         $boolkeys  = array('can_edit' , 'can_dupsem' , 'can_vacancies' , 'can_class' , 'can_addclass' , 'can_disciplines' , 'can_coursedisciplines' , 'can_prof' , 'can_viewlog' , 'can_scenery' , 'can_room');
         $txtkeys = array('rolename' , 'description');
         $_SESSION['usercanedit'] = '0';
+        $_SESSION['usercanscen'] = '0';
         while ($sqlrow = $result->fetch_assoc()) {
             $_SESSION['role']['isadmin'] |= $sqlrow['isadmin'];
             $_SESSION['usercanedit'] |= $sqlrow['can_edit'];
+            $_SESSION['usercanscen'] |= $sqlrow['can_scenery'];
             if ($_SESSION['role'][$sqlrow['unit_id']]) {
                 foreach ($boolkeys as $key) {
                     $_SESSION['role'][$sqlrow['unit_id']][$key] = $_SESSION['role'][$sqlrow['unit_id']][$key] || $sqlrow[$key];
@@ -260,7 +262,7 @@ class DBclass extends mysqli {
             } else {
                 $_SESSION['role'][$sqlrow['unit_id']] = $sqlrow;
             }
-            if($sqlrow['can_scenery']) {
+            if($sqlrow['can_scenery'] == '1') {
                 $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
             }
         }

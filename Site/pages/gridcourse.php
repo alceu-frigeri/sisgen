@@ -12,37 +12,37 @@ echo  '<div class = "row">' .
 
 echo formpost($thisform);
         
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
               'courseid' , 
               $_POST['courseid'] , 
               'id' , 
               'acronym');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM term ORDER BY term . name;" , 
               'termid' , 
               $_POST['termid'] , 
               'id' , 
               'name');
 echo " Somente OB/AL ? ";
-formselectsession('reqonly' , 
+echo formselectsession('reqonly' , 
                   'bool' , 
                   $_POST['reqonly'] , 
                   false , 
                   true);
 echo " Nome Profs ? ";
-formselectsession('profnicks' , 
+echo formselectsession('profnicks' , 
                   'bool' , 
                   $_POST['profnicks'] , 
                   false , true);
 echo  '<br>';  
-formsceneryselect(); 
+echo formsceneryselect(); 
 echo '</form>';
   
 // semester, course, term

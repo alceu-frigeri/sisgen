@@ -38,15 +38,21 @@ if ($postedit) {
         break;
     case 'Submit':
         if ($_SESSION['scen.role'][$_POST['sceneryid']] |  $_SESSION['role']['isadmin']) {
-                                
-            $Query = 
-                "UPDATE `scenery` " .
-                "SET `name` = '$_POST[sceneryname]' , " .
-                        "`desc` = '$_POST[scenerydesc]' , " .
-                        "`hide` = '$_POST[sceneryhide]' ".
-                "WHERE `id` = '$_POST[sceneryid]' ; " ;
-            $GBLmysqli->dbquery( $Query );
-            $_POST['sceneryid'] = null;
+         $scenkey = 'scen' .$_POST['sceneryid'] ;
+        $compfields = array('sceneryname' , 'scenerydesc' , 'sceneryhide' ) ;
+            if (fieldscompare($scenkey , $compfields)) {
+                foreach ($compfields as $field) {
+                    $keypost[$field] = $_POST[$scenkey . $field] ;
+                }
+                $Query = 
+                    "UPDATE `scenery` " .
+                    "SET `name` = '$keypost[sceneryname]' , " .
+                            "`desc` = '$keypost[scenerydesc]' , " .
+                            "`hide` = '$keypost[sceneryhide]' ".
+                    "WHERE `id` = '$_POST[sceneryid]' ; " ;
+                    $GBLmysqli->dbquery( $Query );
+            }                           
+            //$_POST['sceneryid'] = null;
         }
         break;
     case 'Insert':
@@ -87,6 +93,7 @@ if($_SESSION['role']['isadmin']) {
 
 $sqlroles = $GBLmysqli->dbquery( $Query );
 while ($rolerow = $sqlroles->fetch_assoc()) {
+    echo hiddendivkey('role' , $rolerow['id']);
     echo spanformat('1.2em' , 'blue', 'Perfil ' . $rolerow['rolename'] . ' - ' . $rolerow['description'] . '<br>' , null , true);
     $Query = 
         "SELECT scenery.* , " . 
@@ -102,23 +109,40 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
     while ($sceneryrow = $sqlscenery->fetch_assoc()) {
         if ($sceneryrow['can_scenery'] | $_SESSION['role']['isadmin']) {                                
             if ($sceneryrow['id'] == $_POST['sceneryid']) {
-                echo hiddendivkey('scen' , $sceneryrow['id']);
-                highlightbegin();
-                echo formpost($thisform) . formhiddenval('sceneryid' , $sceneryrow['id']);
-                echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , 'sceneryname' , $sceneryrow['name'])  . 
-                    'Descrição:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , 'scenerydesc' , $sceneryrow['desc']);
+                if ($_POST['act'] == 'Submit') {
+                //echo hiddendivkey('scen' , $sceneryrow['id']);
+                echo highlightbegin();
+                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
+                echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
+                if ($sceneryrow['hide']) {
+                    echo spanformat('' , 'red' , 'hidden: T ');
+                } else {
+                    echo spanformat('' , 'blue' , 'hidden: F ');
+                }
+                echo '<br>';
+                echo '</form>';
+                                echo highlightend();
+
+                } else {
+                //echo hiddendivkey('scen' , $sceneryrow['id']);
+                echo highlightbegin();
+                $scenkey = 'scen' . $sceneryrow['id'] ;
+                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']);
+                echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
+                    'Descrição:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , $scenkey.'scenerydesc' , $sceneryrow['desc']);
                 echo 'hide scenery? ';
-                formselectsession('sceneryhide' , 'bool' , $sceneryrow['hide']);
+                echo formselectsession($scenkey.'sceneryhide' , 'bool' , $sceneryrow['hide']);
                 echo '<br>' . formsubmit('act' , 'Submit');
                 echo '</form>';      
-                highlightend();
+                echo highlightend();
                 echo formpost($thisform) . formhiddenval('sceneryid' , $sceneryrow['id']);
                 echo spanformatstart('' , 'red' , null , true) . 'Delete scenery &lt;' . $sceneryrow['name']  . '&gt;?' ;
-                formselectsession('scenerydelete' , 'bool' , 0);
+                echo formselectsession('scenerydelete' , 'bool' , 0);
                 echo formsubmit('act' , 'Delete') . spanformatend() ;
                 echo '</form><br>';      
+                }
             } else {
-                echo formpost($thisform . targetdivkey('scen' , $sceneryrow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
+                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
                 echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
                 if ($sceneryrow['hide']) {
                     echo spanformat('' , 'red' , 'hidden: T ');
@@ -136,22 +160,22 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
             } else {
                 echo spanformat('' , 'blue' , 'hidden: F ');
             }
-            echo '<br>';
+            //echo '<br>';
         }         
     }
     if ($_SESSION['role.scen'][$rolerow['id']]['can_scenery'] | $_SESSION['role']['isadmin']) {                
-        echo formpost($thisform);
+        echo formpost($thisform . targetdivkey('role' , $rolerow['id']));
         echo formhiddenval('roleid' , $rolerow['id']);        
         echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , 'sceneryname' , '!')  . 
             'Descriçao:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , 'scenerydesc' , '!');
         echo '  hidden? ';
-        formselectsession('sceneryhide' , 'bool' , 0);
+        echo formselectsession('sceneryhide' , 'bool' , 0);
         echo '<br> Add scenery? ';
-        formselectsession('addscenery' , 'bool' , 0);
+        echo formselectsession('addscenery' , 'bool' , 0);
         echo  formsubmit('act' , 'Insert');
-        echo '</form><br>';      
+        echo '</form>';      
     }
-    echo '<hr><hr>';  
+    echo '<hr>';  
         
         
 }

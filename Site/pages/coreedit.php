@@ -87,10 +87,10 @@ function thisformpost($hash = null) {
 
 function sceneryclasshack($profnicks , $inselect = true) {
     if($inselect) {
-        formsceneryselect();
+        echo formsceneryselect();
     } else {
         echo '<br>';
-        displaysessionselected('Cenário(s)' , 'sceneryselected');
+        echo displaysessionselected('Cenário(s)' , 'sceneryselected');
     }
   
     $inselected = inscenery_sessionlst('sceneryselected');
@@ -153,16 +153,16 @@ function formsegmentedit($segrow) {
     $segformid = 'seg' . $segrow['id'];
     $_SESSION['segments'][$segrow['id']] = $segformid;
 
-    formselectrange($segformid . 'day' , 2 , 8 , $segrow['day'] , '' , $_SESSION['weekday']);
-    formselectrange($segformid . 'start' , 7 , 21 , $segrow['start'] , ':30');
-    formselectrange($segformid . 'length' , 1 , 6 , $segrow['length']);
-    formselectsession($segformid . 'room' , 'roomsID' , $segrow['room_id']);
-    formselectsession($segformid . 'prof' , 'deptprof' . $_POST['unitid'] , $segrow['prof_id']);
-    formselectsession($segformid . 'status' , 'status' , $segrow['status_id']);
+    echo formselectrange($segformid . 'day' , 2 , 8 , $segrow['day'] , '' , $_SESSION['weekday']);
+    echo formselectrange($segformid . 'start' , 7 , 21 , $segrow['start'] , ':30');
+    echo formselectrange($segformid . 'length' , 1 , 6 , $segrow['length']);
+    echo formselectsession($segformid . 'room' , 'roomsID' , $segrow['room_id']);
+    echo formselectsession($segformid . 'prof' , 'deptprof' . $_POST['unitid'] , $segrow['prof_id']);
+    echo formselectsession($segformid . 'status' , 'status' , $segrow['status_id']);
     
     if ($can_addclass) {
         echo spanformatstart('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
-        formselectsession($segformid . 'delete' , 'bool' , 0);
+        echo formselectsession($segformid . 'delete' , 'bool' , 0);
         echo spanformatend();
     }
 }
@@ -175,25 +175,27 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     global $GBLcommentpattern;
     global $GBLclasspattern;
     global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
-
+    global $class_edited;
+    
+    $class_edited = true;
     $classkey = 'class' . $classrow['id'];
     $_SESSION['classes'][$classrow['id']] = $classkey;
     
-    echo '<table style="background-color:#E0FFE0;color:#8000B0;"><tr><td>';
+    echo highlightbegin();
     echo 'Turma:<b>' . formpatterninput(3 , 1 , $GBLclasspattern , ' Turma' , $classkey . 'classname' , $classrow['name']) . '</b>' . $GBL_Qspc . 'agregadora:';
 
 
-    formselectsession($classkey . 'agreg' , 'bool' , $classrow['agreg']);
+    echo formselectsession($classkey . 'agreg' , 'bool' , $classrow['agreg']);
     if($_SESSION['agreg']) {
         echo '  agregada à:';
-        formselectsession($classkey . 'partof' , 'agreg' , $classrow['partof'] , true);
+        echo formselectsession($classkey . 'partof' , 'agreg' , $classrow['partof'] , true);
     }
     echo $GBL_Tspc . 'status:';
-    formselectsession($classkey . 'status' , 'status' , $classrow['status_id']);
+    echo formselectsession($classkey . 'status' , 'status' , $classrow['status_id']);
 
     //echo spanformat('' , 'red' , $GBL_Tspc . 'remover:' , null , true);
     echo spanformatstart('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
-    formselectsession($classkey . 'delete' , 'bool' , 0);
+    echo formselectsession($classkey . 'delete' , 'bool' , 0);
     echo spanformatend();
 
     echo '</br>';
@@ -213,14 +215,14 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     }
     if ($postedit && ($can_addclass || $canbyscenery)) {
         echo 'Adicionar segmento:';
-        formselectsession($classkey . 'addsegment' , 'ADDsegments' , 0);
+        echo formselectsession($classkey . 'addsegment' , 'ADDsegments' , 0);
     }
     echo '<br>';
     
     if ($postedit && ($can_addclass || $canbyscenery)) {
         if($can_addclass) {
             echo 'Cenários?:';
-            formselectsession($classkey . 'scenerybool' , 'bool' , $classrow['scenery']);
+            echo formselectsession($classkey . 'scenerybool' , 'bool' , $classrow['scenery']);
         } else {
             echo 'Cenários:';
             echo formhiddenval($classkey . 'scenerybool' , $classrow['scenery']);
@@ -255,7 +257,6 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
             echo '<th style="width:110px">' . '<input type="checkbox" name="' . $classkey. 'scenery' . $id . '" id="scenery' . $id .   '" value="'. $id  . '"'  . $checked. '> <label for="scenery'. $id  . '">'. $name  . '</label></th>';
         }
         echo '</tr></table>';
-
     }
 
     $q = 
@@ -273,8 +274,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     } else {
         formvacedit($vacsql);
     }
-    
-    echo '</td></tr></table>';
+    echo highlightend();
 }
   
 function formclassdisplay ($classrow , $vacedit = false) {
@@ -300,7 +300,6 @@ function formclassdisplay ($classrow , $vacedit = false) {
         }
     }
     
-
     echo 'Turma:<b>' . $classrow['name'] . '</b>' . $GBL_Qspc . 'agregadora:';
     echo $_SESSION['bool'][$classrow['agreg']];
     if ($classrow['partof']) {
@@ -385,6 +384,8 @@ function formvacedit ($vacsql) {
     global $GBLcommentcolor;
     global $GBLvackind;
     global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $vac_edited;
+    
     
     
     echo '<table>';
@@ -399,7 +400,7 @@ function formvacedit ($vacsql) {
                 formpatterninput(3 , 1 , '[0-9]+' , 'Núm . ' , $vacid . 'askedreserv' , $vacrow['askedreservnum']) . 
                 $GBL_Dspc  . 
                 spanformat('' , '' , $GBLvackind[$vacrow['courseid']]) . $GBL_Dspc;
-            formselectsession($vacid . 'askedstatusid' , 'status' , $vacrow['askedstatus_id']);
+            echo formselectsession($vacid . 'askedstatusid' , 'status' , $vacrow['askedstatus_id']);
             echo '</td>';
         } else {
             echo formhiddenval($vacid . 'asked' , $vacrow['askednum']);
@@ -415,10 +416,11 @@ function formvacedit ($vacsql) {
                 '</td>';
         }
         if (($_SESSION['role'][$_POST['unitid']]['can_vacancies'] | $_SESSION['role']['isadmin']) & !$readonly) {
+            $vac_edited = true;
             $_SESSION['vacancies'][$vacrow['id']] = $vacid;
             echo '<td>' . $GBL_Dspc . 'Vagas concedidas: '  .   formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'given' , $vacrow['givennum']);
             echo $GBL_Dspc . 'reserv: ' . formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'givenreserv' , $vacrow['givenreservnum']);
-            formselectsession($vacid . 'givenstatusid' , 'status' , $vacrow['givenstatus_id']);
+            echo formselectsession($vacid . 'givenstatusid' , 'status' , $vacrow['givenstatus_id']);
             echo '</td>';
         } else {
             echo formhiddenval($vacid . 'given' , $vacrow['givennum']);
@@ -434,6 +436,7 @@ function formvacedit ($vacsql) {
         echo '<td>' . $GBL_Dspc . 'Vagas Ocupadas: ' . $vacrow['usednum'] . ' (+' . $vacrow['usedreservnum'] . ')</td>';
         echo '</tr>';
         if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
+            $vac_edited = true;
             $_SESSION['vacancies'][$vacrow['id']] = $vacid;
             echo '<tr>';
             echo '<td>Obs.: ' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Obs.' , $vacid . 'comment' , $vacrow['comment']) . '</td>';
@@ -939,7 +942,8 @@ function classsubmit ($classlog) {
         }
     }
     if(!$segadded) {
-        $_POST['classid'] = null;
+//        $_POST['classid'] = null;
+        $_POST['act'] = 'SubDisplay';
     }
 
 }

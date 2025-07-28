@@ -51,7 +51,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
                                    'children' => array(
                                        'sem' => array('page'=> 'adminsem.php', 'label' => 'Ed. Semestres') , 
                                        'courses' => array('page'=> 'admincourse.php', 'label' => 'Ed. Cursos') , 
-                                       'scenery' => array('page'=> 'adminscenery.php', 'label' => 'Ed. Cenários') , 
+//                                       'scenery' => array('page'=> 'adminscenery.php', 'label' => 'Ed. Cenários') , 
                                        'adminacc' => array('page'=> 'adminacc.php', 'label' => 'Usuários') , 
                                        'adminroles' => array('page'=> 'adminroles.php', 'label' => 'Roles') , 
                                    )

@@ -90,11 +90,11 @@ if($_SESSION['role']['isadmin']) {
     echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
     echo formhiddenval('usrid' , $usrrow['id']);
     if ($usrrow['id'] == $_POST['usrid']) {
-      highlightbegin();
+      echo highlightbegin();
     }
     echo spanformat('' , 'darkblue' , 'User: <b>' . $usrrow['displayname'] . ' / ' . $usrrow['name']  . ' ( ' . $usrrow['email'] . ' )</b>');
     echo $GBL_Dspc . ' Reset passwd?';
-    formselectsession('resetpasswd' , 'bool' , 0);
+    echo formselectsession('resetpasswd' , 'bool' , 0);
     echo 'chgpasswd:';
   if ($usrrow['chgpasswd']) {
             echo spanformat('' , 'red' , ':T ');
@@ -102,10 +102,10 @@ if($_SESSION['role']['isadmin']) {
             echo spanformat('' , 'blue' , ':F ');
         }
     echo $GBL_Dspc . ' Activ?';
-    formselectsession('activ' , 'bool' , $usrrow['activ']);  
+    echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
     echo formsubmit('act' , 'Submit') . '<br>';
     echo spanformat('' , 'red' , $GBL_Dspc . 'Delete?' , null , true);
-    formselectsession('userdelete' , 'bool' , 0);
+    echo formselectsession('userdelete' , 'bool' , 0);
     echo spanformat('' , 'red' , formsubmit('act' , 'Delete User') . '<br>' , null , true);
     echo '</form>'. '<br>';
         
@@ -123,13 +123,13 @@ if($_SESSION['role']['isadmin']) {
       echo formhiddenval('accroleid' , $rolerow['accroleid']);
       echo formhiddenval('usrid' , $usrrow['id']);
       if ($rolerow['accroleid'] == $_POST['accroleid']) {
-        formselectsession('newroleid' , 'roleslist' , $rolerow['id']);
+        echo formselectsession('newroleid' , 'roleslist' , $rolerow['id']);
         echo formsubmit('act' , 'Change Role');
       } else {
         echo formsubmit('act' , 'Edit Role');
         echo $GBL_Dspc . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
         echo spanformat('' , 'red' , $GBL_Dspc . 'Delete?');
-        formselectsession('roledelete' , 'bool' , 0);
+        echo formselectsession('roledelete' , 'bool' , 0);
         echo spanformat('' , 'red' , formsubmit('act' , 'Delete Role')  . '<br>');
       }
       echo '</form>';
@@ -137,11 +137,11 @@ if($_SESSION['role']['isadmin']) {
         echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
     echo formhiddenval('usrid' , $usrrow['id']);
         echo '<br>';
-    formselectsession('newroleid' , 'roleslist' , 15);
+    echo formselectsession('newroleid' , 'roleslist' , 15);
     echo  formsubmit('act' , 'Add Role');
     echo '</form>';  
     if ($usrrow['id'] == $_POST['usrid']) {
-      highlightend();
+      echo highlightend();
     }
   
     

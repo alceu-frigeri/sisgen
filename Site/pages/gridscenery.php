@@ -11,17 +11,17 @@ echo '<div class = "row">' .
     '<hr>' ;
         
 echo formpost($thisform);
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY semester . name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
 echo " Todos ? ";
-formselectsession('allscenery' , 'bool' , $_POST['allscenery'] , false , true);        
+echo formselectsession('allscenery' , 'bool' , $_POST['allscenery'] , false , true);        
 
 if($_SESSION['role']['isadmin']) {
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT DISTINCT scen . * FROM scenery scen ORDER BY name;" , 
                   'sceneryid' , 
                   $_POST['sceneryid'] , 
@@ -33,7 +33,7 @@ if($_SESSION['role']['isadmin']) {
     } else {
         $Qallscen = '';
     }
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT DISTINCT scen . * FROM scenery scen  ,  sceneryrole scenrole ,   accrole " . 
                   "WHERE ( scen . id = scenrole . scenery_id " . 
                         "AND scenrole . role_id = accrole . role_id " . 
@@ -47,7 +47,7 @@ if($_SESSION['role']['isadmin']) {
 }
 
 echo "Nome Profs ? ";
-formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
+echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 echo  '<br>';
 
 echo '</form>';

@@ -8,7 +8,7 @@ $thisform = $GBLbasepage . '?q=reports&sq=assignment';
 $GBLmysqli->postsanitize();
 formretainvalues(array('semid' , 'deptid'));
 
-formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));
+echo formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));
   
 
 echo '<div class = "row">' .
@@ -17,13 +17,13 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
         
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM semester ORDER BY semester . name DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
-formselectsql($anytmp , 
+echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit . name;" , 
               'deptid' , 
               $_POST['deptid'] , 
@@ -31,7 +31,7 @@ formselectsql($anytmp ,
               'acronym');
 echo  '<br>';
   
-formsceneryselect();  
+echo formsceneryselect();  
 echo '</form>';
 
 echo "<button onclick=\"printContent('Encargos')\">Print</button>";

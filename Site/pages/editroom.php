@@ -44,13 +44,24 @@ case 'Delete':
     }
     break;
 case 'Submit':
+    $roomkey = 'room' . $_POST['roomid'] ; 
+    $compfields = array('roomtype' , 'capacity');
+        if(fieldscompare( $roomkey , $compfields)) {
+            foreach ($compfields as $field) {
+                $keypost[$field] = $_POST[$roomkey . $field] ;
+            }
     $Query = 
         "UPDATE `room` " .
-        "SET `roomtype_id` = '$_POST[roomtype]' , " .
-                "`capacity` = '$_POST[capacity]' " .
+        "SET `roomtype_id` = '$keypost[roomtype]' , " .
+                "`capacity` = '$keypost[capacity]' " .
         "WHERE `id` = '$_POST[roomid]' ; " ;
+        //vardebug($Query,'query');
+        //vardebug($keypost,'key post');
+        //vardebug($compfields,'comp fields');
+        //vardebug($_POST,'post');
     $GBLmysqli->dbquery( $Query );
-    $_POST['roomid'] = null;
+    } 
+    //$_POST['roomid'] = null;
     break;
     
 }
@@ -62,7 +73,7 @@ if ($postedit & $can_room) {
     echo '</form>';
 } else {
 
-    formselectsql($anytmp , 
+    echo formselectsql($anytmp , 
                   "SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;" , 
                   'buildingid' , 
                   $_POST['buildingid'] , 
@@ -85,11 +96,26 @@ if ($postedit & $can_room) {
         echo formpost($thisform);
         echo formhiddenval('buildingid' , $_POST['buildingid']);
         if ($_POST['roomid'] == $sqlrow['id']) {
+            if($_POST['act'] == 'Submit') {
+            echo highlightbegin();
+            echo formsubmit('act' , 'Edit');
+            echo formhiddenval('roomid' , $sqlrow['id']);
+            echo $sqlrow['name'] . $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
+            if ($sqlrow['capacity']) {
+                echo ' (cap . :' . $sqlrow['capacity'] . ')';
+            }
+            echo '<br>';      
+            echo highlightend();
+            } else {
+            $roomkey = 'room' . $sqlrow['id'] ; 
+            echo highlightbegin();
             echo formhiddenval('roomid' , $sqlrow['id']);
             echo $GBL_Dspc . ' ' . $sqlrow['name'];
-            formselectsession('roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
-            echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , 'capacity' , $sqlrow['capacity']);
+            echo formselectsession($roomkey . 'roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
+            echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , $roomkey . 'capacity' , $sqlrow['capacity']);
             echo formsubmit('act' , 'Submit');
+            echo highlightend();
+            } 
         } else {
             echo formsubmit('act' , 'Edit');
             echo formhiddenval('roomid' , $sqlrow['id']);
