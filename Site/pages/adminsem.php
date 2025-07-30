@@ -47,7 +47,7 @@ if($_SESSION['role']['isadmin']) {
         echo formpost($thisform) . formhiddenval('semid' , $semrow['id']);
         if (($_POST['semid'] == $semrow['id']) & (($_POST['act'] == 'Edit'))) {
             echo HLbegin();
-            echo $semrow['name'] . $GBL_Dspc . 'readonly:';
+            echo $semrow['name'] . $GBLspc['D'] . 'readonly:';
             echo formselectsession('readonly' , 'bool' , $semrow['readonly']);
             echo formsubmit('act' , 'Submit');
             echo spanfmtbegin('','red',null,true);
@@ -61,12 +61,14 @@ if($_SESSION['role']['isadmin']) {
             echo formpatterninput(10 , 5 , '[0-9a-zA-Z \-]+' , 'novo semestre' , 'newsem' , '!');
             echo formsubmit('act' , 'Duplicate as');
         } else {
-            echo formsubmit('act' , 'Edit') . $semrow['name'] . $GBL_Qspc;
+            if ($_POST['semid'] == $semrow['id']) { echo HLbegin();}
+            echo formsubmit('act' , 'Edit') . $semrow['name'] . $GBLspc['Q'];
             if ($semrow['readonly']) {
                 echo '(readonly)';
             } else {
                 echo '(read/write)';
             }    
+            if ($_POST['semid'] == $semrow['id']) { echo HLend();}
         }
         echo '</form>';
     }

@@ -33,9 +33,9 @@ $GBLclasspattern = '[A-Z][A-Za-z0-9\*\-\+@]*';
 // $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
 
   
-$GBL_Dspc = '&nbsp;&nbsp;';
-$GBL_Tspc = '&nbsp;&nbsp;&nbsp;&nbsp;';
-$GBL_Qspc = '&nbsp;&nbsp;&nbsp;&nbsp;';
+$GBLspc['D'] = '&nbsp;&nbsp;';
+$GBLspc['T'] = '&nbsp;&nbsp;&nbsp;&nbsp;';
+$GBLspc['Q'] = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $GBLhighlightstyle = ' style="background-color:#E0FFE0;color:#8000B0;"';
 
 
@@ -409,7 +409,7 @@ function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
 
 function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $edit = true , $matrixonly = false , $courseHL = null) {
     global $GBLmysqli;
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
     
     $rtnmatrix = '';
   
@@ -568,7 +568,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
     }
     $rtnmatrix .=  '</tr>';
     for ($j = 7;$j<22;$j++) {
-        $rtnmatrix .=  '<tr style="border-bottom:1px solid black"><td>' . $j . ':30 ' . $GBL_Dspc . ' </td>';
+        $rtnmatrix .=  '<tr style="border-bottom:1px solid black"><td>' . $j . ':30 ' . $GBLspc['D'] . ' </td>';
         for ($i = 2;$i<8;$i++) {
             $td = '<td>';
             if (count($discweek[$i][$j]) > 1) {
@@ -628,7 +628,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
                 while ($sqlrow = $result->fetch_assoc()) {
                     $hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] = hiddencoursekey($_POST['semid'] , $sqlrow['courseid'] , $sqlrow['termid']);
                     if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor = '#0000A0';} else {$bold = false;$tcolor = null;}
-                    $kind .= hiddenformlnk($hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] , spanformat (null , $tcolor , ' ' . $sqlrow['acro'] . ' - ' . $sqlrow['tcode'] . spanformat('smaller' , null , '('.$sqlrow['kcode'] .')') . $GBL_Tspc . ' ' , null , $bold));
+                    $kind .= hiddenformlnk($hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] , spanformat (null , $tcolor , ' ' . $sqlrow['acro'] . ' - ' . $sqlrow['tcode'] . spanformat('smaller' , null , '('.$sqlrow['kcode'] .')') . $GBLspc['T'] . ' ' , null , $bold));
                 }
                 if ($kind) {
                     $kind = '<sub>'.spanformat('smaller' , '' , $kind).'</sub>';
@@ -957,7 +957,7 @@ function formsessionselect($session , $fieldname , &$cnt , $desc = null) {
 
   
 function formsceneryselect() {
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
         
     $rtntext = '';
 
@@ -965,7 +965,7 @@ function formsceneryselect() {
     $rtntext .=  formsessionselectinit('sceneryroles' , 'scen.editroles');
                     
     $rtntext .=  '<details>';
-    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
+    $rtntext .=  '<summary>' . $GBLspc['T'] . '<b>&rArr;</b> ';
     $rtntext .=  displaysessionselected('Cenário(s)' , 'sceneryselected');
     $rtntext .=  '</summary>';
     $cnt = 0;
@@ -977,7 +977,7 @@ function formsceneryselect() {
         
                         
     $rtntext .=  '<details>';
-    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> Legenda: ';
+    $rtntext .=  '<summary>' . $GBLspc['T'] . '<b>&rArr;</b> Legenda: ';
     $rtntext .=  '</summary>';
     $cnt = 0;
     $rtntext .=  '<table><tr>';
@@ -988,7 +988,7 @@ function formsceneryselect() {
     $rtntext .=  '</details>';       
     $rtntext .=  '<p style="line-height:0px;"></p>';
     $rtntext .=  '<details>';
-    $rtntext .=  '<summary>' . $GBL_Tspc . '<b>&rArr;</b> ';
+    $rtntext .=  '<summary>' . $GBLspc['T'] . '<b>&rArr;</b> ';
     $rtntext .=  displaysessionselected('Perfil(is)' , 'sceneryroles');
     $rtntext .=  '</summary>';
     $cnt = 0;

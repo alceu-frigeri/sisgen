@@ -79,7 +79,7 @@ function DBinsertgrade($Course , $Term , $DiscCode , $DiscName , $DiscCred , $Di
     global $GBLDiscIDs;
   
     $dbcntA +=1;
-    echo "Acnt:$dbcntA $GBL_Tspc\n";
+    echo "Acnt:$dbcntA $GBLspc[T]\n";
 
     $DiscDeptCode = substr($DiscCode , 0 , 5);
   
@@ -121,7 +121,7 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
     $PreDiscCode = '';
     $PreClass = '';
     $dbcntB +=1;
-    echo "Bcnt:$dbcntB $GBL_Tspc\n";
+    echo "Bcnt:$dbcntB $GBLspc[T]\n";
    
     //  vardebug($_SESSION['sem']);
     //  vardebug($_SESSION['termbycode']);
@@ -234,7 +234,7 @@ function DBinsertreserv($grpAcro , $sem , $DiscCode , $DiscName , $Class , $Clas
     $PreDiscCode = '';
     $PreClass = '';
     $dbcntE +=1;
-    echo "Ecnt:$dbcntE $GBL_Tspc\n";
+    echo "Ecnt:$dbcntE $GBLspc[T]\n";
    
     if ( ($ClassReserv == 0) & ($ClassUsedReserv == 0)) {
         echo '(skipping) ';
@@ -294,7 +294,7 @@ function courseupdt($coursecode , $disccode , $kindcode , $termcode) {
     global $dbcntC;
   
     $dbcntC +=1;
-    echo "Ccnt:$dbcntC (".$disccode.")$GBL_Tspc\n";
+    echo "Ccnt:$dbcntC (".$disccode.")$GBLspc[T]\n";
 
     $q = 
         "SELECT `cd`.`id` " .
@@ -333,11 +333,11 @@ function disccourserem($disclist , $courseid) {
     global $dbcntD;
   
     $dbcntD +=1;
-    echo "Dcnt:$dbcntD rem(".$disccode.")$GBL_Tspc\n";
+    echo "Dcnt:$dbcntD rem(".$disccode.")$GBLspc[T]\n";
   
     foreach ($disclist as $code) {
         $dbcntD +=1;
-        echo "Dcnt:$dbcntD (".$code.")$GBL_Tspc\n";
+        echo "Dcnt:$dbcntD (".$code.")$GBLspc[T]\n";
         $q = 
                 "SELECT `id` " .
                 "FROM `discipline` " .

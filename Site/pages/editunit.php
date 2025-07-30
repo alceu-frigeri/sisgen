@@ -47,6 +47,15 @@ case 'Submit':
 }
 
 
+function unitdisplay($sqlrow) {
+    $GBLspc;
+    echo '<td>' . formsubmit('act' , 'Edit') . formhiddenval('unitid' , $sqlrow['id']) . $GBLspc['T'] . '</td>';        
+    echo '<td>' . $sqlrow['acronym'] . $GBLspc['T'] . '</td><td>' . $sqlrow['name'] . $GBLspc['T'] . '</td>';
+    echo '<td>Contato:' . $sqlrow['contactname']  . $GBLspc['T'] . '</td>' . 
+        '<td>Email:'. $sqlrow['contactemail'] . $GBLspc['T'] . '</td>'  . 
+        ' <td>Fone:'. $sqlrow['contactphone'] . $GBLspc['T'] . '</td><td></td>';
+}
+
 // course, term
 $result = $GBLmysqli->dbquery( "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `name` ASC;" );
 $anyone = 0;
@@ -68,49 +77,37 @@ while ($sqlrow = $result->fetch_assoc()) {
         $unitkey = 'unit' . $sqlrow['id'] ; 
         if ($_POST['unitid'] == $sqlrow['id']) {
             if ($_POST['act'] == 'Submit') {
-            echo '<tr  ' . $GBLhighlightstyle . '>';
-            echo '<td>' . formsubmit('act' , 'Edit') . formhiddenval('unitid' , $sqlrow['id']) . $GBL_Tspc . '</td>';        
-            echo '<td>' . $sqlrow['acronym'] . $GBL_Tspc . '</td><td>' . $sqlrow['name'] . $GBL_Tspc . '</td>';
-            echo '<td>Contato:' . $sqlrow['contactname']  . $GBL_Tspc . '</td>' . 
-        '<td>Email:'. $sqlrow['contactemail'] . $GBL_Tspc . '</td>'  . 
-        ' <td>Fone:'. $sqlrow['contactphone'] . $GBL_Tspc . '</td><td></td>';
-        echo '</tr>';
-        
+                    echo '<tr  ' . $GBLhighlightstyle . '>';
+                    unitdisplay($sqlrow);
+                    echo '</tr>';        
             } else {
-            //echo '<tr>';
             echo '<tr ' . iddivkey('unit' , $sqlrow['id']) . '><td>&nbsp;<td></tr>';
             echo '<tr><td>&nbsp;</td></tr>';
             echo '<tr><td>&nbsp;</td></tr>';
             echo '<tr  ' . $GBLhighlightstyle . '>';
             //echo hiddendivkey('unit' , $sqlrow['id']); 
-            echo '<td>' . formsubmit('act' , 'Edit') . formhiddenval('unitid' , $sqlrow['id']) . $GBL_Tspc . '</td>';
-            echo '<td>' . $sqlrow['acronym'] . $GBL_Tspc . '</td><td>' . $sqlrow['name'] . $GBL_Tspc . '</td>';
-            echo '<td>Contato:' . formpatterninput(64 , 20 , $GBLnamepattern , 'Contato' , $unitkey . 'contactname' , $sqlrow['contactname'])  . $GBL_Tspc . '</td>' . 
-        '<td>Email:'. formpatterninput(64 , 20 , $GBLnamepattern , 'Email' , $unitkey . 'contactemail' , $sqlrow['contactemail']) . $GBL_Tspc . '</td>'  . 
-        ' <td>Fone:'. formpatterninput(16 , 9 , '[0-9\.]+' , 'Telefone' , $unitkey . 'contactphone' , $sqlrow['contactphone']) .  $GBL_Tspc  . '</td></tr><tr><td></td><td></td><td></td><td>'  . formsubmit('act' , 'Submit') . '</td>';
+            echo '<td>' . formsubmit('act' , 'Edit') . formhiddenval('unitid' , $sqlrow['id']) . $GBLspc['T'] . '</td>';
+            echo '<td>' . $sqlrow['acronym'] . $GBLspc['T'] . '</td><td>' . $sqlrow['name'] . $GBLspc['T'] . '</td>';
+            echo '<td>Contato:' . formpatterninput(64 , 20 , $GBLnamepattern , 'Contato' , $unitkey . 'contactname' , $sqlrow['contactname'])  . $GBLspc['T'] . '</td>' . 
+        '<td>Email:'. formpatterninput(64 , 20 , $GBLnamepattern , 'Email' , $unitkey . 'contactemail' , $sqlrow['contactemail']) . $GBLspc['T'] . '</td>'  . 
+        ' <td>Fone:'. formpatterninput(16 , 9 , '[0-9\.]+' , 'Telefone' , $unitkey . 'contactphone' , $sqlrow['contactphone']) .  $GBLspc['T']  . '</td></tr><tr><td></td><td></td><td></td><td>'  . formsubmit('act' , 'Submit') . '</td>';
         echo '</tr>';
         }
         } else {
             echo '<tr>';
-            echo '<td>' . formsubmit('act' , 'Edit') . formhiddenval('unitid' , $sqlrow['id']) . $GBL_Tspc . '</td>';        
-            echo '<td>' . $sqlrow['acronym'] . $GBL_Tspc . '</td><td>' . $sqlrow['name'] . $GBL_Tspc . '</td>';
-            echo '<td>Contato:' . $sqlrow['contactname']  . $GBL_Tspc . '</td>' . 
-        '<td>Email:'. $sqlrow['contactemail'] . $GBL_Tspc . '</td>'  . 
-        ' <td>Fone:'. $sqlrow['contactphone'] . $GBL_Tspc . '</td><td></td>';
-        echo '</tr>';
+            unitdisplay($sqlrow);
+            echo '</tr>';
         }
-//        echo '</tr>';
         echo "</form>";
     } else {
     echo '<tr>';
         echo '<td>' .  '</td>';
-        echo '<td>' . $sqlrow['acronym'] . $GBL_Tspc . '</td><td>' . $sqlrow['name'] . $GBL_Tspc . '</td>';
-        echo '<td>Contato:' . $sqlrow['contactname']  . $GBL_Tspc . '</td>' . 
-            '<td>Email:'. $sqlrow['contactemail'] . $GBL_Tspc . '</td>'  . 
-            ' <td>Fone:'. $sqlrow['contactphone'] . $GBL_Tspc . '</td>';
+        echo '<td>' . $sqlrow['acronym'] . $GBLspc['T'] . '</td><td>' . $sqlrow['name'] . $GBLspc['T'] . '</td>';
+        echo '<td>Contato:' . $sqlrow['contactname']  . $GBLspc['T'] . '</td>' . 
+            '<td>Email:'. $sqlrow['contactemail'] . $GBLspc['T'] . '</td>'  . 
+            ' <td>Fone:'. $sqlrow['contactphone'] . $GBLspc['T'] . '</td>';
     echo '</tr>';
     }
-    //echo '</tr>';
 }
 echo '</table>';
 

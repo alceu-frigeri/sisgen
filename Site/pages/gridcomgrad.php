@@ -35,7 +35,7 @@ $Query = "SELECT DISTINCT `disc` . `dept_id` , `unit` . `acronym` , `unit` . `na
                 "AND `grade` . `course_id` = '$_POST[courseid]' " .
         "ORDER BY `unit` . `acronym` ; " ;
        
-echo $GBL_Tspc . 'Dept.:';
+echo $GBLspc['T'] . 'Dept.:';
 echo formselectsql($anytmp , 
               $Query  , 
               'deptid' , 
@@ -150,13 +150,13 @@ while ($termrow = $termsql->fetch_assoc()) {
             $segsql = $GBLmysqli->dbquery( $Query );
             while ($segrow = $segsql->fetch_assoc()) {
                 if ($segrow['length']>1) { $p = 's'; } else { $p = ''; };
-                $temp =  $GBL_Tspc  . spanformat('' , 'gray' , $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora' . $p . '-Aula<br>'); 
+                $temp =  $GBLspc['T']  . spanformat('' , 'gray' , $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora' . $p . '-Aula<br>'); 
 
                 $emailbody .= $temp;
             }
         }
         if(!$flag) {
-            $temp =  $GBL_Tspc  . spanformat('' , 'gray' , ' -- sem demandas --<br>'); 
+            $temp =  $GBLspc['T']  . spanformat('' , 'gray' , ' -- sem demandas --<br>'); 
 
             $emailbody .= $temp;
         }
@@ -194,8 +194,8 @@ if ($emailbody) {
     echo formhiddenval('courseid' , $_POST['courseid']);
     echo formhiddenval('deptid' , $_POST['deptid']);
     echo '<hr>';
-    echo $GBL_Dspc . 'from:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'from:' , 'emailfrom' , $courserow['contactemail']) . '<br>';
-    echo $GBL_Qspc . 'to:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'to:' , 'emailto' , $deptrow['contactemail']) . '<br>';
+    echo $GBLspc['D'] . 'from:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'from:' , 'emailfrom' , $courserow['contactemail']) . '<br>';
+    echo $GBLspc['Q'] . 'to:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'to:' , 'emailto' , $deptrow['contactemail']) . '<br>';
     echo 'subject:' . formpatterninput(128 , 64 , '[a-zA-Z0-9\._- ]+' , 'subject:' , 'emailsubject' , 'Demandas COMGRAD/' . $courserow['acronym'] . ' para o semestre ' . $semrow['name'] . ' (' . $deptrow['acronym'] . ')') . '<br>';
     echo 'body:<textarea name="emailtext" rows="10" cols="64"> Prezado(a) ' . $deptrow['contactname'] . " , \n Seguem abaixo as nossas necessidades de turmas/vagas para o Semestre " . 
         $semrow['name'] . '.'  . 

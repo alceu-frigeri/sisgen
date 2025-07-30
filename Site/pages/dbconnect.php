@@ -21,7 +21,7 @@ class DBclass extends mysqli {
 
 
     public function dbquery($q , $logOK = null) {
-        global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+        global $GBLspc;
 
         if ($result = $this->query($q)) {
             if ($logOK) {
@@ -29,7 +29,7 @@ class DBclass extends mysqli {
             }
         } else {
             $err = 'Query <' . $q . '> failed: (' . $this->errno . ') ' . $this->error;
-            echo '<br><b>Query' . $GBL_Dspc . '</b>' . spanformat('smaller' , '', htmlspecialchars($q , ENT_QUOTES))  . '<b>' . $GBL_Tspc . 'FAILED' . spanformat('' , 'red',  htmlspecialchars($this->error , ENT_QUOTES)) . '</b></p>';
+            echo '<br><b>Query' . $GBLspc['D'] . '</b>' . spanformat('smaller' , '', htmlspecialchars($q , ENT_QUOTES))  . '<b>' . $GBLspc['T'] . 'FAILED' . spanformat('' , 'red',  htmlspecialchars($this->error , ENT_QUOTES)) . '</b></p>';
             $this->eventlog(array('level'=>'DBERROR' ,   'action'=> $logOK['action'] . '(dbquery)', 'str' => $err, 'xtra' => 'dbconnect.php'));
         }
         return $result;

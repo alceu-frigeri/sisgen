@@ -128,12 +128,12 @@ if ($postedit) {
     thisformpost();
 
     echo displaysqlitem('Semestre: ' , 'semester' , $_POST['semid'] , 'name');
-    echo displaysqlitem($GBL_Dspc . 'Dept . : ' , 'unit' , $_POST['unitid'] , 'acronym');
+    echo displaysqlitem($GBLspc['D'] . 'Dept . : ' , 'unit' , $_POST['unitid'] , 'acronym');
     echo '<br><b>';
-    echo displaysqlitem($GBL_Dspc , 'discipline' , $_POST['discid'] , 'code' , 'name');
+    echo displaysqlitem($GBLspc['D'] , 'discipline' , $_POST['discid'] , 'code' , 'name');
     echo '</b>';
     echo formsubmit('act' , 'Cancel');
-    echo spanformat('smaller' , $GBLcommentcolor, displaysqlitem($GBL_Dspc , 'discipline' , $_POST['discid'] , 'comment')) ;
+    echo spanformat('smaller' , $GBLcommentcolor, displaysqlitem($GBLspc['D'] , 'discipline' , $_POST['discid'] , 'comment')) ;
 
     echo formhiddenval('profnicks' , $_POST['profnicks']);
     echo formhiddenval('courseHL' , $_POST['courseHL']);
@@ -262,9 +262,9 @@ while ($classrow = $result->fetch_assoc()) {
         if ( $classrow['id'] == $_POST['classid'] ) {
         
             if ($_POST['act'] == 'SubDisplay') {
+                    echo HLbegin();
                     echo formsubmit('act' , 'Cancel');
                     echo formsubmit('act' , 'Edit');
-                    echo HLbegin();
                     formclassdisplay($classrow);
                     echo HLend();
             } else {

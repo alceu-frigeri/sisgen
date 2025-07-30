@@ -68,10 +68,10 @@ while ($profrow = $profsql->fetch_assoc()) {
     $flag =  checkweek( $Query  );
     
     if($flag['disc']) {
-        echo spanformat('','orange',$GBL_Qspc . 'Possível colisão de disciplina<br>');
+        echo spanformat('','orange',$GBLspc['Q'] . 'Possível colisão de disciplina<br>');
     }
     if($flag['class']) {
-        echo spanformat('','brown',$GBL_Qspc . 'Possível colisão de turma<br>');
+        echo spanformat('','brown',$GBLspc['Q'] . 'Possível colisão de turma<br>');
     }
 
 }

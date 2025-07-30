@@ -54,10 +54,8 @@ case 'Submit':
                 "`name` = '$keypost[profname]' , " .
                 "`nickname` = '$keypost[profnickname]'  " .
                 "WHERE `id` = '$_POST[profid]' ; " ;
-            //    vardebug($Query,'query');
             $GBLmysqli->dbquery( $Query );            
         }
-    //$_POST['profid'] = null;
     break;
 case 'Delete':
     if ($_POST['profdelete']) {
@@ -76,16 +74,15 @@ if ($postedit & $can_prof) {
     echo formsubmit('act' , 'Cancel');
     echo '</form>';
 } else {
-
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM unit WHERE `isdept` = '1' AND `mark` = '1' ORDER BY unit . acronym;" , 
-                  'deptid' , 
-                  $_POST['deptid'] , 
-                  'id' , 
-                  'acronym');
+    $Query = 
+        "SELECT * " . 
+        "FROM unit " . 
+        "WHERE `isdept` = '1' " . 
+                "AND `mark` = '1' " . 
+        "ORDER BY unit . acronym ; " ;
+    echo formselectsql($anytmp , $Query , 'deptid' , $_POST['deptid'] , 'id' ,  'acronym');
 }
   
-
 // course, term
 $Query = 
         "SELECT * " .
@@ -94,6 +91,14 @@ $Query =
         "ORDER BY `profkind_id` , `name` ; " ;
 
 $result = $GBLmysqli->dbquery( $Query );
+
+function profdisplay($sqlrow) {
+      global $GBLspc;
+      echo formsubmit('act' , 'Edit');
+      echo formhiddenval('profid' , $sqlrow['id']);
+      echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBLspc['D'] . $sqlrow['name'] . $GBLspc['D'] . ' (' . $sqlrow['nickname'] . ')<br>';
+}
+
 $anyone = 0;
 $first = true;
 if ($postedit & $can_prof) {
@@ -103,9 +108,7 @@ if ($postedit & $can_prof) {
     if ($_POST['profid'] == $sqlrow['id']) {
       if($_POST['act'] == 'Submit') {
           echo HLbegin();
-              echo formsubmit('act' , 'Edit');
-              echo formhiddenval('profid' , $sqlrow['id']);
-              echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBL_Dspc . $sqlrow['name'] . $GBL_Dspc . ' (' . $sqlrow['nickname'] . ')<br>';
+          profdisplay($sqlrow);
           echo HLend(); 
       } else {
       $profkey = 'prof' . $sqlrow['id'] ;
@@ -114,21 +117,19 @@ if ($postedit & $can_prof) {
       echo formhiddenval('profid' , $sqlrow['id']);
       echo formselectsession($profkey . 'profkind' , 'profkind' , $sqlrow['profkind_id']);
             echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , $profkey .  'profname' , $sqlrow['name']);
-      echo '<br>' . $GBL_Qspc .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
+      echo '<br>' . $GBLspc['Q'] .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
       echo formsubmit('act' , 'Submit');
       echo '</form>';
       echo HLend();
       echo formpost($thisform);
       echo formhiddenval('deptid' , $_POST['deptid']);
       echo formhiddenval('profid' , $sqlrow['id']);
-      echo spanfmtbegin('' , 'red' , null , true) . '  ' . $GBL_Tspc . 'remover: ' ;
+      echo spanfmtbegin('' , 'red' , null , true) . '  ' . $GBLspc['T'] . 'remover: ' ;
       echo formselectsession('profdelete' , 'bool' , 0);
       echo formsubmit('act' , 'Delete') . spanfmtend() ; 
       }
     } else {
-      echo formsubmit('act' , 'Edit');
-      echo formhiddenval('profid' , $sqlrow['id']);
-      echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBL_Dspc . $sqlrow['name'] . $GBL_Dspc . ' (' . $sqlrow['nickname'] . ')<br>';
+      profdisplay($sqlrow);
     }
     echo '</form>';
     }
@@ -140,7 +141,7 @@ if ($postedit & $can_prof) {
     echo formhiddenval('deptid' , $_POST['deptid']);
     echo formselectsession('profkind' , 'profkind' , 1);
     echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , 'profname' , '-');
-    echo $GBL_Dspc . ' ' . formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , 'profnickname' , '-');
+    echo $GBLspc['D'] . ' ' . formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , 'profnickname' , '-');
     echo formsubmit('act' , 'Insert') ;
     echo '</form>';
     
@@ -154,7 +155,7 @@ if ($postedit & $can_prof) {
             echo '<br>';
             $first = false;
         } 
-        echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBL_Dspc . $sqlrow['name'] . $GBL_Dspc . ' (' . $sqlrow['nickname'] . ')<br>';
+        echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBLspc['D'] . $sqlrow['name'] . $GBLspc['D'] . ' (' . $sqlrow['nickname'] . ')<br>';
     }
 }
 

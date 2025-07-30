@@ -55,7 +55,7 @@ if ($_SESSION['role']['isadmin']) {
                 formpatterninput(32 , 16 , $GBLnamepattern , 'nome' , 'name' , $sqlrow['name']);
             echo formsubmit('act' , 'Submit');
             echo spanfmtbegin('','red',null,true);
-            echo $GBL_Tspc . 'Deletar:';
+            echo $GBLspc['T'] . 'Deletar:';
             echo formselectsession('coursedelete' , 'bool' , 0);
             echo formsubmit('act' , 'Delete') . '<br>';
             echo spanfmtend();
@@ -71,7 +71,7 @@ if ($_SESSION['role']['isadmin']) {
             echo "</form>";
         } else {
             echo formsubmit('act' , 'Edit');
-            echo $sqlrow['acronym'].  $GBL_Dspc  . $sqlrow['code'] .  $GBL_Dspc  . $sqlrow['name'] . "<br>";
+            echo $sqlrow['acronym'].  $GBLspc['D']  . $sqlrow['code'] .  $GBLspc['D']  . $sqlrow['name'] . "<br>";
             echo "</form>";
         }
     }

@@ -97,7 +97,7 @@ while ($discrow = $discsql->fetch_assoc()) {
         $segsql = $GBLmysqli->dbquery( $Query );
         while ($segrow = $segsql->fetch_assoc()) {
             if ($segrow['length']>1) { $p = 's'; } else { $p = ''; };
-            echo  $GBL_Tspc  . 
+            echo  $GBLspc['T']  . 
                 spanformat('' , 'gray' , $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 ' . $segrow['length'] . ' Hora' . $p . '-Aula') . 
                 ', ' . $segrow['name'] . ',  ' . 
                 spanformat('' , 'gray' , 'Sala: ' . $segrow['roomname'] . ' (' . $segrow['buildingname'] . ')');
@@ -129,7 +129,7 @@ while ($discrow = $discsql->fetch_assoc()) {
             else 
             { $p = 's'; };       
                                         
-            echo $GBL_Qspc . $vacrow['acronym'] . ' : ' . 
+            echo $GBLspc['Q'] . $vacrow['acronym'] . ' : ' . 
                 ($vacrow['givennum'] + $vacrow['givenreservnum']) . 
                 ' Vaga' . $p . 
                 ' (' . $vacrow['disckind']  . ')';

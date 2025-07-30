@@ -81,6 +81,16 @@ if ($postedit & $can_room) {
                   'acronym');
 }
 
+function roomdisplay($sqlrow) {
+    global $GBLspc;
+    echo formsubmit('act' , 'Edit');
+    echo formhiddenval('roomid' , $sqlrow['id']);
+    echo $sqlrow['name'] . $GBLspc['D'] . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBLspc['D'];
+    if ($sqlrow['capacity']) {
+        echo ' (cap . :' . $sqlrow['capacity'] . ')';
+    }
+    echo '<br>';      
+}
  
 // course, term
 $Query = 
@@ -98,32 +108,20 @@ if ($postedit & $can_room) {
         if ($_POST['roomid'] == $sqlrow['id']) {
             if($_POST['act'] == 'Submit') {
             echo HLbegin();
-            echo formsubmit('act' , 'Edit');
-            echo formhiddenval('roomid' , $sqlrow['id']);
-            echo $sqlrow['name'] . $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
-            if ($sqlrow['capacity']) {
-                echo ' (cap . :' . $sqlrow['capacity'] . ')';
-            }
-            echo '<br>';      
+            roomdisplay($sqlrow)
             echo HLend();
             } else {
             $roomkey = 'room' . $sqlrow['id'] ; 
             echo HLbegin();
-            echo formhiddenval('roomid' , $sqlrow['id']);
-            echo $GBL_Dspc . ' ' . $sqlrow['name'];
-            echo formselectsession($roomkey . 'roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
-            echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , $roomkey . 'capacity' , $sqlrow['capacity']);
-            echo formsubmit('act' , 'Submit');
+                    echo formhiddenval('roomid' , $sqlrow['id']);
+                    echo $GBLspc['D'] . ' ' . $sqlrow['name'];
+                    echo formselectsession($roomkey . 'roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
+                    echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , $roomkey . 'capacity' , $sqlrow['capacity']);
+                    echo formsubmit('act' , 'Submit');
             echo HLend();
             } 
         } else {
-            echo formsubmit('act' , 'Edit');
-            echo formhiddenval('roomid' , $sqlrow['id']);
-            echo $sqlrow['name'] . $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
-            if ($sqlrow['capacity']) {
-                echo ' (cap . :' . $sqlrow['capacity'] . ')';
-            }
-            echo '<br>';      
+            roomdisplay($sqlrow)
         }
         echo '</form>';
     }
@@ -141,7 +139,7 @@ if ($postedit & $can_room) {
             }
             echo '<br>';
         }
-        echo $sqlrow['name']. $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
+        echo $sqlrow['name']. $GBLspc['D'] . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBLspc['D'];
         if ($sqlrow['capacity']) {
             echo ' (cap.:' . $sqlrow['capacity'] . ')';
         }

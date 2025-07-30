@@ -75,6 +75,19 @@ if ($postedit) {
     $GBLmysqli->set_scenerysessionvalues();
 }
 
+
+function scenerydisplay($thisform,$rolerow,$sceneryrow) {
+        echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
+        echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
+        if ($sceneryrow['hide']) {
+            echo spanformat('' , 'red' , 'hidden: T ');
+        } else {
+            echo spanformat('' , 'blue' , 'hidden: F ');
+        }
+        echo '<br>';
+        echo '</form>';
+}
+
 if($_SESSION['role']['isadmin']) {
     $Query = 
         "SELECT role.*  " .
@@ -110,57 +123,37 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
         if ($sceneryrow['can_scenery'] | $_SESSION['role']['isadmin']) {                                
             if ($sceneryrow['id'] == $_POST['sceneryid']) {
                 if ($_POST['act'] == 'Submit') {
-                //echo hiddendivkey('scen' , $sceneryrow['id']);
-                echo HLbegin();
-                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
-                echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
-                if ($sceneryrow['hide']) {
-                    echo spanformat('' , 'red' , 'hidden: T ');
+                    echo HLbegin();
+                        scenerydisplay($thisform,$rolerow,$sceneryrow);
+                    echo HLend();
                 } else {
-                    echo spanformat('' , 'blue' , 'hidden: F ');
-                }
-                echo '<br>';
-                echo '</form>';
-                                echo HLend();
-
-                } else {
-                //echo hiddendivkey('scen' , $sceneryrow['id']);
-                echo HLbegin();
-                $scenkey = 'scen' . $sceneryrow['id'] ;
-                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']);
-                echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
-                    'Descrição:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , $scenkey.'scenerydesc' , $sceneryrow['desc']);
-                echo 'hide scenery? ';
-                echo formselectsession($scenkey.'sceneryhide' , 'bool' , $sceneryrow['hide']);
-                echo '<br>' . formsubmit('act' , 'Submit');
-                echo '</form>';      
-                echo HLend();
-                echo formpost($thisform) . formhiddenval('sceneryid' , $sceneryrow['id']);
-                echo spanfmtbegin('' , 'red' , null , true) . 'Delete scenery &lt;' . $sceneryrow['name']  . '&gt;?' ;
-                echo formselectsession('scenerydelete' , 'bool' , 0);
-                echo formsubmit('act' , 'Delete') . spanfmtend() ;
-                echo '</form><br>';      
+                        echo HLbegin();
+                        $scenkey = 'scen' . $sceneryrow['id'] ;
+                        echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']);
+                        echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
+                            'Descrição:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , $scenkey.'scenerydesc' , $sceneryrow['desc']);
+                        echo 'hide scenery? ';
+                        echo formselectsession($scenkey.'sceneryhide' , 'bool' , $sceneryrow['hide']);
+                        echo '<br>' . formsubmit('act' , 'Submit');
+                        echo '</form>';      
+                        echo HLend();
+                        echo formpost($thisform) . formhiddenval('sceneryid' , $sceneryrow['id']);
+                        echo spanfmtbegin('' , 'red' , null , true) . 'Delete scenery &lt;' . $sceneryrow['name']  . '&gt;?' ;
+                        echo formselectsession('scenerydelete' , 'bool' , 0);
+                        echo formsubmit('act' , 'Delete') . spanfmtend() ;
+                        echo '</form><br>';      
                 }
             } else {
-                echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
-                echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
-                if ($sceneryrow['hide']) {
-                    echo spanformat('' , 'red' , 'hidden: T ');
-                } else {
-                    echo spanformat('' , 'blue' , 'hidden: F ');
-                }
-                echo '<br>';
-                echo '</form>';
+                scenerydisplay($thisform,$rolerow,$sceneryrow);
             }
         } else {
-            echo $GBL_Qspc; 
+            echo $GBLspc['Q']; 
             echo  $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )  ' ;
             if ($sceneryrow['hide']) {
                 echo spanformat('' , 'red' , 'hidden: T ');
             } else {
                 echo spanformat('' , 'blue' , 'hidden: F ');
             }
-            //echo '<br>';
         }         
     }
     if ($_SESSION['role.scen'][$rolerow['id']]['can_scenery'] | $_SESSION['role']['isadmin']) {                

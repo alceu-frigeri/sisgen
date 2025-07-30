@@ -71,13 +71,13 @@ while ($termrow = $termsql->fetch_assoc()) {
     $flag =  checkweek( $Query , null , $_POST['courseid'] , $termrow['id']);
 
     if($flag['disc']) {
-        echo spanformat('','orange',$GBL_Qspc . 'Possível colisão de disciplina<br>');
+        echo spanformat('','orange',$GBLspc['Q'] . 'Possível colisão de disciplina<br>');
     }
     if($flag['class']) {
-        echo spanformat('','brown',$GBL_Qspc . 'Possível colisão de turma<br>');
+        echo spanformat('','brown',$GBLspc['Q'] . 'Possível colisão de turma<br>');
     }
     if($flag['ob']) {
-        echo spanformat('','',$GBL_Qspc . 'Disciplina ob/al não ofertada<br>',null,true);
+        echo spanformat('','',$GBLspc['Q'] . 'Disciplina ob/al não ofertada<br>',null,true);
     }
 
     //     echo dbweekmatrix(  implode( ' ' , $Query)  , $inselected , $_POST['courseid']);

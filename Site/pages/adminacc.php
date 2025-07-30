@@ -93,7 +93,7 @@ if($_SESSION['role']['isadmin']) {
       echo HLbegin();
     }
     echo spanformat('' , 'darkblue' , 'User: <b>' . $usrrow['displayname'] . ' / ' . $usrrow['name']  . ' ( ' . $usrrow['email'] . ' )</b>');
-    echo $GBL_Dspc . ' Reset passwd?';
+    echo $GBLspc['D'] . ' Reset passwd?';
     echo formselectsession('resetpasswd' , 'bool' , 0);
     echo 'chgpasswd:';
   if ($usrrow['chgpasswd']) {
@@ -101,11 +101,11 @@ if($_SESSION['role']['isadmin']) {
         } else {
             echo spanformat('' , 'blue' , ':F ');
         }
-    echo $GBL_Dspc . ' Activ?';
+    echo $GBLspc['D'] . ' Activ?';
     echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
     echo formsubmit('act' , 'Submit') . '<br>';
     echo spanfmtbegin('' , 'red' , null , true);
-    echo  $GBL_Dspc . 'Delete?' ;
+    echo  $GBLspc['D'] . 'Delete?' ;
     echo formselectsession('userdelete' , 'bool' , 0);
     echo formsubmit('act' , 'Delete User');
     echo spanfmtend();
@@ -129,9 +129,9 @@ if($_SESSION['role']['isadmin']) {
         echo formsubmit('act' , 'Change Role');
       } else {
         echo formsubmit('act' , 'Edit Role');
-        echo $GBL_Dspc . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
+        echo $GBLspc['D'] . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
         echo spanfmtbegin('' , 'red' );
-        echo $GBL_Dspc . 'Delete?';
+        echo $GBLspc['D'] . 'Delete?';
         echo formselectsession('roledelete' , 'bool' , 0);
         echo formsubmit('act' , 'Delete Role')  . '<br>';
         echo spanfmtend();

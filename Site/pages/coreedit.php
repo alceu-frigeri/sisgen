@@ -160,7 +160,7 @@ function formsegmentdisplay($segrow) {
     $hiddenroombuildingid[$segrow['room_id']] = $_SESSION['rooms'][$segrow['room_id']]['buildingid'];
     echo $_SESSION['weekday'][$segrow['day']] . ' -- ' . $segrow['start'] . ':30 -- ' . $segrow['length'] . 'H -- ' . $_SESSION['rooms'][$segrow['room_id']]['txtlnk'] . ' -- ' . 
         hiddenformlnk(hiddenprofkey($_POST['semid'] , $_SESSION['deptIDprof' . $_POST['unitid']][$segrow['prof_id']] , $segrow['prof_id']) , $_SESSION['deptprof' . $_POST['unitid']][$segrow['prof_id']])  . 
-        $GBL_Qspc. spanformat('', $_SESSION['statuscolor'][$segrow['status_id']]  ,  '(' .  $_SESSION['status'][$segrow['status_id']] . ')');
+        $GBLspc['Q']. spanformat('', $_SESSION['statuscolor'][$segrow['status_id']]  ,  '(' .  $_SESSION['status'][$segrow['status_id']] . ')');
 }
     
   
@@ -179,7 +179,7 @@ function formsegmentedit($segrow) {
     echo formselectsession($segformid . 'status' , 'status' , $segrow['status_id']);
     
     if ($can_addclass) {
-        echo spanfmtbegin('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
+        echo spanfmtbegin('' , 'red' , null , true) . $GBLspc['T'] . 'remover:';
         echo formselectsession($segformid . 'delete' , 'bool' , 0);
         echo spanfmtend();
     }
@@ -192,7 +192,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     global $postedit;
     global $GBLcommentpattern;
     global $GBLclasspattern;
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
     global $class_edited;
     
     $class_edited = true;
@@ -200,7 +200,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     $_SESSION['classes'][$classrow['id']] = $classkey;
     
     echo HLbegin();
-    echo 'Turma:<b>' . formpatterninput(3 , 1 , $GBLclasspattern , ' Turma' , $classkey . 'classname' , $classrow['name']) . '</b>' . $GBL_Qspc . 'agregadora:';
+    echo 'Turma:<b>' . formpatterninput(3 , 1 , $GBLclasspattern , ' Turma' , $classkey . 'classname' , $classrow['name']) . '</b>' . $GBLspc['Q'] . 'agregadora:';
 
 
     echo formselectsession($classkey . 'agreg' , 'bool' , $classrow['agreg']);
@@ -208,11 +208,11 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
         echo '  agregada à:';
         echo formselectsession($classkey . 'partof' , 'agreg' , $classrow['partof'] , true);
     }
-    echo $GBL_Tspc . 'status:';
+    echo $GBLspc['T'] . 'status:';
     echo formselectsession($classkey . 'status' , 'status' , $classrow['status_id']);
 
-    //echo spanformat('' , 'red' , $GBL_Tspc . 'remover:' , null , true);
-    echo spanfmtbegin('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
+    //echo spanformat('' , 'red' , $GBLspc['T'] . 'remover:' , null , true);
+    echo spanfmtbegin('' , 'red' , null , true) . $GBLspc['T'] . 'remover:';
     echo formselectsession($classkey . 'delete' , 'bool' , 0);
     echo spanfmtend();
 
@@ -249,7 +249,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
       
         unset ($_SESSION['org']['sceneryclass']);
         unset ($_SESSION['org']['sceneryusr']);
-        echo $GBL_Qspc;
+        echo $GBLspc['Q'];
         $q = 
                 "SELECT * " .
                 "FROM sceneryclass " .
@@ -301,7 +301,7 @@ function formclassdisplay ($classrow , $vacedit = false) {
     global $can_addclass;
     global $postedit;
     global $GBLcommentcolor;
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
     
     $courseHL = false;
     if ($_POST['courseHL']) {
@@ -318,16 +318,16 @@ function formclassdisplay ($classrow , $vacedit = false) {
         }
     }
     
-    echo 'Turma:<b>' . $classrow['name'] . '</b>' . $GBL_Qspc . 'agregadora:';
+    echo 'Turma:<b>' . $classrow['name'] . '</b>' . $GBLspc['Q'] . 'agregadora:';
     echo $_SESSION['bool'][$classrow['agreg']];
     if ($classrow['partof']) {
-        echo $GBL_Dspc . 'agregada à: Turma <b>' . $_SESSION['agreg'][$classrow['partof']] . '</b>';
+        echo $GBLspc['D'] . 'agregada à: Turma <b>' . $_SESSION['agreg'][$classrow['partof']] . '</b>';
     }
-    echo $GBL_Qspc . spanformat('', $_SESSION['statuscolor'][$classrow['status_id']] , '(' .  $_SESSION['status'][$classrow['status_id']] . ')');
+    echo $GBLspc['Q'] . spanformat('', $_SESSION['statuscolor'][$classrow['status_id']] , '(' .  $_SESSION['status'][$classrow['status_id']] . ')');
     echo '</br>';
 
     if ($classrow['comment']) {
-        echo  $GBL_Tspc   . spanformat('smaller' , $GBLcommentcolor  , $classrow['comment']) . '<br>';
+        echo  $GBLspc['T']   . spanformat('smaller' , $GBLcommentcolor  , $classrow['comment']) . '<br>';
     }
     
     $q = 
@@ -401,7 +401,7 @@ function formvacedit ($vacsql) {
     global $GBLcommentpattern;
     global $GBLcommentcolor;
     global $GBLvackind;
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
     global $vac_edited;
     
     
@@ -414,10 +414,10 @@ function formvacedit ($vacsql) {
             $_SESSION['vacancies'][$vacrow['id']] = $vacid;
             echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' . 
                 formpatterninput(3 , 1 , '[0-9]+' , 'Núm . ' , $vacid . 'asked' , $vacrow['askednum']) ;
-            echo $GBL_Dspc . 'reserv: ' . 
+            echo $GBLspc['D'] . 'reserv: ' . 
                 formpatterninput(3 , 1 , '[0-9]+' , 'Núm . ' , $vacid . 'askedreserv' , $vacrow['askedreservnum']) . 
-                $GBL_Dspc  . 
-                spanformat('' , '' , $GBLvackind[$vacrow['courseid']]) . $GBL_Dspc;
+                $GBLspc['D']  . 
+                spanformat('' , '' , $GBLvackind[$vacrow['courseid']]) . $GBLspc['D'];
             echo formselectsession($vacid . 'askedstatusid' , 'status' , $vacrow['askedstatus_id']);
             echo '</td>';
         } else {
@@ -429,29 +429,29 @@ function formvacedit ($vacsql) {
                 '<sub>' . 
                 spanformat('smaller' , '' , $GBLvackind[$vacrow['courseid']]). 
                 '</sub>' . 
-                $GBL_Qspc . 
+                $GBLspc['Q'] . 
                 spanformat('', $_SESSION['statuscolor'][$vacrow['askedstatus_id']] , '(' .  $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . 
                 '</td>';
         }
         if (($_SESSION['role'][$_POST['unitid']]['can_vacancies'] | $_SESSION['role']['isadmin']) & !$readonly) {
             $vac_edited = true;
             $_SESSION['vacancies'][$vacrow['id']] = $vacid;
-            echo '<td>' . $GBL_Dspc . 'Vagas concedidas: '  .   formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'given' , $vacrow['givennum']);
-            echo $GBL_Dspc . 'reserv: ' . formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'givenreserv' , $vacrow['givenreservnum']);
+            echo '<td>' . $GBLspc['D'] . 'Vagas concedidas: '  .   formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'given' , $vacrow['givennum']);
+            echo $GBLspc['D'] . 'reserv: ' . formpatterninput(3 , 1 , '[0-9]+' , 'Núm.' , $vacid . 'givenreserv' , $vacrow['givenreservnum']);
             echo formselectsession($vacid . 'givenstatusid' , 'status' , $vacrow['givenstatus_id']);
             echo '</td>';
         } else {
             echo formhiddenval($vacid . 'given' , $vacrow['givennum']);
             echo formhiddenval($vacid . 'givenreserv' , $vacrow['givenreservnum']);
             echo formhiddenval($vacid . 'givenstatusid' , $vacrow['givenstatus_id']);
-            echo '<td>' . $GBL_Dspc . 'Vagas concedidas: ' . 
+            echo '<td>' . $GBLspc['D'] . 'Vagas concedidas: ' . 
                 $vacrow['givennum'] . ' (+' . $vacrow[givenreservnum] . ') ' . 
-                $GBL_Qspc . 
+                $GBLspc['Q'] . 
                 spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']]  , '(' .  
                            $_SESSION['status'][$vacrow['givenstatus_id']] . ')') . 
                 '</td>';
         }
-        echo '<td>' . $GBL_Dspc . 'Vagas Ocupadas: ' . $vacrow['usednum'] . ' (+' . $vacrow['usedreservnum'] . ')</td>';
+        echo '<td>' . $GBLspc['D'] . 'Vagas Ocupadas: ' . $vacrow['usednum'] . ' (+' . $vacrow['usedreservnum'] . ')</td>';
         echo '</tr>';
         if (($_SESSION['role'][$vacrow['course_id']]['can_vacancies'] | $_SESSION['role']['isadmin'])  & !$readonly) {
             $vac_edited = true;
@@ -461,7 +461,7 @@ function formvacedit ($vacsql) {
             echo '<td></td></tr>';
         } else {
             echo formhiddenval($vacid . 'comment' , $vacrow['comment']);
-            echo '<tr><td>' .  $GBL_Tspc  . spanformat('smaller' , $GBLcommentcolor , $vacrow['comment']) . '</td><td></td></tr>';
+            echo '<tr><td>' .  $GBLspc['T']  . spanformat('smaller' , $GBLcommentcolor , $vacrow['comment']) . '</td><td></td></tr>';
         }
       
     }
@@ -475,7 +475,7 @@ function formvacdisplay ($vacsql) {
     global $postedit;
     global $GBLcommentcolor;
     global $GBLvackind;
-    global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    global $GBLspc;
     
     echo '<table>';
     $totalasked = 0;
@@ -495,13 +495,13 @@ function formvacdisplay ($vacsql) {
         }
         echo '<td>Vagas solicitadas ' . $vacrow['acronym'] . ': ' .  
             $vacrow['askednum'] . ' (+' . $vacrow['askedreservnum'] . ') ' . '<sub>' . spanformat('smaller' , $coursecolor , $GBLvackind[$vacrow['courseid']] , null , $coursebold). '</sub>'. 
-            $GBL_Qspc . 
+            $GBLspc['Q'] . 
             spanformat('' , $_SESSION['statuscolor'][$vacrow['askedstatus_id']], '(' .  
                        $_SESSION['status'][$vacrow['askedstatus_id']] . ')') . 
             '</td>';
-        echo '<td>' . $GBL_Dspc . 'Vagas concedidas: ' . 
+        echo '<td>' . $GBLspc['D'] . 'Vagas concedidas: ' . 
             $vacrow['givennum'] .  ' (+' . $vacrow['givenreservnum'] . ') ' . 
-            $GBL_Qspc . 
+            $GBLspc['Q'] . 
             spanformat('', $_SESSION['statuscolor'][$vacrow['givenstatus_id']] , '(' .  
                        $_SESSION['status'][$vacrow['givenstatus_id']] . ')') .  
             '</td>';
@@ -518,10 +518,10 @@ function formvacdisplay ($vacsql) {
             $totalusedreserv += $vacrow['usedreservnum'];      
         }
         if ($vacrow['comment']) {
-            echo '<tr><td>' .  $GBL_Tspc  . spanformat('smaller' , $GBLcommentcolor , $vacrow['comment']) . '</td><td></td></tr>';
+            echo '<tr><td>' .  $GBLspc['T']  . spanformat('smaller' , $GBLcommentcolor , $vacrow['comment']) . '</td><td></td></tr>';
         }
     }
-    echo '<tr><td>' . spanformat('' , 'darkblue' , 'Total: ' . $totalasked  . ' (+' . $totalreserv . ')') . '</td><td>' . $GBL_Dspc . '' . spanformat('' , 'darkblue' , 'Total: ' . $totalgiven . ' (+' . $totalgivenreserv . ')') . '</td><td>' . spanformat('' , 'darkblue' , 'Total: ' . $totalused . ' (+' . $totalusedreserv . ')') . '</td></tr>';
+    echo '<tr><td>' . spanformat('' , 'darkblue' , 'Total: ' . $totalasked  . ' (+' . $totalreserv . ')') . '</td><td>' . $GBLspc['D'] . '' . spanformat('' , 'darkblue' , 'Total: ' . $totalgiven . ' (+' . $totalgivenreserv . ')') . '</td><td>' . spanformat('' , 'darkblue' , 'Total: ' . $totalused . ' (+' . $totalusedreserv . ')') . '</td></tr>';
     echo '</table>';
     
 }

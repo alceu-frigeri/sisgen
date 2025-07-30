@@ -115,6 +115,11 @@ if ($_POST['orderby'] == 0) {
   $ordby = 'discipline.code';
 }
 
+function coursedisplay($sqlrow) {
+  echo formsubmit('act' , 'Edit');
+  echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
+}
+
 // course, term
 $Query = 
         "SELECT `discipline` . `code` , " . 
@@ -143,8 +148,7 @@ if ($postedit & $can_coursedisciplines) {
     if ($_POST['coursediscid'] == $sqlrow['id']) {
       if($_POST['act'] == 'Submit') {
           echo HLbegin();
-          echo formsubmit('act' , 'Edit');
-          echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
+          coursedisplay($sqlrow);
           echo HLend();
       } else {
       echo HLbegin();
@@ -154,7 +158,7 @@ if ($postedit & $can_coursedisciplines) {
       echo formsubmit('act' , 'Submit') . '</form>';
       echo HLend();
       echo formpost($thisform);
-      echo spanformat('' , 'red' , '  ' . $GBL_Tspc . 'remover: ' , '' , true);
+      echo spanformat('' , 'red' , '  ' . $GBLspc['T'] . 'remover: ' , '' , true);
       echo formselectsession('discdelete' , 'bool' , 0);
       echo formhiddenval('courseid' , $_POST['courseid']);
       echo formhiddenval('termid' , $_POST['termid']);
@@ -163,8 +167,7 @@ if ($postedit & $can_coursedisciplines) {
       echo spanformat('' , 'red' , formsubmit('act' , 'Delete') , '' , true) . '<br>';
       } 
     } else {
-      echo formsubmit('act' , 'Edit');
-      echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
+      coursedisplay($sqlrow);
     }
     echo '</form>';
     }

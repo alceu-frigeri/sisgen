@@ -9,7 +9,6 @@ $menu =
     );
 
 if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
-    //  if ($GBLmysqli->hashcheck() & $_SESSION['role']) {
     if ($_SESSION['role']) {
         $menu['grids'] = 
             array(

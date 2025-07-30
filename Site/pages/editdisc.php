@@ -88,6 +88,20 @@ if ($postedit & $can_discipline) {
 }
       
 
+function discdisplay($sqlrow) {
+    global $GBLspc, $GBLcommentcolor;
+        echo formsubmit('act' , 'Edit');
+        echo formhiddenval('discid' , $sqlrow['id']);
+        echo formhiddenval('orderby' , $_POST['orderby']);
+        
+        echo $sqlrow['code'] . $GBLspc['T'] . 'T: ' . $sqlrow['Tcred'] . $GBLspc['D'] . 'L: ' . $sqlrow['Lcred'] . $GBLspc['D'] . ' ' . $sqlrow['name'];
+        if ($sqlrow['comment']) {
+            echo $GBLspc['T'] . '' . spanformat('smaller' , $GBLcommentcolor , '(' . $sqlrow['comment'] . ')') ;
+        }
+        echo '<br>';
+
+}
+
 // course, term
 if ($_POST['orderby'] == 0) {
     $ordby = 'discipline.name';
@@ -105,57 +119,41 @@ $result = $GBLmysqli->dbquery( $Query );
 $anyone = 0;
 if ($postedit & $can_discipline) {
     while ($sqlrow = $result->fetch_assoc()) {
+        $discdeptcode = substr($sqlrow['code'] , 0 , 5);
         echo formpost($thisform . targetdivkey('disc' , $sqlrow['id']));
         echo formhiddenval('unitid' , $_POST['unitid']);
         if ($_POST['discid'] == $sqlrow['id']) {
             if ($_POST['act'] == 'Submit') {
                 echo HLbegin();
-                echo formsubmit('act' , 'Edit');
-                echo formhiddenval('discid' , $sqlrow['id']);
-                echo formhiddenval('orderby' , $_POST['orderby']);
-                $discdeptcode = substr($sqlrow['code'] , 0 , 5);
-                echo $sqlrow['code'] . $GBL_Tspc . 'T: ' . $sqlrow['Tcred'] . $GBL_Dspc . 'L: ' . $sqlrow['Lcred'] . $GBL_Dspc . ' ' . $sqlrow['name'];
-                if ($sqlrow['comment']) {
-                    echo $GBL_Tspc . '' . spanformat('smaller' , $GBLcommentcolor , '(' . $sqlrow['comment'] . ')') ;
-                }
-                echo '<br>';
+                discdisplay($sqlrow);
                 echo HLend();
             } else 
             {
                 echo hiddendivkey('disc' , $sqlrow['id']);
                 echo HLbegin();
                 echo formhiddenval('discid' , $sqlrow['id']);
-                $discdeptcode = substr($sqlrow['code'] , 0 , 5);
                 echo formhiddenval('discdeptcode' , $discdeptcode);
                 $discsubcode =  substr($sqlrow['code'] , 5 , 3);
                 echo $discdeptcode;
                 $disckey = 'disc' . $sqlrow['id'] ;
                 echo formpatterninput(3 , 1 , '[0-9][0-9][0-9]' , '3 digitos' , $disckey . 'discsubcode' , $discsubcode)  . 
-                    $GBL_Tspc . 'T: '  . 
+                    $GBLspc['T'] . 'T: '  . 
                     formpatterninput(1 , 1 , '[0-8]' , 'single digit' , $disckey . 'discTcred' , $sqlrow['Tcred'])  . 
-                    $GBL_Dspc . 'L: '  . 
+                    $GBLspc['D'] . 'L: '  . 
                     formpatterninput(1 , 1 , '[0-8]' , 'single digit' , $disckey . 'discLcred' , $sqlrow['Lcred'])  . 
-                    $GBL_Dspc . ' '  . 
+                    $GBLspc['D'] . ' '  . 
                     formpatterninput(120 , 64 , $GBLdiscpattern , 'Nome da disciplina' , $disckey . 'discname' , $sqlrow['name'])  . 
-                    '<br>' . $GBL_Dspc . ' Obs . :' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , $disckey . 'disccomment' , $sqlrow['comment']);
+                    '<br>' . $GBLspc['D'] . ' Obs . :' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , $disckey . 'disccomment' , $sqlrow['comment']);
                 echo formsubmit('act' , 'Submit');
                 echo '</form>';
                 echo HLend();
                 echo formpost($thisform) . formhiddenval('unitid' , $_POST['unitid']) . formhiddenval('discid' , $sqlrow['id'])  . 
-                    spanfmtbegin('' , 'red' , '' , true) . '  ' . $GBL_Tspc . 'Remover: ' ;
+                    spanfmtbegin('' , 'red' , '' , true) . '  ' . $GBLspc['T'] . 'Remover: ' ;
                 echo formselectsession('discdelete' , 'bool' , 0) ;
                 echo formsubmit('act' , 'Delete') . spanfmtend();
             }
         } else {
-            echo formsubmit('act' , 'Edit');
-            echo formhiddenval('discid' , $sqlrow['id']);
-            echo formhiddenval('orderby' , $_POST['orderby']);
-            $discdeptcode = substr($sqlrow['code'] , 0 , 5);
-            echo $sqlrow['code'] . $GBL_Tspc . 'T: ' . $sqlrow['Tcred'] . $GBL_Dspc . 'L: ' . $sqlrow['Lcred'] . $GBL_Dspc . ' ' . $sqlrow['name'];
-            if ($sqlrow['comment']) {
-                echo $GBL_Tspc . '' . spanformat('smaller' , $GBLcommentcolor , '(' . $sqlrow['comment'] . ')') ;
-            }
-            echo '<br>';
+            discdisplay($sqlrow);
         }
         echo '</form>';
     }
@@ -168,14 +166,14 @@ if ($postedit & $can_discipline) {
     $discsubcode =  '-';
     echo $discdeptcode;
     echo formpatterninput(3 , 1 , '[0-9][0-9][0-9]' , '3 digitos' , 'discsubcode' , $discsubcode)  . 
-        $GBL_Tspc . 'T: '  . 
+        $GBLspc['T'] . 'T: '  . 
         formpatterninput(1 , 1 , '[0-8]' , 'single digit' , 'discTcred' , 0)  . 
-        $GBL_Dspc . 'L: '  . 
+        $GBLspc['D'] . 'L: '  . 
         formpatterninput(1 , 1 , '[0-8]' , 'single digit' , 'discLcred' , 0)  . 
-        $GBL_Dspc . ' '  . 
+        $GBLspc['D'] . ' '  . 
         formpatterninput(120 , 64 , $GBLdiscpattern , 'Nome da disciplina' , 'discname' , '!')  . 
-        $GBL_Dspc . ' Obs.:' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , 'disccomment' , $sqlrow['comment'])  . 
-        '  ' . $GBL_Tspc . ' '  . 
+        $GBLspc['D'] . ' Obs.:' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , 'disccomment' , $sqlrow['comment'])  . 
+        '  ' . $GBLspc['T'] . ' '  . 
         formsubmit('act' , 'Insert')  . 
         '</form>';
     
@@ -191,9 +189,9 @@ if ($postedit & $can_discipline) {
                 echo   '</form><br>';
             }
         }
-        echo $sqlrow['code'] . $GBL_Tspc . 'T: ' . $sqlrow['Tcred'] . $GBL_Dspc . 'L: ' . $sqlrow['Lcred'] . $GBL_Dspc . ' ' . $sqlrow['name'];
+        echo $sqlrow['code'] . $GBLspc['T'] . 'T: ' . $sqlrow['Tcred'] . $GBLspc['D'] . 'L: ' . $sqlrow['Lcred'] . $GBLspc['D'] . ' ' . $sqlrow['name'];
         if ($sqlrow['comment']) {
-            echo $GBL_Tspc . '' . spanformat('smaller' , $GBLcommentcolor , $sqlrow['comment']);
+            echo $GBLspc['T'] . '' . spanformat('smaller' , $GBLcommentcolor , $sqlrow['comment']);
         }
         echo '<br>';
     }

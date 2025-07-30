@@ -130,22 +130,7 @@ echo '<div class = "row">' .
     '<hr>' ;
 
 
-$pattern = '[a-zA-Z \-\.\(\)]+';
-if($_SESSION['role']['isadmin']) {
-    $Query = 
-        "SELECT `role` . *, " .
-        "`unit` . `acronym` " .
-        "FROM `role` , `unit` " .
-        "WHERE `role` . `unit_id` = `unit` . `id` " .
-        "ORDER BY `acronym` , `rolename` ; " ;
-    $sqlroles = $GBLmysqli->dbquery($Query);
-    while ($rolerow = $sqlroles->fetch_assoc()) {
-    
-        echo hiddendivkey('role' , $rolerow['id']);
-
-        if ($rolerow['id'] == $_POST['roleid']) {
-            if(($_POST['act'] == 'Submit') || ($_POST['act'] == 'Edit Scenery')) {
-            echo HLbegin();
+function admroledisplay($bfields,$canfields,$rolerow) {
             echo formpost($thisform . '#role' . $rolerow['id'] . 'div') . formhiddenval('roleid' , $rolerow['id']) . formsubmit('act' , 'Edit');
             echo $rolerow['rolename'] . ' ( ' . $rolerow['description'] . ' ) :: ' . $rolerow['acronym'] . ' <br>';
             foreach ($bfields as $key) {
@@ -164,7 +149,25 @@ if($_SESSION['role']['isadmin']) {
                 }
             }
             echo '</form>';
-            
+}
+
+$pattern = '[a-zA-Z \-\.\(\)]+';
+if($_SESSION['role']['isadmin']) {
+    $Query = 
+        "SELECT `role` . *, " .
+        "`unit` . `acronym` " .
+        "FROM `role` , `unit` " .
+        "WHERE `role` . `unit_id` = `unit` . `id` " .
+        "ORDER BY `acronym` , `rolename` ; " ;
+    $sqlroles = $GBLmysqli->dbquery($Query);
+    while ($rolerow = $sqlroles->fetch_assoc()) {
+    
+        echo hiddendivkey('role' , $rolerow['id']);
+
+        if ($rolerow['id'] == $_POST['roleid']) {
+            if(($_POST['act'] == 'Submit') || ($_POST['act'] == 'Edit Scenery')) {
+            echo HLbegin();
+            admroledisplay($bfields,$canfields,$rolerow);
             echo HLend();
             } else {
             echo '<br>' . formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('roleid' , $rolerow['id']);
@@ -198,24 +201,7 @@ if($_SESSION['role']['isadmin']) {
             //echo '</td></tr></table>';
             }
         } else {
-            echo formpost($thisform . '#role' . $rolerow['id'] . 'div') . formhiddenval('roleid' , $rolerow['id']) . formsubmit('act' , 'Edit');
-            echo $rolerow['rolename'] . ' ( ' . $rolerow['description'] . ' ) :: ' . $rolerow['acronym'] . ' <br>';
-            foreach ($bfields as $key) {
-                if ($rolerow[$key]) {
-                    echo spanformat('' , 'red' , $key . ':T ');
-                } else {
-                    echo spanformat('' , 'blue' , $key . ':F ');
-                }
-            }
-            echo '<br>';
-            foreach ($canfields as $key) {
-                if ($rolerow['can_' . $key]) {
-                    echo spanformat('' , 'red' , $key . ':T ');
-                } else {
-                    echo spanformat('' , 'blue' , $key . ':F ');
-                }
-            }
-            echo '</form>';
+            admroledisplay($bfields,$canfields,$rolerow);
         }
     
       
@@ -235,8 +221,8 @@ if($_SESSION['role']['isadmin']) {
                 echo formsubmit('act' , 'Change Scenery');
             } else {
                 echo formsubmit('act' , 'Edit Scenery');
-                echo $GBL_Dspc . ' ' . $sceneryrow['name'] . ' / ' . $sceneryrow['desc'];
-                echo $GBL_Dspc . 'Remove?';
+                echo $GBLspc['D'] . ' ' . $sceneryrow['name'] . ' / ' . $sceneryrow['desc'];
+                echo $GBLspc['D'] . 'Remove?';
                 echo formselectsession('scenerydelete' , 'bool' , 0);
                 echo formsubmit('act' , 'Remove Scenery')  . '<br>';
             }
