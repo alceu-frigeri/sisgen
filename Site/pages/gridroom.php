@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=grids&sq=room';
+$thisform = $_SESSION['pagelnk']['room'];
 formretainvalues(array('semid' , 'buildingid' , 'roomid'));
   
 
@@ -93,7 +93,7 @@ if ($_POST['roomid']) {
         "ORDER BY `discipline` . `name` , `class` . `name` ;";
     
  
-    dbweekmatrix(  $Query  , $inselected);
+    echo dbweekmatrix(  $Query  , $inselected);
 }
 
 echo  '</div>';

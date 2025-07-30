@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=check&sq=prof'; 
+$thisform = $_SESSION['pagelnk']['chkprof'];
 formretainvalues(array('semid' , 'deptid'));
 
 echo '<div class = "row">' .

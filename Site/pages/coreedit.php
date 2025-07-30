@@ -25,9 +25,27 @@ if(!($_SESSION['rooms'])) {
         } else {
             $_SESSION['rooms'][$roomrow['id']]['txtlnk'] = $roomrow['building'] . ' - ' . $roomrow['room'] . $cap;
         }
-    }
-    
+    }   
 }
+
+// That, just because 'semid' might/will change...
+    $Query = 
+        "SELECT room . id , " .
+                "room . acronym AS room , " .
+                "room . capacity AS capacity , " .
+                "building . acronym AS building , " .
+                "building . mark AS mark , " .
+                "building . id AS buildingid " .
+        "FROM room , building " .
+        "WHERE room . building_id = building . id " .
+                "AND mark = '1' " . 
+        "ORDER BY building . acronym , room . acronym;";
+    $sqlroom = $GBLmysqli->dbquery( $Query );
+    while ($roomrow = $sqlroom->fetch_assoc()) {
+            $_SESSION['rooms'][$roomrow['id']]['txtlnk'] = hiddenformlnk(hiddenroomkey($_POST['semid'] , $roomrow['buildingid'] , $roomrow['id']) , $roomrow['building'] . ' - ' . $roomrow['room']) . $cap;
+    }
+
+
 if(!($_SESSION['deptprof' . $_POST['unitid']])) {
     $q = 
         "SELECT prof . id , prof . name " .
@@ -161,9 +179,9 @@ function formsegmentedit($segrow) {
     echo formselectsession($segformid . 'status' , 'status' , $segrow['status_id']);
     
     if ($can_addclass) {
-        echo spanformatstart('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
+        echo spanfmtbegin('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
         echo formselectsession($segformid . 'delete' , 'bool' , 0);
-        echo spanformatend();
+        echo spanfmtend();
     }
 }
   
@@ -181,7 +199,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     $classkey = 'class' . $classrow['id'];
     $_SESSION['classes'][$classrow['id']] = $classkey;
     
-    echo highlightbegin();
+    echo HLbegin();
     echo 'Turma:<b>' . formpatterninput(3 , 1 , $GBLclasspattern , ' Turma' , $classkey . 'classname' , $classrow['name']) . '</b>' . $GBL_Qspc . 'agregadora:';
 
 
@@ -194,9 +212,9 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     echo formselectsession($classkey . 'status' , 'status' , $classrow['status_id']);
 
     //echo spanformat('' , 'red' , $GBL_Tspc . 'remover:' , null , true);
-    echo spanformatstart('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
+    echo spanfmtbegin('' , 'red' , null , true) . $GBL_Tspc . 'remover:';
     echo formselectsession($classkey . 'delete' , 'bool' , 0);
-    echo spanformatend();
+    echo spanfmtend();
 
     echo '</br>';
     echo 'Obs.: ' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Obs.' , $classkey . 'comment' , $classrow['comment']) . '<br>';
@@ -274,7 +292,7 @@ function formclassedit ($classrow , $incanedit , $canbyscenery = false) {
     } else {
         formvacedit($vacsql);
     }
-    echo highlightend();
+    echo HLend();
 }
   
 function formclassdisplay ($classrow , $vacedit = false) {

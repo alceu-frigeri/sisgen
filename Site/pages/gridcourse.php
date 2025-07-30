@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=grids&sq=course'; 
+$thisform = $_SESSION['pagelnk']['course'];
 formretainvalues(array('semid' , 'courseid' , 'termid'));
 
 echo  '<div class = "row">' .
@@ -89,7 +89,7 @@ if ($_POST['termid']) {
                 $qscensql . $qextra . 
         "ORDER BY `discipline` . `name` , `class` . `name` ; " ;
 
-    dbweekmatrix(  $Query , $inselected , $_POST['courseid'] , $_POST['termid']);
+    echo dbweekmatrix(  $Query , $inselected , $_POST['courseid'] , $_POST['termid']);
 }
 
 echo '</div>' ;

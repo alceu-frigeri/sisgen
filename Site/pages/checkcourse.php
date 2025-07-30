@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=check&sq=course';
+$thisform = $_SESSION['pagelnk']['chkcourse'];
 formretainvalues(array('semid' , 'courseid'));
 
 echo '<div class = "row">' .
@@ -80,7 +80,7 @@ while ($termrow = $termsql->fetch_assoc()) {
         echo spanformat('','',$GBL_Qspc . 'Disciplina ob/al não ofertada<br>',null,true);
     }
 
-    //     dbweekmatrix(  implode( ' ' , $Query)  , $inselected , $_POST['courseid']);
+    //     echo dbweekmatrix(  implode( ' ' , $Query)  , $inselected , $_POST['courseid']);
 }
 
 echo '</div>' ;

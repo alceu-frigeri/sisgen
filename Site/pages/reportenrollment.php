@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=reports&sq=enrollment'; 
+$thisform = $_SESSION['pagelnk']['rpenroll'];
  
 echo formjavaprint(displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym') . displaysqlitem(' - Encargos ' , 'semester' , $_POST['semid'] , 'name'));
 

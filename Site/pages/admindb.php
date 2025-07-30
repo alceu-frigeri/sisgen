@@ -3,9 +3,9 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=admin&sq=DBimport';
+$thisform = $_SESSION['pagelnk']['admdb'];
   
-        
+
 
 include 'coreX.php';
 

@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=check&sq=room';
+$thisform = $_SESSION['pagelnk']['chkroom'];
 formretainvalues(array('semid' , 'buildingid'));
 
 echo '<div class = "row">' . 

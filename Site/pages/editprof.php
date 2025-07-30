@@ -2,12 +2,12 @@
 <?php 
 include 'bailout.php';
 
-$can_prof = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['deptid']] & $_SESSION['role'][$_POST['deptid']]['can_prof']) ;
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=Prof';
+$thisform = $_SESSION['pagelnk']['edprof'];
 formretainvalues(array('deptid'));
 
+$can_prof = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['deptid']] & $_SESSION['role'][$_POST['deptid']]['can_prof']) ;
   
         
 
@@ -102,28 +102,28 @@ if ($postedit & $can_prof) {
     echo formhiddenval('deptid' , $_POST['deptid']);
     if ($_POST['profid'] == $sqlrow['id']) {
       if($_POST['act'] == 'Submit') {
-          echo highlightbegin();
+          echo HLbegin();
               echo formsubmit('act' , 'Edit');
               echo formhiddenval('profid' , $sqlrow['id']);
               echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBL_Dspc . $sqlrow['name'] . $GBL_Dspc . ' (' . $sqlrow['nickname'] . ')<br>';
-          echo highlightend(); 
+          echo HLend(); 
       } else {
       $profkey = 'prof' . $sqlrow['id'] ;
       echo hiddendivkey('prof' , $sqlrow['id']);
-      echo highlightbegin();
+      echo HLbegin();
       echo formhiddenval('profid' , $sqlrow['id']);
       echo formselectsession($profkey . 'profkind' , 'profkind' , $sqlrow['profkind_id']);
             echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , $profkey .  'profname' , $sqlrow['name']);
       echo '<br>' . $GBL_Qspc .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
       echo formsubmit('act' , 'Submit');
       echo '</form>';
-      echo highlightend();
+      echo HLend();
       echo formpost($thisform);
       echo formhiddenval('deptid' , $_POST['deptid']);
       echo formhiddenval('profid' , $sqlrow['id']);
-      echo spanformatstart('' , 'red' , null , true) . '  ' . $GBL_Tspc . 'remover: ' ;
+      echo spanfmtbegin('' , 'red' , null , true) . '  ' . $GBL_Tspc . 'remover: ' ;
       echo formselectsession('profdelete' , 'bool' , 0);
-      echo formsubmit('act' , 'Delete') . spanformatend() ; 
+      echo formsubmit('act' , 'Delete') . spanfmtend() ; 
       }
     } else {
       echo formsubmit('act' , 'Edit');

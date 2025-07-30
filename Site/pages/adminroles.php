@@ -3,8 +3,8 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=admin&sq=adminroles';
-  
+$thisform = $_SESSION['pagelnk']['admrole'];
+
         
 
         
@@ -145,7 +145,7 @@ if($_SESSION['role']['isadmin']) {
 
         if ($rolerow['id'] == $_POST['roleid']) {
             if(($_POST['act'] == 'Submit') || ($_POST['act'] == 'Edit Scenery')) {
-            echo highlightbegin();
+            echo HLbegin();
             echo formpost($thisform . '#role' . $rolerow['id'] . 'div') . formhiddenval('roleid' , $rolerow['id']) . formsubmit('act' , 'Edit');
             echo $rolerow['rolename'] . ' ( ' . $rolerow['description'] . ' ) :: ' . $rolerow['acronym'] . ' <br>';
             foreach ($bfields as $key) {
@@ -165,10 +165,10 @@ if($_SESSION['role']['isadmin']) {
             }
             echo '</form>';
             
-            echo highlightend();
+            echo HLend();
             } else {
             echo '<br>' . formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('roleid' , $rolerow['id']);
-            echo highlightbegin();
+            echo HLbegin();
             $rolekey = 'role' . $rolerow['id'] ;
             //echo '<table style = "background-color:#E0FFE0;color:#8000B0;"><tr><td>';
             echo 'Nome:' . formpatterninput(32 , 8 , $pattern , 'role name' , $rolekey . 'rolename' , $rolerow['rolename'])  . 
@@ -188,13 +188,13 @@ if($_SESSION['role']['isadmin']) {
             echo '</form>';      
     
             echo formpost($thisform) . formhiddenval('roleid' , $rolerow['id']);
-            echo spanformatstart('' , 'red' , '' , true);
+            echo spanfmtbegin('' , 'red' , '' , true);
             echo 'Delete Role &lt;' . $rolerow['rolename']  . '&gt;?' ;
             echo formselectsession('roledelete' , 'bool' , 0);
             echo formsubmit('act' , 'Delete');
-            echo spanformatend();
+            echo spanfmtend();
             echo '</form><br>';      
-            echo highlightend();
+            echo HLend();
             //echo '</td></tr></table>';
             }
         } else {

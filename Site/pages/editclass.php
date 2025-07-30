@@ -2,11 +2,13 @@
 <?php 
 include 'bailout.php';
 
-include 'coreedit.php';
+
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage.'?q=edits&sq=classes';  
+$thisform = $_SESSION['pagelnk']['edclass'];
 formretainvalues(array('semid' , 'unitid' , 'discid' , 'profnicks' , 'courseHL'));
+
+include 'coreedit.php';
   
 $class_edited = false;
 $vac_edited = false;
@@ -200,7 +202,7 @@ if ($postedit) {
     }
 
 }
-dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
+echo dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
 echo '<hr>';
 
 
@@ -262,9 +264,9 @@ while ($classrow = $result->fetch_assoc()) {
             if ($_POST['act'] == 'SubDisplay') {
                     echo formsubmit('act' , 'Cancel');
                     echo formsubmit('act' , 'Edit');
-                    echo highlightbegin();
+                    echo HLbegin();
                     formclassdisplay($classrow);
-                    echo highlightend();
+                    echo HLend();
             } else {
                     if($can_class) {
                         formclassedit($classrow , $incanedit);
@@ -298,7 +300,7 @@ while ($classrow = $result->fetch_assoc()) {
             thisformpost('classNEWdiv');
             echo '<p style="line-height:0px;"></p>';
                                 
-            echo spanformatstart('' , 'green' , null , true) . 
+            echo spanfmtbegin('' , 'green' , null , true) . 
                 'Replicar esta Turma como:' . 
                 formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
                 formhiddenval('classid' , $classrow['id']) .
@@ -306,12 +308,12 @@ while ($classrow = $result->fetch_assoc()) {
                 formselectsession('addclass' , 'bool' , 0) .
                 formsubmit('act' , 'Replicate Class') . 
                 '</form>' . 
-                spanformatend();
+                spanfmtend();
         } else {
             if ($incanedit) {
                 thisformpost('classNEWdiv');
                 echo '<p style="line-height:0px;"></p>';
-                echo spanformatstart('' , 'green' , null , true) . 
+                echo spanfmtbegin('' , 'green' , null , true) . 
                         'Replicar esta Turma como:' . 
                         formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
                         formhiddenval('classid' , $classrow['id']) .
@@ -320,7 +322,7 @@ while ($classrow = $result->fetch_assoc()) {
                         formselectsession('addclass' , 'bool' , 0) .
                         formsubmit('act' , 'Replicate Class in Scenery') . 
                         '</form>' . 
-                        spanformatend();        
+                        spanfmtend();        
             }
         }
       
@@ -343,24 +345,24 @@ if ($hiddenroombuildingid) {
 if ($postedit) {
     if ($can_addclass) {
         thisformpost('classNEWdiv');
-        echo spanformatstart('' , 'brown' , null , true) .  
+        echo spanfmtbegin('' , 'brown' , null , true) .  
                 'Adicionar Turma:' . 
                 formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
                 formselectsession('addclass' , 'bool' , 0) .
                 formsubmit('act' , 'Add Class') . 
                 '</form>' . 
-                spanformatend();
+                spanfmtend();
     } else {
         if ($incanedit) {
             thisformpost('classNEWdiv');
-            echo spanformatstart('' , 'brown' , null , true) . 
+            echo spanfmtbegin('' , 'brown' , null , true) . 
                 'Adicionar Turma:' . 
                 formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
                 formselectsession('addscenery' , 'scen.acc.edit' , 0) .
                 formselectsession('addclass' , 'bool' , 0) .
                 formsubmit('act' , 'Add Class in Scenery') . 
                 '</form>' . 
-                spanformatend() ;        
+                spanfmtend() ;        
         }
     }
 }

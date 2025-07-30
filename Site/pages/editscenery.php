@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=scenery'; 
+$thisform = $_SESSION['pagelnk']['edscen'];
   
 $can_scenery = $_SESSION['role']['isadmin'];
 foreach ($_SESSION['role.scen'] as $roleid => $rolecanscen) {
@@ -111,7 +111,7 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
             if ($sceneryrow['id'] == $_POST['sceneryid']) {
                 if ($_POST['act'] == 'Submit') {
                 //echo hiddendivkey('scen' , $sceneryrow['id']);
-                echo highlightbegin();
+                echo HLbegin();
                 echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']) . formsubmit('act' , 'Edit');
                 echo $sceneryrow['name'] . ' ( ' . $sceneryrow['desc'] . ' )' . ' <br>';
                 if ($sceneryrow['hide']) {
@@ -121,11 +121,11 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
                 }
                 echo '<br>';
                 echo '</form>';
-                                echo highlightend();
+                                echo HLend();
 
                 } else {
                 //echo hiddendivkey('scen' , $sceneryrow['id']);
-                echo highlightbegin();
+                echo HLbegin();
                 $scenkey = 'scen' . $sceneryrow['id'] ;
                 echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']);
                 echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
@@ -134,11 +134,11 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
                 echo formselectsession($scenkey.'sceneryhide' , 'bool' , $sceneryrow['hide']);
                 echo '<br>' . formsubmit('act' , 'Submit');
                 echo '</form>';      
-                echo highlightend();
+                echo HLend();
                 echo formpost($thisform) . formhiddenval('sceneryid' , $sceneryrow['id']);
-                echo spanformatstart('' , 'red' , null , true) . 'Delete scenery &lt;' . $sceneryrow['name']  . '&gt;?' ;
+                echo spanfmtbegin('' , 'red' , null , true) . 'Delete scenery &lt;' . $sceneryrow['name']  . '&gt;?' ;
                 echo formselectsession('scenerydelete' , 'bool' , 0);
-                echo formsubmit('act' , 'Delete') . spanformatend() ;
+                echo formsubmit('act' , 'Delete') . spanfmtend() ;
                 echo '</form><br>';      
                 }
             } else {

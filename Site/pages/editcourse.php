@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=Course';
+$thisform = $_SESSION['pagelnk']['edcourse'];
 formretainvalues(array('courseid' , 'termid' , 'orederby'));
   
 
@@ -142,17 +142,17 @@ if ($postedit & $can_coursedisciplines) {
     $disckey = 'disc' . $sqlrow['id'] ;
     if ($_POST['coursediscid'] == $sqlrow['id']) {
       if($_POST['act'] == 'Submit') {
-          echo highlightbegin();
+          echo HLbegin();
           echo formsubmit('act' , 'Edit');
           echo $sqlrow['code'] . ' -- ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
-          echo highlightend();
+          echo HLend();
       } else {
-      echo highlightbegin();
+      echo HLbegin();
       echo $sqlrow['code'] . ' -- ' . $sqlrow['name'] . '  ';
       echo formselectsession($disckey . 'newterm' ,  'term' , $_POST['termid']);
       echo formselectsession($disckey . 'newkind' , 'disckind' , $sqlrow['disckindid']);
       echo formsubmit('act' , 'Submit') . '</form>';
-      echo highlightend();
+      echo HLend();
       echo formpost($thisform);
       echo spanformat('' , 'red' , '  ' . $GBL_Tspc . 'remover: ' , '' , true);
       echo formselectsession('discdelete' , 'bool' , 0);

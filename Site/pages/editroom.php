@@ -4,7 +4,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=rooms';
+$thisform = $_SESSION['pagelnk']['edroom'];
 formretainvalues(array('buildingid'));
   
         
@@ -97,7 +97,7 @@ if ($postedit & $can_room) {
         echo formhiddenval('buildingid' , $_POST['buildingid']);
         if ($_POST['roomid'] == $sqlrow['id']) {
             if($_POST['act'] == 'Submit') {
-            echo highlightbegin();
+            echo HLbegin();
             echo formsubmit('act' , 'Edit');
             echo formhiddenval('roomid' , $sqlrow['id']);
             echo $sqlrow['name'] . $GBL_Dspc . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBL_Dspc;
@@ -105,16 +105,16 @@ if ($postedit & $can_room) {
                 echo ' (cap . :' . $sqlrow['capacity'] . ')';
             }
             echo '<br>';      
-            echo highlightend();
+            echo HLend();
             } else {
             $roomkey = 'room' . $sqlrow['id'] ; 
-            echo highlightbegin();
+            echo HLbegin();
             echo formhiddenval('roomid' , $sqlrow['id']);
             echo $GBL_Dspc . ' ' . $sqlrow['name'];
             echo formselectsession($roomkey . 'roomtype' , 'roomtype' , $sqlrow['roomtype_id']);
             echo '  Capacidade:  ' . formpatterninput(3 , 1 , '[0-9]+' , 'Capacidade' , $roomkey . 'capacity' , $sqlrow['capacity']);
             echo formsubmit('act' , 'Submit');
-            echo highlightend();
+            echo HLend();
             } 
         } else {
             echo formsubmit('act' , 'Edit');

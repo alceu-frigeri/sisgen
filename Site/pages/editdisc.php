@@ -3,13 +3,11 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=Disciplines'; 
+$thisform = $_SESSION['pagelnk']['eddisc'];
 formretainvalues(array('unitid' , 'orederby'));
   
-        
-
   
-$can_discipline = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
+$can_discipline = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
 
 $postedit = false;
 if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert')) & $can_discipline) {
@@ -111,7 +109,7 @@ if ($postedit & $can_discipline) {
         echo formhiddenval('unitid' , $_POST['unitid']);
         if ($_POST['discid'] == $sqlrow['id']) {
             if ($_POST['act'] == 'Submit') {
-                echo highlightbegin();
+                echo HLbegin();
                 echo formsubmit('act' , 'Edit');
                 echo formhiddenval('discid' , $sqlrow['id']);
                 echo formhiddenval('orderby' , $_POST['orderby']);
@@ -121,11 +119,11 @@ if ($postedit & $can_discipline) {
                     echo $GBL_Tspc . '' . spanformat('smaller' , $GBLcommentcolor , '(' . $sqlrow['comment'] . ')') ;
                 }
                 echo '<br>';
-                echo highlightend();
+                echo HLend();
             } else 
             {
                 echo hiddendivkey('disc' , $sqlrow['id']);
-                echo highlightbegin();
+                echo HLbegin();
                 echo formhiddenval('discid' , $sqlrow['id']);
                 $discdeptcode = substr($sqlrow['code'] , 0 , 5);
                 echo formhiddenval('discdeptcode' , $discdeptcode);
@@ -142,11 +140,11 @@ if ($postedit & $can_discipline) {
                     '<br>' . $GBL_Dspc . ' Obs . :' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , $disckey . 'disccomment' , $sqlrow['comment']);
                 echo formsubmit('act' , 'Submit');
                 echo '</form>';
-                echo highlightend();
+                echo HLend();
                 echo formpost($thisform) . formhiddenval('unitid' , $_POST['unitid']) . formhiddenval('discid' , $sqlrow['id'])  . 
-                    spanformatstart('' , 'red' , '' , true) . '  ' . $GBL_Tspc . 'Remover: ' ;
+                    spanfmtbegin('' , 'red' , '' , true) . '  ' . $GBL_Tspc . 'Remover: ' ;
                 echo formselectsession('discdelete' , 'bool' , 0) ;
-                echo formsubmit('act' , 'Delete') . spanformatend();
+                echo formsubmit('act' , 'Delete') . spanfmtend();
             }
         } else {
             echo formsubmit('act' , 'Edit');
@@ -187,7 +185,7 @@ if ($postedit & $can_discipline) {
         $anyone = 1;
         if ($firstofmany) {
             $firstofmany = false;
-            if ($candiscipline) {
+            if ($can_discipline) {
                 echo formsubmit('act' , 'Edit') .  '</form><br>';
             } else {
                 echo   '</form><br>';

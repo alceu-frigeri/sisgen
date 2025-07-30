@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=grids&sq=comgrad';
+$thisform = $_SESSION['pagelnk']['comgrad'];
 formretainvalues(array('semid' , 'courseid' , 'deptid'));
   
 

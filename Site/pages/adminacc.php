@@ -2,7 +2,7 @@
 <?php 
 include 'bailout.php';
 
-$thisform = $GBLbasepage . '?q=admin&sq=adminacc'; 
+$thisform = $_SESSION['pagelnk']['admacc'];
 $GBLmysqli->postsanitize();
 
 unset($_SESSION['rolelist']);
@@ -90,7 +90,7 @@ if($_SESSION['role']['isadmin']) {
     echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
     echo formhiddenval('usrid' , $usrrow['id']);
     if ($usrrow['id'] == $_POST['usrid']) {
-      echo highlightbegin();
+      echo HLbegin();
     }
     echo spanformat('' , 'darkblue' , 'User: <b>' . $usrrow['displayname'] . ' / ' . $usrrow['name']  . ' ( ' . $usrrow['email'] . ' )</b>');
     echo $GBL_Dspc . ' Reset passwd?';
@@ -104,11 +104,11 @@ if($_SESSION['role']['isadmin']) {
     echo $GBL_Dspc . ' Activ?';
     echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
     echo formsubmit('act' , 'Submit') . '<br>';
-    echo spanformatstart('' , 'red' , null , true);
+    echo spanfmtbegin('' , 'red' , null , true);
     echo  $GBL_Dspc . 'Delete?' ;
     echo formselectsession('userdelete' , 'bool' , 0);
     echo formsubmit('act' , 'Delete User');
-    echo spanformatend();
+    echo spanfmtend();
     echo '</form>'. '<br>';
         
         $Query = 
@@ -130,11 +130,11 @@ if($_SESSION['role']['isadmin']) {
       } else {
         echo formsubmit('act' , 'Edit Role');
         echo $GBL_Dspc . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
-        echo spanformatstart('' , 'red' );
+        echo spanfmtbegin('' , 'red' );
         echo $GBL_Dspc . 'Delete?';
         echo formselectsession('roledelete' , 'bool' , 0);
         echo formsubmit('act' , 'Delete Role')  . '<br>';
-        echo spanformatend();
+        echo spanfmtend();
       }
       echo '</form>';
     }
@@ -145,7 +145,7 @@ if($_SESSION['role']['isadmin']) {
     echo  formsubmit('act' , 'Add Role');
     echo '</form>';  
     if ($usrrow['id'] == $_POST['usrid']) {
-      echo highlightend();
+      echo HLend();
     }
   
     

@@ -3,7 +3,7 @@
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
-$thisform = $GBLbasepage . '?q=edits&sq=unit';
+$thisform = $_SESSION['pagelnk']['edunit'];
         
 $can_edit = $_SESSION['role']['isadmin'] || ($_SESSION['usercanedit']);
 

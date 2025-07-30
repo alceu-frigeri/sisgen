@@ -4,7 +4,7 @@
 <?php 
 include 'bailout.php';
 
-$thisform = $GBLbasepage . '?q=reports&sq=assignment'; 
+$thisform = $_SESSION['pagelnk']['rpassign'];
 $GBLmysqli->postsanitize();
 formretainvalues(array('semid' , 'deptid'));
 
@@ -81,7 +81,7 @@ while ($profrow = $profsql->fetch_assoc()) {
     echo   spanformat('larger' , '' , $profrow['name'])  ;
     //    $flag =  checkweek( $Query );    
     
-    dbweekmatrix( $Query  , $inselected , null , null , false);
+    echo dbweekmatrix( $Query  , $inselected , null , null , false);
 
 }
 echo '</div>' . 

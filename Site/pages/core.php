@@ -15,6 +15,7 @@ $GBLdebug = true;
 $GBLtimeout = 2400 ; //if last check was 'that long ago', auto-logout
 $GBLgracetime = 800; //if last check was over that (and less than timeout), auto-renew
 
+// 
 $sisgensetup = true; //to enable/disable 'initial' import/fix pages (admin)
 $sisgenfullsetup = false; // this disable the "initial data imports"
 $sisgenDBsetupHacks = false; // this disable whatever "DB import hack"
@@ -37,10 +38,30 @@ $GBL_Tspc = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $GBL_Qspc = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $GBLhighlightstyle = ' style="background-color:#E0FFE0;color:#8000B0;"';
 
+
+include 'menu.php';
+
+if(!$_SESSION['pagelnk']) {
+        foreach ($menu as $key => $value) {
+                if($value['id']) {
+                        $_SESSION['pagelnk'][$value['id']] = $GBLbasepage .  "?q=${key}";
+                }
+                if($value['hasChildren']) {
+                        foreach ($value['children'] as $ckey => $cvalue) {
+                                if($cvalue['id']) {
+                                        $_SESSION['pagelnk'][$cvalue['id']] = $GBLbasepage .  "?q=${key}&sq=${ckey}";
+                                }
+                        }
+                }
+        }
+}
+
 include 'dbconnect.php';
 
 $GBLmysqli = myconnect();
 
+////
+////
 
 function mymail($email , $subject , $msg) {
     $msg .= "\n\nAtt.\n sisgen\n$GBLbaseurl";
@@ -389,6 +410,8 @@ function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
 function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $edit = true , $matrixonly = false , $courseHL = null) {
     global $GBLmysqli;
     global $GBL_Dspc, $GBL_Tspc, $GBL_Qspc;
+    
+    $rtnmatrix = '';
   
     //  $basevals = array('DA' , 'A0' , '68' , '40' , '00');
     //  $basevals = array('D8' , 'A0' , '80' , '50' , '00');
@@ -400,11 +423,11 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
             foreach ($basevals as $blue) {
                 $colors[$numcolors] = '#'.$red.$green.$blue;
                 $numcolors++;          
-                //          echo spanformat('smaller' , '#'.$red.$green.$blue , '<b>#'.$red.$green.$blue.'</b>&nbsp;');
+                //          $rtnmatrix .=  spanformat('smaller' , '#'.$red.$green.$blue , '<b>#'.$red.$green.$blue.'</b>&nbsp;');
             }
-            //        echo '<br>';
+            //        $rtnmatrix .=  '<br>';
         }
-        //      echo '<br>';
+        //      $rtnmatrix .=  '<br>';
     }
 
 
@@ -523,7 +546,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
                     if($courseHLquery) {
                         $courseHL = $courseHLquery;
                     }
-                    echo hiddenclassform($_POST['semid'] , $Hdeptid , $Hdiscid , $Hclassid , 'name' , $profnicks , $courseHL);
+                    $rtnmatrix .=  hiddenclassform($_POST['semid'] , $Hdeptid , $Hdiscid , $Hclassid , 'name' , $profnicks , $courseHL);
                 }
             }
         }
@@ -533,19 +556,19 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
 
     if($hiddenprofdeptid){
         foreach ($hiddenprofdeptid as $Hprofid => $Hdeptid) {
-            echo hiddenprofform($_POST['semid'] , $Hdeptid , $Hprofid);
+            $rtnmatrix .=  hiddenprofform($_POST['semid'] , $Hdeptid , $Hprofid);
         }
     }
 
 
-    echo '<table>';
-    echo '<tr style="border-bottom:1px solid black"><th style="width:50px">Hora</th>';
+    $rtnmatrix .=  '<table>';
+    $rtnmatrix .=  '<tr style="border-bottom:1px solid black"><th style="width:50px">Hora</th>';
     for ($i = 2; $i <8; $i++) {
-        echo "<th style='width:155px'> " . $_SESSION['weekday'][$i] . '</th>';
+        $rtnmatrix .=  "<th style='width:155px'> " . $_SESSION['weekday'][$i] . '</th>';
     }
-    echo '</tr>';
+    $rtnmatrix .=  '</tr>';
     for ($j = 7;$j<22;$j++) {
-        echo '<tr style="border-bottom:1px solid black"><td>' . $j . ':30 ' . $GBL_Dspc . ' </td>';
+        $rtnmatrix .=  '<tr style="border-bottom:1px solid black"><td>' . $j . ':30 ' . $GBL_Dspc . ' </td>';
         for ($i = 2;$i<8;$i++) {
             $td = '<td>';
             if (count($discweek[$i][$j]) > 1) {
@@ -561,15 +584,15 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
                     }
                 }
             }
-            echo $td;
+            $rtnmatrix .=  $td;
             foreach ($week[$i][$j] as $d) {
-                echo '<p style="margin:0;border:0;">' . spanformat(null , $disccolor[$seg[$d]], '<b>'.$d.'</b>');
+                $rtnmatrix .=  '<p style="margin:0;border:0;">' . spanformat(null , $disccolor[$seg[$d]], '<b>'.$d.'</b>');
             }
-            echo '</td>';
+            $rtnmatrix .=  '</td>';
         }
-        echo '</tr>';
+        $rtnmatrix .=  '</tr>';
     }
-    echo '</table>';
+    $rtnmatrix .=  '</table>';
   
     if($matrixonly) {}
     else {
@@ -618,18 +641,18 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
             };
 
             if ($edit) {
-                echo hiddendiscform($_POST['semid'] , $discdept[$d] , $discid[$d] , $profnicks , $courseHL , '') . formsubmit('submit' , 'go edit');      
-                echo  spanformat('' , $disccolor[$d], $d . ' - ' . $disc[$d]  , $bgcolor , true) . $kind;
-                echo  '</form>'   ;
+                $rtnmatrix .=  hiddendiscform($_POST['semid'] , $discdept[$d] , $discid[$d] , $profnicks , $courseHL , '') . formsubmit('submit' , 'go edit');      
+                $rtnmatrix .=   spanformat('' , $disccolor[$d], $d . ' - ' . $disc[$d]  , $bgcolor , true) . $kind;
+                $rtnmatrix .=   '</form>'   ;
             } else {
-                echo  spanformat('' , $disccolor[$d], $d . ' - ' . $disc[$d]  , $bgcolor , true) . $kind . '<br>';
+                $rtnmatrix .=   spanformat('' , $disccolor[$d], $d . ' - ' . $disc[$d]  , $bgcolor , true) . $kind . '<br>';
             }
       
         }
         if ($hiddencoursekeys) {
             foreach ($hiddencoursekeys as $cid => $acid) {
                 foreach ($acid as $tid => $atid) {
-                    echo hiddencourseform($_POST['semid'] , $cid , $tid);
+                    $rtnmatrix .=  hiddencourseform($_POST['semid'] , $cid , $tid);
                 }
             }
         }
@@ -655,24 +678,30 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
             while ($termrow = $termsql->fetch_assoc()) {
                 if(!$discflag[$termrow['code']]) {
                     if($title) {
-                        echo $title;
+                        $rtnmatrix .=  $title;
                         $title = '';
                     }
-                    echo hiddendiscform($_POST['semid'] , $termrow['discdeptid'] , $termrow['discid'] , $profnicks , $courseHL , null) . 
-                        formsubmit('submit' , 'go edit') . $termrow['code'].' - '.$termrow['name']  . '<sub>'.spanformat('smaller' , '' , $termrow['kindcode']).'</sub>' . '</form>'  ;
+                    $rtnmatrix .=  hiddendiscform($_POST['semid'] , $termrow['discdeptid'] , $termrow['discid'] , $profnicks , $courseHL , null) . 
+                        formsubmit('submit' , 'go edit') . 
+                        $termrow['code'] . ' - ' . $termrow['name']  . 
+                        '<sub>' . 
+                                spanformat('smaller' , '' , $termrow['kindcode']).
+                        '</sub>' . 
+                        '</form>'  ;
                 };
             }
         }
     }
+    
+    return $rtnmatrix;
 }
-
 
 
 function spanformat($size , $color , $text , $bgcolor = null , $bold = null , $height = null) {
-    return spanformatstart($size , $color , $bgcolor , $bold , $height) . $text . spanformatend();
+    return spanfmtbegin($size , $color , $bgcolor , $bold , $height) . $text . spanfmtend();
 }
 
-function spanformatstart($size , $color , $bgcolor = null , $bold = null , $height = null) {
+function spanfmtbegin($size , $color , $bgcolor = null , $bold = null , $height = null) {
     $style = '';
     if($size) {$style .= 'font-size:'.$size.';';}
     if($color) {$style .= 'color:'.$color.';';}
@@ -681,7 +710,7 @@ function spanformatstart($size , $color , $bgcolor = null , $bold = null , $heig
     if($height) {$style .= 'line-height:'.$height.';';}
     return '<span style = "'.$style.'">' ;
 }
-function spanformatend() {
+function spanfmtend() {
     return '</span>';
 }
   
@@ -699,13 +728,14 @@ function formpost($action , $target = null , $formname = null) {
   
   
 function hiddenformlnk($formkey , $textlink) {
-    return '<a href = "javascript:document.forms['."'". $formkey .  "'" . '].submit()">' . $textlink .'</a>';
+    return '<a href = "javascript:document.forms['."'" .  $formkey .  "'" . '].submit()">' . $textlink .'</a>';
 }
   
 function hiddenprofform($semid , $deptid , $profid , $closing = '</form>') {
     global $GBLbasepage;
     $lnk = join('_' , array('profhid' , $semid , $deptid , $profid));
-    return formpost($GBLbasepage.'?q=reports&sq=prof', $lnk, $lnk ) . 
+    
+    return formpost( $_SESSION['pagelnk']['prof'] , $lnk , $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('deptid' , $deptid) . 
         formhiddenval('profid' , $profid) . formhiddenval('act' , 'Refresh') . $closing;
 }
@@ -716,7 +746,8 @@ function hiddenprofkey($semid , $deptid , $profid) {
 function hiddenroomform($semid , $buildingid , $roomid , $closing = '</form>') {
     global $GBLbasepage;
     $lnk = join('_' , array('roomhid' , $semid , $buildingid , $roomid));
-    return formpost($GBLbasepage.'?q=reports&sq=room', $lnk, $lnk ) . 
+
+    return formpost( $_SESSION['pagelnk']['room'] , $lnk, $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('buildingid' , $buildingid) . 
         formhiddenval('roomid' , $roomid) . formhiddenval('act' , 'Refresh') . $closing;
 }
@@ -727,7 +758,8 @@ function hiddenroomkey($semid , $buildingid , $roomid) {
 function hiddencourseform($semid , $courseid , $termid , $closing = '</form>') {
     global $GBLbasepage;
     $lnk = join('_' , array('coursehid' , $semid , $courseid , $termid));
-    return formpost($GBLbasepage.'?q=reports&sq=course', $lnk, $lnk ) . 
+    
+    return formpost( $_SESSION['pagelnk']['course'] , $lnk, $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('courseid' , $courseid) . 
         formhiddenval('termid' , $termid) . formhiddenval('act' , 'Refresh') . $closing;
 }
@@ -738,7 +770,8 @@ function hiddencoursekey($semid , $courseid , $termid) {
 function hiddendiscform($semid , $deptid , $discid , $profnicks = '0' , $courseHL = '' , $closing = '</form>') {
     global $GBLbasepage;
     $lnk = join('_' , array('dischid' , $semid , $deptid , $discid));
-    return formpost($GBLbasepage.'?q=edits&sq=classes', $lnk, $lnk ) . 
+    
+    return formpost( $_SESSION['pagelnk']['edclass'] ,  $lnk ,  $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('unitid' , $deptid) . 
         formhiddenval('discid' , $discid) . 
         formhiddenval('profnicks' , $profnicks) . 
@@ -753,7 +786,8 @@ function hiddenclassform($semid , $deptid , $discid , $classid , $classname , $p
     global $GBLbasepage;
     $pagelnk = join('_' , array('dischid' , $semid , $deptid , $discid));
     $formlnk = join('_' , array('classhid' , $semid , $deptid , $discid , $classid));
-    return formpost($GBLbasepage.'?q=edits&sq=classes#class'.$classid.'div', $pagelnk, $formlnk ) . 
+    
+    return formpost( $_SESSION['pagelnk']['edclass'] . '#class'.$classid.'div', $pagelnk, $formlnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('unitid' , $deptid) . 
         formhiddenval('discid' , $discid) . 
         formhiddenval('classid' , $classid) . formhiddenval('classname' , $classname) . 
@@ -1048,12 +1082,12 @@ function formselectsql(&$any , $q , $selectname , $refval , $idkey , $valAkey , 
 }
 
 
-function highlightbegin() {
+function HLbegin() {
     global $GBLhighlightstyle;
     return "<table $GBLhighlightstyle ><tr><td>";
 }
   
-function highlightend() {
+function HLend() {
     return '</td></tr></table>';
 }
   

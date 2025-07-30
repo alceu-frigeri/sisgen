@@ -5,13 +5,14 @@ header('Content-Type: text/html; charset=utf-8');
 echo '<!DOCTYPE html>' .
     '<html lang="en">';
 
-include 'toppage/sisgen-head.php'; 
+include 'toppage/head.php'; 
         
 echo '<body> ' ;
-        
+
 include 'pages/core.php';
         
-include "toppage/sisgen-topmenu.php"; 
+include "toppage/topmenu.php"; 
+
         
 echo '<div class="container">';
   
@@ -78,7 +79,7 @@ if(isset($_SESSION['sessionhash'])){
     }
 }
   
-include 'toppage/sisgen-foot.php';
+include 'toppage/foot.php';
         
 echo '</div>' .  // <!-- /.container -->
     '</body>' .
