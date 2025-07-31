@@ -32,6 +32,22 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
                                   'id' => 'scen' ) , 
                     )
             );
+        $menu['check'] = 
+            array(
+                'hasChildren' => true , 'page' => 'home.php', 'label' => 'Verificações' , 'visible' => true , 
+                'children' => 
+                    array(
+                        'course' => 
+                            array('page'=> 'checkcourse.php', 'label' => 'Cursos' ,
+                                  'id' => 'chkcourse' ) , 
+                        'prof' => 
+                            array('page'=> 'checkprof.php', 'label' => 'Professores' ,
+                                  'id' => 'chkprof' ) , 
+                        'room' => 
+                            array('page'=> 'checkroom.php', 'label' => 'Salas' ,
+                                  'id' => 'chkroom' ) , 
+                    )
+            );
         $menu['reports'] = 
             array(
                 'hasChildren' => true , 'page' => 'home.php', 'label' => 'Relatórios' , 'visible' => true , 
@@ -49,22 +65,6 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
                         'grid' => 
                             array('page'=> 'reportgrid.php', 'label' => 'Grade Depto.' ,
                                   'id' => 'rpgrid' ) , 
-                    )
-            );
-        $menu['check'] = 
-            array(
-                'hasChildren' => true , 'page' => 'home.php', 'label' => 'Verificações' , 'visible' => true , 
-                'children' => 
-                    array(
-                        'course' => 
-                            array('page'=> 'checkcourse.php', 'label' => 'Cursos' ,
-                                  'id' => 'chkcourse' ) , 
-                        'prof' => 
-                            array('page'=> 'checkprof.php', 'label' => 'Professores' ,
-                                  'id' => 'chkprof' ) , 
-                        'room' => 
-                            array('page'=> 'checkroom.php', 'label' => 'Salas' ,
-                                  'id' => 'chkroom' ) , 
                     )
             );
         $menu['edits'] = 

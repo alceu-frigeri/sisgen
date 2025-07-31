@@ -13,7 +13,7 @@ include 'coreedit.php';
 $class_edited = false;
 $vac_edited = false;
         
-
+//vardebug($_SESSION['pagelnk'],'page link');
 
 $q = "SELECT readonly FROM semester WHERE id =  '$_POST[semid]' ;";
 $result = $GBLmysqli->dbquery($q);
@@ -175,7 +175,7 @@ if ($postedit) {
     echo "Nome Profs? ";
     echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 
-    echo "Realçar curso: ";
+    echo $GBLspc['D'] . "Realçar curso: ";
     echo formselectsql($anytmp , 
                   "SELECT `course` . * FROM `unit` AS `course` , coursedisciplines AS `cdisc` WHERE `cdisc` . `discipline_id` =  '$_POST[discid]'  AND `cdisc` . `course_id` = `course` . `id` ORDER BY name;" , 
                   'courseHL' , 
@@ -192,7 +192,7 @@ if ($postedit) {
 
     if (!$readonly) {
         if ($_POST['semid'] && $_POST['unitid'] && ($result->num_rows > 0) && $can_something ) {
-            echo  formsubmit('act' , 'Edit') . '</form>';
+            echo  $GBLspc['D'] . formsubmit('act' , 'Edit') . '</form>';
         } else {
             echo  '</form>';
         }
@@ -246,11 +246,7 @@ if ($can_class) {
 }
 $result = $GBLmysqli->dbquery($q);
   
-$anyone = 0;
-
-
 while ($classrow = $result->fetch_assoc()) {
-    $anyone = 1;
     if ($postedit) {
         echo hiddendivkey('class' , $classrow['id']);
         if($classrow['id'] == $newclassid) {

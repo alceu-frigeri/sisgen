@@ -72,7 +72,7 @@ if ($postedit & $can_prof) {
     echo formhiddenval('deptid' , $_POST['deptid']);
     echo displaysqlitem('' , 'unit' , $_POST['deptid'] , 'acronym' , 'name');
     echo formsubmit('act' , 'Cancel');
-    echo '</form>';
+    echo '</form><br>';
 } else {
     $Query = 
         "SELECT * " . 
@@ -99,8 +99,7 @@ function profdisplay($sqlrow) {
       echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBLspc['D'] . $sqlrow['name'] . $GBLspc['D'] . ' (' . $sqlrow['nickname'] . ')<br>';
 }
 
-$anyone = 0;
-$first = true;
+$firstofmany = true;
 if ($postedit & $can_prof) {
     while ($sqlrow = $result->fetch_assoc()) {
       echo formpost($thisform . targetdivkey('prof' , $sqlrow['id']));
@@ -148,18 +147,19 @@ if ($postedit & $can_prof) {
 
 } else {
     while ($sqlrow = $result->fetch_assoc()) {
-        if ($first) {
+        if ($firstofmany) {
             if ($can_prof) {
-                echo formsubmit('act' , 'Edit');
-            } 
+                echo $GBLspc['D'] .  formsubmit('act' , 'Edit') . '</form>';
+            } else {
+                echo  '</form>';
+            }
             echo '<br>';
-            $first = false;
+            $firstofmany = false;
         } 
         echo $_SESSION['profkind'][$sqlrow['profkind_id']] . $GBLspc['D'] . $sqlrow['name'] . $GBLspc['D'] . ' (' . $sqlrow['nickname'] . ')<br>';
     }
 }
 
-echo '</form>';
 echo '</div>';
   
 ?>

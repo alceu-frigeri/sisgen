@@ -30,6 +30,8 @@ class DBclass extends mysqli {
         } else {
             $err = 'Query <' . $q . '> failed: (' . $this->errno . ') ' . $this->error;
             echo '<br><b>Query' . $GBLspc['D'] . '</b>' . spanformat('smaller' , '', htmlspecialchars($q , ENT_QUOTES))  . '<b>' . $GBLspc['T'] . 'FAILED' . spanformat('' , 'red',  htmlspecialchars($this->error , ENT_QUOTES)) . '</b></p>';
+            $err = $this->real_escape_string($err);
+            $logOK['action'] = $this->real_escape_string($logOK['action']);
             $this->eventlog(array('level'=>'DBERROR' ,   'action'=> $logOK['action'] . '(dbquery)', 'str' => $err, 'xtra' => 'dbconnect.php'));
         }
         return $result;
@@ -97,10 +99,10 @@ class DBclass extends mysqli {
                         " '$logdata[xtra]'  , " . 
                         " '$logdata[dataorg]'  , " . 
                         " '$logdata[datanew]'  ) ; " ;
-                        
+        
         $result = $this->dbquery( $Query );
         if(!$result) {
-            $str = "<br>LOG execute failed: ( $stmt->errno ) $result->error "; 
+            $str = "<br>LOG execute failed: ( $result->errno ) $result->error "; 
             echo $str;
             writeLogFile("$str \n $logline \n"); // last resort !!!    
         }    
@@ -265,6 +267,19 @@ class DBclass extends mysqli {
             if($sqlrow['can_scenery'] == '1') {
                 $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
             }
+            if($sqlrow['can_room'] == '1') {
+                $BQuery = 
+                        "SELECT DISTINCT `building` . * " .
+                        "FROM `building` , `buildingrole` "  .
+                        "WHERE `building`.`id` = `buildingrole`. `building_id` " .
+                                "AND `buildingrole` . `role_id` = $sqlrow[id] ; " ;
+                $buildresult = $this->dbquery( $BQuery );
+                while ($sqlbuilding = $buildresult->fetch_assoc()) {
+                        $_SESSION['role']['building'][$sqlbuilding['id']]['can_room'] = true ;
+                }
+                $buildresult->close();
+            }
+            
         }
         $result->close();
 

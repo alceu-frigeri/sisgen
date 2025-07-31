@@ -71,7 +71,7 @@ if ($postedit & $can_discipline) {
     echo formhiddenval('orderby' , $_POST['orderby']);
     echo displaysqlitem('' , 'unit' , $_POST['unitid'] , 'acronym' , 'name');
     echo formsubmit('act' , 'Cancel');
-    echo '</form>';
+    echo '</form><br>';
 } else {
 
     echo formselectsql($anytmp , 
@@ -116,7 +116,7 @@ $Query =
     "ORDER BY $ordby ; " ;
 
 $result = $GBLmysqli->dbquery( $Query );
-$anyone = 0;
+
 if ($postedit & $can_discipline) {
     while ($sqlrow = $result->fetch_assoc()) {
         $discdeptcode = substr($sqlrow['code'] , 0 , 5);
@@ -180,7 +180,6 @@ if ($postedit & $can_discipline) {
 
 } else {
     while ($sqlrow = $result->fetch_assoc()) {
-        $anyone = 1;
         if ($firstofmany) {
             $firstofmany = false;
             if ($can_discipline) {

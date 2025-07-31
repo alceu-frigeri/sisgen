@@ -721,54 +721,53 @@ function pagereload($page) {
 }
 
 function formpost($action , $target = null , $formname = null) {
-    if($target) {$target = ' target = "'.$target.'"';};
-    if($formname) {$formname = ' name="'.$formname.'"';};
-    return '<form method="post" enctype="multipart/form-data" action="' . $action . '"'.$target . $formname . '>';
+    if($target) {$target = " target = '$target' " ; } ;
+    if($formname) {$formname = " name='$formname' " ; } ;
+    return "<form method='post' enctype='multipart/form-data' action='$action' $target $formname >";
 }
   
   
 function hiddenformlnk($formkey , $textlink) {
-    return '<a href = "javascript:document.forms['."'" .  $formkey .  "'" . '].submit()">' . $textlink .'</a>';
+    return "<a href = \"javascript:document.forms['$formkey'].submit()\">$textlink</a>";
 }
   
 function hiddenprofform($semid , $deptid , $profid , $closing = '</form>') {
-    global $GBLbasepage;
     $lnk = join('_' , array('profhid' , $semid , $deptid , $profid));
     
     return formpost( $_SESSION['pagelnk']['prof'] , $lnk , $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('deptid' , $deptid) . 
         formhiddenval('profid' , $profid) . formhiddenval('act' , 'Refresh') . $closing;
 }
+
 function hiddenprofkey($semid , $deptid , $profid) {
     return join('_' , array('profhid' , $semid , $deptid , $profid));
 }
   
 function hiddenroomform($semid , $buildingid , $roomid , $closing = '</form>') {
-    global $GBLbasepage;
     $lnk = join('_' , array('roomhid' , $semid , $buildingid , $roomid));
 
     return formpost( $_SESSION['pagelnk']['room'] , $lnk, $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('buildingid' , $buildingid) . 
         formhiddenval('roomid' , $roomid) . formhiddenval('act' , 'Refresh') . $closing;
 }
+
 function hiddenroomkey($semid , $buildingid , $roomid) {
     return join('_' , array('roomhid' , $semid , $buildingid , $roomid));
 }
 
 function hiddencourseform($semid , $courseid , $termid , $closing = '</form>') {
-    global $GBLbasepage;
     $lnk = join('_' , array('coursehid' , $semid , $courseid , $termid));
     
     return formpost( $_SESSION['pagelnk']['course'] , $lnk, $lnk ) . 
         formhiddenval('semid' , $semid) . formhiddenval('courseid' , $courseid) . 
         formhiddenval('termid' , $termid) . formhiddenval('act' , 'Refresh') . $closing;
 }
+
 function hiddencoursekey($semid , $courseid , $termid) {
     return join('_' , array('coursehid' , $semid , $courseid , $termid));
 }
   
 function hiddendiscform($semid , $deptid , $discid , $profnicks = '0' , $courseHL = '' , $closing = '</form>') {
-    global $GBLbasepage;
     $lnk = join('_' , array('dischid' , $semid , $deptid , $discid));
     
     return formpost( $_SESSION['pagelnk']['edclass'] ,  $lnk ,  $lnk ) . 
@@ -778,12 +777,12 @@ function hiddendiscform($semid , $deptid , $discid , $profnicks = '0' , $courseH
         formhiddenval('courseHL' , $courseHL) . 
         formhiddenval('act' , 'Refresh') . $closing;
 }
+
 function hiddendisckey($semid , $deptid , $discid) {
     return join('_' , array('dischid' , $semid , $deptid , $discid));
 }
   
 function hiddenclassform($semid , $deptid , $discid , $classid , $classname , $profnicks = '0' , $courseHL = '' , $closing = '</form>') {
-    global $GBLbasepage;
     $pagelnk = join('_' , array('dischid' , $semid , $deptid , $discid));
     $formlnk = join('_' , array('classhid' , $semid , $deptid , $discid , $classid));
     
@@ -795,6 +794,7 @@ function hiddenclassform($semid , $deptid , $discid , $classid , $classname , $p
         formhiddenval('courseHL' , $courseHL) . 
         formhiddenval('act' , 'Edit') . $closing;
 }
+
 function hiddenclasskey($semid , $deptid , $discid , $classid) {
     return join('_' , array('classhid' , $semid , $deptid , $discid , $classid));
 }    
@@ -920,35 +920,15 @@ function formsessionselect($session , $fieldname , &$cnt , $desc = null) {
         if ($cnt == 7) {
             $cnt = 1;
             $rtntext .= '</tr><tr>';
-            //echo '</tr><tr>';
         }
         if ($desc) {
-            $rtntext .= '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
-            //echo '<td style="width:170px' . $style . '"><b>' . $selectname .':</b> '. $_SESSION[$desc][$selectid].'</td>';
+            $desctext = $_SESSION[$desc][$selectid];
+            $rtntext .= "<td style='width:170px $style'><b>$selectname:</b> $desctext</td>";
         } else {
-            
-            $rtntext .=  '<th style="width:170px' . $style . '">' . 
-                '<input type="checkbox" name="' . 
-                $fieldname . $selectid . 
-                '" value="' . $selectid . 
-                '"' . $checked . 
-                ' > <label for="' . 
-                $fieldname . $selectid .
-                '">' . 
-                $selectname . 
-                '</label></th>';
-                /*
-            echo '<th style="width:170px' . $style . '">' . 
-                '<input type="checkbox" name="' . 
-                $fieldname . $selectid . 
-                '" value="' . $selectid . 
-                '"' . $checked . 
-                ' > <label for="' . 
-                $fieldname . $selectid .
-                '">' . 
-                $selectname . 
-                '</label></th>';
-                */
+            $rtntext .=  "<th style='width:170px $style'>" . 
+                "<input type='checkbox' name='${fieldname}${selectid}' value='$selectid' $checked>" .
+                "<label for='${fieldname}${selectid}'>$selectname</label>" . 
+                "</th>";
         }
 
     }

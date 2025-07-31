@@ -1,6 +1,5 @@
   
 <?php 
-// TODO: LOL error in logic. no unitid...
 include 'bailout.php';
 
 $GBLmysqli->postsanitize();
@@ -8,7 +7,7 @@ $thisform = $_SESSION['pagelnk']['edroom'];
 formretainvalues(array('buildingid'));
   
         
-$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_room']);
+$can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role']['building'][$_POST['buildingid']] && $_SESSION['role']['building'][$_POST['buildingid']]['can_room']);
 
 
 $postedit = false;
@@ -70,7 +69,7 @@ if ($postedit & $can_room) {
     echo formhiddenval('buildingid' , $_POST['buildingid']);
     echo displaysqlitem('' , 'building' , $_POST['buildingid'] , 'acronym' , 'name');
     echo formsubmit('act' , 'Cancel');
-    echo '</form>';
+    echo '</form><br>';
 } else {
 
     echo formselectsql($anytmp , 
@@ -100,7 +99,7 @@ $Query =
     "ORDER BY `name` ; " ;
 
 $result = $GBLmysqli->dbquery( $Query );
-$anyone = 0;
+
 if ($postedit & $can_room) {
     while ($sqlrow = $result->fetch_assoc()) {
         echo formpost($thisform);
@@ -108,7 +107,7 @@ if ($postedit & $can_room) {
         if ($_POST['roomid'] == $sqlrow['id']) {
             if($_POST['act'] == 'Submit') {
             echo HLbegin();
-            roomdisplay($sqlrow)
+            roomdisplay($sqlrow);
             echo HLend();
             } else {
             $roomkey = 'room' . $sqlrow['id'] ; 
@@ -121,7 +120,7 @@ if ($postedit & $can_room) {
             echo HLend();
             } 
         } else {
-            roomdisplay($sqlrow)
+            roomdisplay($sqlrow);
         }
         echo '</form>';
     }
@@ -131,13 +130,13 @@ if ($postedit & $can_room) {
 } else {
     $firstofmany = true;
     while ($sqlrow = $result->fetch_assoc()) {
-        $anyone = 1;
         if ($firstofmany) {
             $firstofmany = false;
             if ($can_room) {
-                echo formsubmit('act' , 'Edit') ;
+                echo formsubmit('act' , 'Edit') . '</form><br>' ;
+            } else {
+                echo  '</form><br>' ;
             }
-            echo '<br>';
         }
         echo $sqlrow['name']. $GBLspc['D'] . $_SESSION['roomtype'][$sqlrow['roomtype_id']] . $GBLspc['D'];
         if ($sqlrow['capacity']) {
@@ -147,7 +146,6 @@ if ($postedit & $can_room) {
     }
 }
 
-echo '</form>';
   
 echo '</div>';
 

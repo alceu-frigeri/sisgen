@@ -5,11 +5,16 @@ include 'bailout.php';
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['admrole'];
 
-        
+//vardebug($_SESSION);
 
         
 $bfields = array('isadmin');
 $canfields = array('edit' , 'dupsem' , 'class' , 'addclass' , 'scenery' , 'vacancies' , 'disciplines' , 'coursedisciplines' , 'prof' , 'room' , 'viewlog');
+
+if(!$_SESSION['buildings']) {
+    $Query = "SELECT * FROM `building` WHERE `mark` = 1 ORDER BY `acronym` ; ";
+    $GBLmysqli->dbvaluesloop($Query,'buildings','id','acronym');
+}
 
 if ($_SESSION['role']['isadmin']) {
     switch($_POST['act']) {
@@ -117,6 +122,26 @@ if ($_SESSION['role']['isadmin']) {
             "VALUES ( '$_POST[roleid]'  ,  '$_POST[newsceneryid]' ) ; " ;
         $GBLmysqli->dbquery($Query);
         $_POST['sceneryroleid'] = null;
+        //$_POST['roleid'] = null;
+        $_POST['act'] = 'Submit';
+        break;
+    case 'Add Building':
+        $Query = 
+            "INSERT INTO `buildingrole` (`role_id` , `building_id`) " .
+            "VALUES ( '$_POST[roleid]'  ,  '$_POST[newbuildingid]' ) ; " ;
+        $GBLmysqli->dbquery($Query);
+        $_POST['buildingroleid'] = null;
+        //$_POST['roleid'] = null;
+        $_POST['act'] = 'Submit';
+        break;
+    case 'Remove Building':
+        if ($_POST['buildingdelete']) {
+            $Query = 
+                "DELETE FROM `buildingrole` " .
+                "WHERE `id` =  '$_POST[buildingroleid]' ; " ;
+            $GBLmysqli->dbquery($Query);
+        }
+        $_POST['buildingroleid'] = null;
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
@@ -234,6 +259,32 @@ if($_SESSION['role']['isadmin']) {
         echo formsubmit('act' , 'Add Scenery');
         echo '</form><p><p>';
     
+
+        $Query = 
+            "SELECT `building` . * , " .
+            "`buildingrole` . `id` AS `buildingroleid` " .
+            "FROM `buildingrole` , `building` " .
+            "WHERE `buildingrole` . `building_id` = `building` . `id` " .
+            "AND `buildingrole` . `role_id` = '$rolerow[id]' ; " ;
+        $sqlbuilding = $GBLmysqli->dbquery($Query);
+        while ($buildingrow = $sqlbuilding->fetch_assoc()) {
+            echo formpost($thisform . '#role' . $rolerow['id'] . 'div');
+            echo formhiddenval('roleid' , $rolerow['id']);
+            echo formhiddenval('buildingroleid' , $buildingrow['buildingroleid']);
+                echo $GBLspc['D'] . ' ' . $buildingrow['acronym'] . ' / ' . $buildingrow['name'];
+                echo $GBLspc['D'] . 'Remove?';
+                echo formselectsession('buildingdelete' , 'bool' , 0);
+                echo formsubmit('act' , 'Remove Building')  . '<br>';
+            echo '</form>';
+        }
+        echo formpost($thisform . '#role' . $rolerow['id'] . 'div');
+        echo formhiddenval('roleid' , $rolerow['id']);
+        echo formselectsession('newbuildingid' , 'buildings' , 0);
+        echo formsubmit('act' , 'Add Building');
+        echo '</form><p><p>';
+
+
+
     }
   
     

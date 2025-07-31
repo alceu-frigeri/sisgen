@@ -58,13 +58,12 @@ function unitdisplay($sqlrow) {
 
 // course, term
 $result = $GBLmysqli->dbquery( "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `name` ASC;" );
-$anyone = 0;
   
 if ($postedit & $can_edit) {
-  echo formsubmit('act' , 'Cancel');
+  echo formsubmit('act' , 'Cancel') . '</form><br>';
 } else {
     if ($can_edit) {
-    echo formsubmit('act' , 'Edit');
+    echo formsubmit('act' , 'Edit') . '</form><br>';
   }
 }
 
@@ -111,7 +110,6 @@ while ($sqlrow = $result->fetch_assoc()) {
 }
 echo '</table>';
 
-echo '</form>';
 echo '</div>';
   
 

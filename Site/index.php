@@ -66,6 +66,7 @@ if(isset($_SESSION['sessionhash'])){
     case 'login': // login (and assigning a session hash to it)
         //echo '<br> account login<br>';
         if ($GBLmysqli->maillogincheck($_POST['emailA'],$_POST['passA'])) {
+            unset($_SESSION['pagelnk']);
             include 'pages/usrhome.php';
             echo pagereload($GBLbasepage);
         } else {

@@ -41,12 +41,14 @@ if(!($_SESSION['term'])) {
 switch ($_POST['act']) {
 case 'Insert':
     if ($can_coursedisciplines) {
+        if ($_POST['discid'] != 0) {
         $Query = 
                 "INSERT INTO `coursedisciplines` (`course_id` , `term_id` , `discipline_id` , `disciplinekind_id`) " . 
                 "VALUES ( '$_POST[courseid]'  ,  '$_POST[termid]'  ,  '$_POST[discid]'  ,  '$_POST[newdisckind]' ) ; " ;
 
         $GBLmysqli->dbquery( $Query );
         $_POST['coursediscid'] = $GBLmysqli->insert_id;
+        }
         $_POST['act'] = 'Submit';
     }
     break;
@@ -88,7 +90,7 @@ if($postedit & $can_coursedisciplines) {
     echo displaysqlitem('-- ' , 'term' , $_POST['termid'] , 'name');
     echo formhiddenval('orderby' , $_POST['orderby']);
     echo formsubmit('act' , 'Cancel');
-    echo '</form>';
+    echo '</form><br>';
 } else {
                 
     echo formselectsql($anytmp , 
@@ -103,11 +105,11 @@ if($postedit & $can_coursedisciplines) {
                   $_POST['termid'] , 
                   'id' , 
                   'name');
-    echo "Ordenado por:  "; 
+    echo " Ordenado por:  "; 
     echo formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 }
   
-echo '<br>'; 
+//echo '<br>'; 
 
 if ($_POST['orderby'] == 0) {
   $ordby = 'discipline.name';
@@ -136,7 +138,8 @@ $Query =
         "ORDER BY $ordby ; " ;
         
 $result = $GBLmysqli->dbquery( $Query );
-$anyone = 0;
+
+$firstofmany = true;
 if ($postedit & $can_coursedisciplines) {
     while ($sqlrow = $result->fetch_assoc()) {
       echo formpost($thisform);
@@ -184,6 +187,7 @@ if ($postedit & $can_coursedisciplines) {
     echo formselectsql($anytmp , $q , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
 
     $q = "SELECT * FROM `discipline` WHERE `dept_id` =  '$_POST[unitid]'  ORDER BY `name`";
+    $anyone = 0;
     echo formselectsql($anyone , $q , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
     
     echo formselectsession('newdisckind' , 'disckind' , 1);
@@ -196,19 +200,19 @@ if ($postedit & $can_coursedisciplines) {
 
 } else {
     while ($sqlrow = $result->fetch_assoc()) {
-        $anyone = 1;
+        if ($firstofmany) {
+                $firstofmany = false;
+                if($can_coursedisciplines) {
+                        echo $GBLspc['D'] . formsubmit('act' , 'Edit') .'</form><br>'  ;
+                } else {
+                        echo '</form><br>'  ;
+                
+                }
+        }
         echo $sqlrow['code'] . '  ' . $sqlrow['name']. ' (' . $sqlrow['disckindcode'] . ')<br>';
     }
 }
 
-if ($postedit & $can_coursedisciplines) {
-} else {
-    if ($anyone & $can_coursedisciplines) {
-        echo formsubmit('act' , 'Edit');
-    }
-}
-
-echo '</form>';
 echo '</div>';
   
 
