@@ -267,13 +267,13 @@ footer {
     vertical-align: center;
     padding: 5px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #fff;
 }
 
 #regform tr {
     padding: 5px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #fff;
 }
 
 #regform th {
@@ -284,6 +284,11 @@ footer {
     border-bottom: 1px solid #ddd;
 }
 
+#regsubmit tr {
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid #00d;
+}
 
 #proceedings {
     border-collapse: collapse;

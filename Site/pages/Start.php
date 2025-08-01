@@ -27,22 +27,22 @@
 <tr>
 <td style='text-align:right; width:30%'>Nome:</td><td style='text-align:left'><input type='text' name='name' id='name' size='30' pattern='<?php echo $GBLnamepattern; ?>' required /></td>
 </tr>
-<tr>
+
 <tr>
 <td style='text-align:right; width:30%'>Sobrenome:</td><td style='text-align:left'><input type='text' name='familyname' id='familyname' size='30' pattern='<?php echo $GBLnamepattern; ?>' required /></td>
 </tr>
-<tr>
+
 <tr>
 <td style='text-align:right; width:30%'>Email:</td><td style='text-align:left'><input type='email' name='emailA' id='emailA' size='30' required <?php echo $emailcheck; ?> /><span id='emailAdiff' style='color:white'>(diff.)</span></td>
 </tr>
-<tr>
+
 <tr>
 <td style='text-align:right; width:30%'>Email (Confirmação):</td><td style='text-align:left'><input type='email' name='emailB' id='emailB' size='30' required <?php echo $emailcheck; ?> /><span id='emailBdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr>
 <td style='text-align:right; width:30%'>Senha:</td><td style='text-align:left'><input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpasswdpattern; ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> /><span id='passAdiff' style='color:white'>(diff.)</span></td>
 </tr>
-<tr>
+
 <tr>
 <td style='text-align:right; width:30%'>Senha (Confirmação):</td><td style='text-align:left'><input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpasswdpattern; ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> /><span id='passBdiff' style='color:white'>(diff.)</span></td>
 </tr>
