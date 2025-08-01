@@ -264,9 +264,9 @@ class DBclass extends mysqli {
             } else {
                 $_SESSION['role'][$sqlrow['unit_id']] = $sqlrow;
             }
-            if($sqlrow['can_scenery'] == '1') {
-                $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
-            }
+//            if($sqlrow['can_scenery'] == '1') {
+//                $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
+//            }
             if($sqlrow['can_room'] == '1') {
                 $BQuery = 
                         "SELECT DISTINCT `building` . * " .
@@ -324,7 +324,8 @@ class DBclass extends mysqli {
             "WHERE `scenery` . `id` = `sceneryrole` . `scenery_id` " .
                     "AND `sceneryrole` . `role_id` = `accrole` . `role_id` " .
                     "AND `accrole` . `role_id` = `role` . `id` " .
-                    "AND  `accrole` . `account_id` = '$_SESSION[userid]' ; " ;
+                    "AND  `accrole` . `account_id` = '$_SESSION[userid]'  " .
+            "ORDER BY `name` ; " ; 
 
         $result = $this->dbquery( $Query );
         while ($sqlrow = $result->fetch_assoc()) {
@@ -335,7 +336,7 @@ class DBclass extends mysqli {
             $_SESSION['role.scen'][$sqlrow['role_id']]['can_scenery'] = $sqlrow['can_scenery'];
             if ($sqlrow['can_scenery']) {
                 $_SESSION['scen.role'][$sqlrow['id']] = $sqlrow['can_scenery'];
-                $_SESSION['scen.byroles'][$sqlrow['role_id']][$sqlrow['id']] = $sqlrow['name'];
+                //$_SESSION['scen.byroles'][$sqlrow['role_id']][$sqlrow['id']] = $sqlrow['name'];
             }
         }
         $result->close();
@@ -371,7 +372,8 @@ class DBclass extends mysqli {
             "WHERE `role` . `id` = `accrole` . `role_id` " . 
                     "AND `accrole` . `account_id` = $_SESSION[userid] " . 
                     "AND `role` . `unit_id` = `r` . `unit_id` " . 
-                    "AND `r` . `can_scenery` = '1' ; " ;
+                    "AND `r` . `can_scenery` = '1' " .
+                    "AND `r` . `isadmin` = '0' ; "    ;
         $result = $this->dbquery( $Query );
         while ($sqlrow = $result->fetch_assoc()) {
             $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
