@@ -17,7 +17,8 @@
     <link href="css/custom.css" rel="stylesheet">
     
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+<!-- <script src="js/jquery.js"></script>  -->
+    <script src="js/jquery-3.7.1.slim.min.js"></script>
 
     <!-- jQuery Mask (here just for phones...) -->
     <!-- see https://igorescobar.github.io/jQuery-Mask-Plugin/ -->
