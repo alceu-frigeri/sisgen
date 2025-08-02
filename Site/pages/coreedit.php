@@ -304,7 +304,7 @@ function formclassdisplay ($classrow , $vacedit = false) {
     global $GBLspc;
     
     $courseHL = false;
-    if ($_POST['courseHL']) {
+    if ($_POST['courseHL'] == 1) {
         $q = 
                 "SELECT (`askednum` + `askedreservnum`+ `givennum` + `givenreservnum`) AS `total` " .
                 "FROM `vacancies` " .
@@ -569,7 +569,7 @@ function repclassinscen ($classlog) {
     global $GBLmysqli;
     global $newclassid;
         
-    if ($_POST['addclass']) {
+    if ($_POST['addclass'] == 1) {
         if ($_POST['newclassname']) {
             $q = 
                 "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `scenery` , `comment`) " .
@@ -609,7 +609,7 @@ function repclassinscen ($classlog) {
 function addclassinscen ($classlog) {
     global $GBLmysqli;
     global $newclassid;
-    if ($_POST['addclass']) {
+    if ($_POST['addclass'] == 1) {
         if ($_POST['newclassname']) {
             $q = 
                 "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `scenery`) " .
@@ -650,7 +650,7 @@ function addclass ($classlog) {
     global $GBLmysqli;
     global $newclassid;
 
-    if ($_POST['addclass']) {
+    if ($_POST['addclass'] == 1) {
         if ($_POST['newclassname']) {
             $q = 
                 "INSERT INTO `class` (`name` , `sem_id` , `discipline_id`) " .
@@ -685,7 +685,7 @@ function addclass ($classlog) {
 function repclass ($classlog) {
     global $GBLmysqli;
     global $newclassid;
-    if ($_POST['addclass']) {
+    if ($_POST['addclass'] == 1) {
         if ($_POST['newclassname']) {
             $q = 
                 "INSERT INTO `class` (`name` , `sem_id` , `discipline_id` , `comment`) " .

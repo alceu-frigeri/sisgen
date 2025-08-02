@@ -20,7 +20,7 @@ echo formselectsql($anytmp ,
               'id' , 
               'name');
   
-echo 'Curso:'; 
+echo  $GBLspc['T'] . 'Curso:'; 
 echo formselectsql($anytmp , 
               "SELECT * FROM unit WHERE `iscourse` = '1' ORDER BY unit . acronym;" , 
               'courseid' , 

@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['edcourse'];
-formretainvalues(array('courseid' , 'termid' , 'orederby'));
+formretainvalues(array('courseid' , 'termid' , 'orderby'));
   
 
 $can_coursedisciplines = ($_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['courseid']] & $_SESSION['role'][$_POST['courseid']]['can_coursedisciplines']));
@@ -105,7 +105,7 @@ if($postedit & $can_coursedisciplines) {
                   $_POST['termid'] , 
                   'id' , 
                   'name');
-    echo " Ordenado por:  "; 
+    echo $GBLspc['T'] . "Ordenado por:  "; 
     echo formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 }
   

@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['course'];
-formretainvalues(array('semid' , 'courseid' , 'termid'));
+formretainvalues(array('semid' , 'courseid' , 'termid' , 'profnicks' , 'reqonly'));
 
 echo  '<div class = "row">' .
     '<h2>Grade p/Curso e Etapa </h2>' .
@@ -30,13 +30,20 @@ echo formselectsql($anytmp ,
               $_POST['termid'] , 
               'id' , 
               'name');
-echo " Somente OB/AL ? ";
+if ($_POST['reqonly'] == '1') {
+        echo spanfmtbegin('','darkgreen',null,true);
+        $fmtend=spanfmtend();
+} else {
+        $fmtend=' ';
+}
+echo $GBLspc['D'] . "Somente OB/AL ? ";
 echo formselectsession('reqonly' , 
                   'bool' , 
                   $_POST['reqonly'] , 
                   false , 
                   true);
-echo " Nome Profs ? ";
+echo $fmtend;
+echo $GBLspc['D'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 
                   'bool' , 
                   $_POST['profnicks'] , 
@@ -46,7 +53,7 @@ echo formsceneryselect();
 echo '</form>';
   
 // semester, course, term
-if ($_POST['termid']) {
+if ( isset($_POST['termid']) && isset($_POST['courseid']) ) {
     echo '<p>';
 
     $inselected = inscenery_sessionlst('sceneryselected');

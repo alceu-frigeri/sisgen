@@ -24,7 +24,7 @@ echo formselectsql($anytmp ,
               'id' , 
               'acronym');
 echo formselectsql($anytmp , 
-              "SELECT prof . * FROM prof , unit , profkind WHERE prof . dept_id = unit . id AND prof . profkind_id = profkind . id AND profkind . acronym <> '-none-' AND unit . id = '$_POST[deptid]' ORDER BY prof . name;" , 
+              "SELECT prof . * FROM prof , unit , profkind WHERE prof . dept_id = unit . id AND prof . profkind_id = profkind . id AND profkind . acronym <> '-none-' AND unit . id = '$_POST[deptid]' AND unit . isdept = 1 AND unit . mark = 1 ORDER BY prof . name;" , 
               'profid' , 
               $_POST['profid'] , 
               'id' , 
@@ -55,6 +55,8 @@ if ($_POST['profid']) {
                 "AND `classsegment` . `class_id` = `class` . `id` " . 
                 "AND `classsegment` . `prof_id` = `prof` . `id` " . 
                 "AND `discipline` . `dept_id` = `discdept` . `id` " . 
+                "AND `unit` . `isdept` = '1' " . 
+                "AND `unit` . `mark` = '1' " .
                 "AND `unit` . `id` = '$_POST[deptid]' " . 
                 "AND `semester` . `id` = '$_POST[semid]' " . 
                 "AND `prof` . `id` = '$_POST[profid]' " . 

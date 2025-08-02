@@ -822,9 +822,9 @@ function formhiddenval($field , $val) {
 
 function formretainvalues($fields) {
     foreach ($fields as $field) {
-        if ($_POST[$field]) {
+        if (isset($_POST[$field])) {
             $_SESSION['retain'][$field] = $_POST[$field];
-        } elseif ($_SESSION['retain'][$field]) {
+        } elseif (isset($_SESSION['retain'][$field])) {
             $_POST[$field] = $_SESSION['retain'][$field];
         }
     }
@@ -892,10 +892,10 @@ function scenery_sql($inscenery) {
 
 
 function formsessionselectinit($fieldname , $fieldlist) {
-    if ($_POST[$fieldname]) {
+    if (isset($_POST[$fieldname])) {
         unset($_SESSION[$fieldname]);
         foreach ($_SESSION[$fieldlist] as $selectid => $selectname) {
-            if ($_POST[$fieldname.$selectid]) {
+            if (isset($_POST[$fieldname.$selectid])) {
                 $_SESSION[$fieldname][$selectid] = $selectname;
             }
         }  

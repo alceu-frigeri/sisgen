@@ -13,13 +13,13 @@ echo '<div class = "row">' .
 echo formpost($thisform);
 
 echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
+              "SELECT * FROM `semester` ORDER BY `semester` . `name` DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
 echo formselectsql($anytmp , 
-              "SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit . name;" , 
+              "SELECT * FROM `unit` WHERE `isdept` = 1 AND `mark` = 1 ORDER BY `unit` . `name` ; " , 
               'deptid' , 
               $_POST['deptid'] , 
               'id' , 
@@ -34,13 +34,15 @@ $inselected = inscenery_sessionlst('sceneryselected');
 list($qscentbl , $qscensql) = scenery_sql($inselected);
 
 $Query = 
-        "SELECT DISTINCT prof . * " .
-        "FROM prof , unit , profkind " .
-        "WHERE prof . dept_id = unit . id  " . 
-                "AND prof . profkind_id = profkind . id " . 
-                "AND profkind . acronym <> '-none-' " . 
-                "AND unit . id = '$_POST[deptid]' " .
-        "ORDER BY prof . name ; " ;
+        "SELECT DISTINCT `prof` . * " .
+        "FROM `prof` , `unit` , `profkind` " .
+        "WHERE `prof` . `dept_id` = `unit` . `id`  " . 
+                "AND `prof` . `profkind_id` = `profkind` . `id` " . 
+                "AND `profkind` . `acronym` <> '-none-' " . 
+                "AND `unit` . `id` = '$_POST[deptid]' " .
+                "AND  `isdept` = '1' " .
+                "AND `mark` = '1'  " .
+        "ORDER BY `prof` . `name` ; " ;
 
 $profsql = $GBLmysqli->dbquery( $Query  );
 while ($profrow = $profsql->fetch_assoc()) {

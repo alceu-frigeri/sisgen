@@ -72,7 +72,8 @@ if ($postedit & $can_room) {
     echo '</form><br>';
 } else {
 
-    echo formselectsql($anytmp , 
+    echo 'Prédio: ' . 
+        formselectsql($anytmp , 
                   "SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;" , 
                   'buildingid' , 
                   $_POST['buildingid'] , 

@@ -13,13 +13,13 @@ echo '<div class = "row">' .
 echo formpost($thisform);
 
 echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY name DESC;" , 
+              "SELECT * FROM `semester` ORDER BY `name` DESC;" , 
               'semid' , 
               $_POST['semid'] , 
               'id' , 
               'name');
 echo formselectsql($anytmp , 
-              "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
+              "SELECT * FROM `unit` WHERE `iscourse` = '1' ORDER BY `unit` . `name` ; " , 
               'courseid' , 
               $_POST['courseid'] , 
               'id' , 
@@ -59,6 +59,7 @@ while ($termrow = $termsql->fetch_assoc()) {
                 "AND `class` . `discipline_id` = `discipline` . `id` " . 
                 "AND `class` . `sem_id` = `semester` . `id` " . 
                 "AND `classsegment` . `class_id` = `class` . `id` " . 
+                "AND `iscourse` = '1' " . 
                 "AND `unit` . `id` = '$_POST[courseid]' " . 
                 "AND `term` . `id` = '$termrow[id]' " . 
                 "AND `semester` . `id` = '$_POST[semid]' " . 

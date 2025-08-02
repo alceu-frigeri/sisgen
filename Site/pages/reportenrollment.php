@@ -13,7 +13,8 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-echo formselectsql($anytmp , 
+echo 
+        formselectsql($anytmp , 
               "SELECT * FROM `unit`  WHERE (`isdept` = '1' AND `mark` = '1') OR (`iscourse` = '1') ORDER BY `isdept` DESC, `acronym` ASC;" , 
               'deptid' , 
               $_POST['deptid'] , 

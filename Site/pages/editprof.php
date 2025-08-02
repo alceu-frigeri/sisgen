@@ -80,14 +80,16 @@ if ($postedit & $can_prof) {
         "WHERE `isdept` = '1' " . 
                 "AND `mark` = '1' " . 
         "ORDER BY unit . acronym ; " ;
-    echo formselectsql($anytmp , $Query , 'deptid' , $_POST['deptid'] , 'id' ,  'acronym');
+    echo 'Dept.: ' . formselectsql($anytmp , $Query , 'deptid' , $_POST['deptid'] , 'id' ,  'acronym');
 }
   
 // course, term
 $Query = 
-        "SELECT * " .
-        "FROM   `prof` " .
+        "SELECT `prof` . * " .
+        "FROM   `prof` ,  `unit`" .
         "WHERE `dept_id` = '$_POST[deptid]' " .
+                "AND `unit` . `id` = `dept_id` " . 
+                "AND `unit` . `mark` = '1' " . 
         "ORDER BY `profkind_id` , `name` ; " ;
 
 $result = $GBLmysqli->dbquery( $Query );

@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['room'];
-formretainvalues(array('semid' , 'buildingid' , 'roomid'));
+formretainvalues(array('semid' , 'buildingid' , 'roomid','profnicks'));
   
 
 echo '<div class = "row">' .
@@ -32,7 +32,7 @@ echo formselectsql($anytmp ,
               $_POST['roomid'] , 
               'id' , 
               'acronym');
-echo "Nome Profs ? ";
+echo $GBLspc['D'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 echo  '<br>';
   

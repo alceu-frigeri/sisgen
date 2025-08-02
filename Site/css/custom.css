@@ -81,7 +81,7 @@ hr {
 
 .menu-active>a{ 
 /*    background: #fbb03d;*/
-    background: #1766aa;  /*#1766aa;*/
+    /*background: #1766aa;*/  /*#1766aa;*/
     color: #FFF !important;
     /*font-weight: bold;*/
 }
@@ -127,8 +127,8 @@ hr {
     background: #07457a;
 }
 
-.navbar-inverse .navbar-nav>li:hover, .navbar-inverse .navbar-nav>li:focus{
-    background: #1766aa;
+.navbar-inverse .navbar-nav>li:hover{
+    /*background: #1766aa;*/
      color: #FFF !important;
     /*font-weight: bold;*/
 }

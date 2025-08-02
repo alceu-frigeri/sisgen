@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['eddisc'];
-formretainvalues(array('unitid' , 'orederby'));
+formretainvalues(array('unitid' , 'orderby'));
   
   
 $can_discipline = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
@@ -74,14 +74,14 @@ if ($postedit & $can_discipline) {
     echo '</form><br>';
 } else {
 
-    echo formselectsql($anytmp , 
+    echo 'Dept.: ' .
+        formselectsql($anytmp , 
                   "SELECT * FROM unit  ORDER BY unit . mark DESC , unit . iscourse ASC, unit . acronym ASC;" , 
                   'unitid' , 
                   $_POST['unitid'] , 
                   'id' , 
                   'acronym');
-    echo "Ordenado por:  ";
-    echo formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
+    echo $GBLspc['D'] . "Ordenado por:  " . formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 
     $firstofmany = true;
 

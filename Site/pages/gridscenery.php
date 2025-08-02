@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['scen'];
-formretainvalues(array('semid' , 'allscenery' , 'sceneryid'));
+formretainvalues(array('semid' , 'allscenery' , 'sceneryid' , 'profnicks'));
       
 echo '<div class = "row">' .
     '<h2>Grade de Disciplinas p/ Cenário </h2>' .
@@ -17,9 +17,9 @@ echo formselectsql($anytmp ,
               $_POST['semid'] , 
               'id' , 
               'name');
-echo " Todos ? ";
+echo $GBLspc['T'] . "Todos ? ";
 echo formselectsession('allscenery' , 'bool' , $_POST['allscenery'] , false , true);        
-
+echo  $GBLspc['T'] . 'cenário: ' ;
 if($_SESSION['role']['isadmin']) {
     echo formselectsql($anytmp , 
                   "SELECT DISTINCT scen . * FROM scenery scen ORDER BY name;" , 
@@ -33,7 +33,8 @@ if($_SESSION['role']['isadmin']) {
     } else {
         $Qallscen = '';
     }
-    echo formselectsql($anytmp , 
+    echo  
+        formselectsql($anytmp , 
                   "SELECT DISTINCT scen . * FROM scenery scen  ,  sceneryrole scenrole ,   accrole " . 
                   "WHERE ( scen . id = scenrole . scenery_id " . 
                         "AND scenrole . role_id = accrole . role_id " . 
@@ -46,7 +47,7 @@ if($_SESSION['role']['isadmin']) {
                   'name');
 }
 
-echo "Nome Profs ? ";
+echo $GBLspc['T'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 echo  '<br>';
 

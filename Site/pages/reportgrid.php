@@ -4,7 +4,7 @@ include 'bailout.php';
 
 $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['rpgrid'];
-formretainvalues(array('semid' , 'deptid'));
+formretainvalues(array('semid' , 'deptid' , 'profnicks'));
   
 
 echo '<div class = "row">' . 
@@ -24,7 +24,7 @@ echo formselectsql($anytmp ,
               $_POST['deptid'] , 
               'id' , 
               'acronym');
-echo "Nome Profs ? ";
+echo $GBLspc['D'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 
                   'bool' , 
                   $_POST['profnicks'] , 
@@ -36,41 +36,46 @@ echo formsceneryselect();
 echo '</form>';
    
    
-if ($_POST['semid'] <> '' & $_POST['deptid'] <> '') {
-    echo '<p>';
-     
-    $inselected = inscenery_sessionlst('sceneryselected');
-    list($qscentbl , $qscensql) = scenery_sql($inselected);
-   
-    if($_POST['profnicks']) {
-        $Qnicks = " , `prof` . `nickname` AS `profnick` , `prof` . `id` AS `profid` , `prof` . `dept_id` AS `profdeptid`  ";
-    } else {
-        $Qnicks = '';
-    }
+if (isset($_POST['semid']) & isset($_POST['deptid'])) {
+        $QueryT = "SELECT * FROM `unit`  WHERE `isdept` = '1' AND `mark` = '1' AND `id` = '$_POST[deptid]' ; " ;
+        $testsql =  $GBLmysqli->dbquery( $QueryT ) ;
+        if ($testsql->num_rows > 0) {
+            echo '<p>';
+             
+            $inselected = inscenery_sessionlst('sceneryselected');
+            list($qscentbl , $qscensql) = scenery_sql($inselected);
+           
+            if($_POST['profnicks']) {
+                $Qnicks = " , `prof` . `nickname` AS `profnick` , `prof` . `id` AS `profid` , `prof` . `dept_id` AS `profdeptid`  ";
+            } else {
+                $Qnicks = '';
+            }
+        
+            $Query = 
+                "SELECT DISTINCT `discipline` . `name` AS `discname` ,  " . 
+                        "`discipline` . `id` AS `discid` , " . 
+                        "`discipline` . * , " . 
+                        "`class` . `id` AS `classid` , " . 
+                        "`class` . * , " . 
+                        "`classsegment` . * , " . 
+                        "`discdept` . `id` AS `discdeptid`"  . 
+                        $Qnicks .
+                " FROM `classsegment` , `class` , `semester` , `unit` , `discipline` , `prof` , `unit` AS `discdept`  " . 
+                        $qscentbl .
+                "WHERE `class` . `discipline_id` = `discipline` . `id` " . 
+                        "AND `class` . `sem_id` = `semester` . `id` " . 
+                        "AND `classsegment` . `class_id` = `class` . `id` " . 
+                        "AND `classsegment` . `prof_id` = `prof` . `id` " . 
+                        "AND `discipline` . `dept_id` = `discdept` . `id` " . 
+                        "AND `unit` . `id` = '$_POST[deptid]' " . 
+                        "AND `semester` . `id` = '$_POST[semid]'  " . 
+                        "AND `unit` . `id` = `prof` .  `dept_id` " .
+                        $qscensql .
+                "ORDER BY `discipline` . `name` , `class` . `name`;" ;
+            
+            echo dbweekmatrix( $Query  , $inselected);
 
-    $Query = 
-        "SELECT DISTINCT `discipline` . `name` AS `discname` ,  " . 
-                "`discipline` . `id` AS `discid` , " . 
-                "`discipline` . * , " . 
-                "`class` . `id` AS `classid` , " . 
-                "`class` . * , " . 
-                "`classsegment` . * , " . 
-                "`discdept` . `id` AS `discdeptid`"  . 
-                $Qnicks .
-        " FROM `classsegment` , `class` , `semester` , `unit` , `discipline` , `prof` , `unit` AS `discdept`  " . 
-                $qscentbl .
-        "WHERE `class` . `discipline_id` = `discipline` . `id` " . 
-                "AND `class` . `sem_id` = `semester` . `id` " . 
-                "AND `classsegment` . `class_id` = `class` . `id` " . 
-                "AND `classsegment` . `prof_id` = `prof` . `id` " . 
-                "AND `discipline` . `dept_id` = `discdept` . `id` " . 
-                "AND `unit` . `id` = '$_POST[deptid]' " . 
-                "AND `semester` . `id` = '$_POST[semid]'  " . 
-                "AND `unit` . `id` = `prof` .  `dept_id` " .
-                $qscensql .
-        "ORDER BY `discipline` . `name` , `class` . `name`;" ;
-    
-    echo dbweekmatrix( $Query  , $inselected);
+        }
    
 }
 echo '</div>';
