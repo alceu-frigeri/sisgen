@@ -11,25 +11,26 @@ echo  '<div class = "row">' .
     '<hr>' ;
 
 echo formpost($thisform);
-        
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
-echo formselectsql($anytmp , 
-              "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
-              'courseid' , 
-              $_POST['courseid'] , 
-              'id' , 
-              'acronym');
-echo formselectsql($anytmp , 
-              "SELECT * FROM term ORDER BY term . name;" , 
-              'termid' , 
-              $_POST['termid'] , 
-              'id' , 
-              'name');
+   
+$Query = 
+    "SELECT * " .
+    "FROM semester " .
+    "ORDER BY name DESC ; " ;
+echo formselectsql($anytmp , $Query ,  'semid' ,  $_POST['semid'] ,  'id' ,  'name');
+              
+$Query = 
+    "SELECT * " . 
+    "FROM unit " . 
+    "WHERE iscourse = 1 " . 
+    "ORDER BY unit . name ; " ; 
+echo formselectsql($anytmp , $Query , 'courseid' , $_POST['courseid'] , 'id' , 'acronym');
+
+$Query = 
+    "SELECT * " . 
+    "FROM term " . 
+    "ORDER BY term . name ; " ;
+echo formselectsql($anytmp , $Query , 'termid' , $_POST['termid'] , 'id' , 'name');
+
 if ($_POST['reqonly'] == '1') {
         echo spanfmtbegin('','darkgreen',null,true);
         $fmtend=spanfmtend();
@@ -37,23 +38,18 @@ if ($_POST['reqonly'] == '1') {
         $fmtend=' ';
 }
 echo $GBLspc['D'] . "Somente OB/AL ? ";
-echo formselectsession('reqonly' , 
-                  'bool' , 
-                  $_POST['reqonly'] , 
-                  false , 
-                  true);
+echo formselectsession('reqonly' , 'bool' , $_POST['reqonly'] , false , true);
 echo $fmtend;
+
 echo $GBLspc['D'] . "Nome Profs ? ";
-echo formselectsession('profnicks' , 
-                  'bool' , 
-                  $_POST['profnicks'] , 
-                  false , true);
+echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 echo  '<br>';  
 echo formsceneryselect(); 
 echo '</form>';
   
 // semester, course, term
-if ( isset($_POST['termid']) && isset($_POST['courseid']) ) {
+
+if ( testpostsql( array('semid','termid','courseid') ) ) {
     echo '<p>';
 
     $inselected = inscenery_sessionlst('sceneryselected');

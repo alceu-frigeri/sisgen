@@ -12,18 +12,18 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
-echo formselectsql($anytmp , 
-              "SELECT * FROM building WHERE mark = 1 ORDER BY acronym;" , 
-              'buildingid' , 
-              $_POST['buildingid'] , 
-              'id' , 
-              'acronym');
+$Query = 
+        "SELECT * " .
+        "FROM semester " .
+        "ORDER BY semester . name DESC;" ; 
+echo formselectsql($anytmp , $Query , 'semid' , $_POST['semid'] , 'id' , 'name');
+
+$Query = 
+        "SELECT * " .
+        "FROM building " .
+        "WHERE mark = 1 " .
+        "ORDER BY acronym;" ; 
+echo formselectsql($anytmp , $Query , 'buildingid' , $_POST['buildingid'] , 'id' , 'acronym');
 echo  '<br>';
   
 echo formsceneryselect();  

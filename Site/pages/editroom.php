@@ -72,13 +72,13 @@ if ($postedit & $can_room) {
     echo '</form><br>';
 } else {
 
+    $Query = 
+        "SELECT * " .
+        "FROM building " .
+        "WHERE `mark` = '1' " .
+        "ORDER BY acronym ; " ;
     echo 'Prédio: ' . 
-        formselectsql($anytmp , 
-                  "SELECT * FROM building WHERE `mark` = '1' ORDER BY acronym;" , 
-                  'buildingid' , 
-                  $_POST['buildingid'] , 
-                  'id' , 
-                  'acronym');
+        formselectsql($anytmp , $Query , 'buildingid' , $_POST['buildingid'] , 'id' , 'acronym');
 }
 
 function roomdisplay($sqlrow) {

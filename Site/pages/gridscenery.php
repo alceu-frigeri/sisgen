@@ -11,41 +11,38 @@ echo '<div class = "row">' .
     '<hr>' ;
         
 echo formpost($thisform);
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
+$Query = 
+    "SELECT * " . 
+    "FROM semester " . 
+    "ORDER BY semester . name DESC ; " ;
+echo formselectsql( $anytmp , $Query , 'semid' ,  $_POST['semid'] ,  'id' , 'name' ) ;
+
 echo $GBLspc['T'] . "Todos ? ";
 echo formselectsession('allscenery' , 'bool' , $_POST['allscenery'] , false , true);        
+
 echo  $GBLspc['T'] . 'cenário: ' ;
 if($_SESSION['role']['isadmin']) {
-    echo formselectsql($anytmp , 
-                  "SELECT DISTINCT scen . * FROM scenery scen ORDER BY name;" , 
-                  'sceneryid' , 
-                  $_POST['sceneryid'] , 
-                  'id' , 
-                  'name');
+    $Query = 
+        "SELECT DISTINCT `scen` . * " . 
+        "FROM  `scenery` `scen` " . 
+        "ORDER BY `name` ; " ;
 } else {
     if($_POST['allscenery']) {
         $Qallscen = "OR ( scen . hide = '0') ";
     } else {
         $Qallscen = '';
     }
-    echo  
-        formselectsql($anytmp , 
-                  "SELECT DISTINCT scen . * FROM scenery scen  ,  sceneryrole scenrole ,   accrole " . 
-                  "WHERE ( scen . id = scenrole . scenery_id " . 
-                        "AND scenrole . role_id = accrole . role_id " . 
-                        "AND accrole . account_id = '$_SESSION[userid]' ) " . 
-                  $Qallscen . 
-                  "ORDER BY name; " , 
-                  'sceneryid' , 
-                  $_POST['sceneryid'] , 
-                  'id' , 
-                  'name');
+    $Query =
+          "SELECT DISTINCT scen . * FROM scenery scen  ,  sceneryrole scenrole ,   accrole " . 
+          "WHERE ( scen . id = scenrole . scenery_id " . 
+                "AND scenrole . role_id = accrole . role_id " . 
+                "AND accrole . account_id = '$_SESSION[userid]' ) " . 
+          $Qallscen . 
+          "ORDER BY name; " ;
 }
+echo formselectsql($anytmp , $Query , 'sceneryid' , $_POST['sceneryid'] , 'id' , 'name');
+
+
 
 echo $GBLspc['T'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
@@ -53,7 +50,8 @@ echo  '<br>';
 
 echo '</form>';
 
-if (($_POST['semid'] != 0 )& ($_POST['sceneryid'] != 0 )) {
+
+if (testpostsql(array('semid','sceneryid'))) {
     echo '<h3>' . 
         $_SESSION['scen.all'][$_POST['sceneryid']] . 
         ' ( ' . $_SESSION['scen.desc'][$_POST['sceneryid']] . ' ) </h3>';

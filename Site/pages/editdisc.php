@@ -74,13 +74,12 @@ if ($postedit & $can_discipline) {
     echo '</form><br>';
 } else {
 
-    echo 'Dept.: ' .
-        formselectsql($anytmp , 
-                  "SELECT * FROM unit  ORDER BY unit . mark DESC , unit . iscourse ASC, unit . acronym ASC;" , 
-                  'unitid' , 
-                  $_POST['unitid'] , 
-                  'id' , 
-                  'acronym');
+    $Query = 
+        "SELECT * " .
+        "FROM unit  " .
+        "ORDER BY unit . mark DESC , unit . iscourse ASC, unit . acronym ASC ; " ; 
+    echo 'Dept.: ' ;
+    echo formselectsql($anytmp , $Query , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
     echo $GBLspc['D'] . "Ordenado por:  " . formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 
     $firstofmany = true;

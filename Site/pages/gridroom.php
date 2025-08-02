@@ -13,25 +13,27 @@ echo '<div class = "row">' .
         
 echo formpost($thisform);
         
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
-echo formselectsql($anytmp ,
-              "SELECT * FROM building WHERE mark = 1 ORDER BY acronym;" , 
-              'buildingid' , 
-              $_POST['buildingid'] , 
-              'id' , 
-              'acronym');
-echo formselectsql($anytmp , 
-              "SELECT room . * FROM room , building WHERE room . building_id = building . id AND building . id = '" . 
-              $_POST['buildingid'] .  "' ORDER BY room . acronym;" , 
-              'roomid' , 
-              $_POST['roomid'] , 
-              'id' , 
-              'acronym');
+$Query = 
+        "SELECT * " . 
+        "FROM semester " . 
+        "ORDER BY semester . name DESC;" ;
+echo formselectsql($anytmp , $Query , 'semid' , $_POST['semid'] , 'id' , 'name');
+              
+$Query = 
+        "SELECT * " . 
+        "FROM building " . 
+        "WHERE mark = 1 " . 
+        "ORDER BY acronym ; " ;  
+echo formselectsql($anytmp , $Query , 'buildingid' , $_POST['buildingid'] , 'id' , 'acronym');
+
+$Query = 
+        "SELECT room . * " . 
+        "FROM room , building " . 
+        "WHERE room . building_id = building . id " . 
+                "AND building . id = '$_POST[buildingid]' " . 
+        "ORDER BY room . acronym ; " ; 
+echo formselectsql($anytmp , $Query , 'roomid' , $_POST['roomid'] , 'id' , 'acronym');
+
 echo $GBLspc['D'] . "Nome Profs ? ";
 echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 echo  '<br>';
@@ -39,9 +41,14 @@ echo  '<br>';
 echo formsceneryselect();
 echo '</form>';
    
+$Query = 
+        "SELECT room . * " . 
+        "FROM room , building " . 
+        "WHERE room . id = $_POST[roomid] " .
+        "AND room . building_id = $_POST[buildingid] ; " ; 
 
 // semester, building, room
-if ($_POST['roomid']) {
+if ( testpostsql( array('semid','buildingid','roomid') , $Query ) ) {
     $Query = 
         "SELECT DISTINCT `room` . *, " . 
                 "`roomtype` . `name` AS `type` , " . 

@@ -201,7 +201,9 @@ if($_SESSION['role']['isadmin']) {
             //echo '<table style = "background-color:#E0FFE0;color:#8000B0;"><tr><td>';
             echo 'Nome:' . formpatterninput(32 , 8 , $pattern , 'role name' , $rolekey . 'rolename' , $rolerow['rolename'])  . 
                 'Descriçao:' . formpatterninput(64 , 32 , $pattern , 'role name' , $rolekey . 'description' , $rolerow['description']);
-            echo formselectsql($anytmp , 'SELECT * FROM `unit`;' , $rolekey . 'unitid' , $rolerow['unit_id'] , 'id' , 'acronym');
+
+            $Query = "SELECT * FROM `unit`;" ;
+            echo formselectsql($anytmp , $Query , $rolekey . 'unitid' , $rolerow['unit_id'] , 'id' , 'acronym');
             echo '<br>';
             foreach ($bfields as $key) {
                 echo '  ' . $key . ': ';
@@ -291,7 +293,9 @@ if($_SESSION['role']['isadmin']) {
     echo '<br>' . formpost($thisform);
     echo 'Nome:' . formpatterninput(32 , 8 , $pattern , 'role name' , 'rolename' , '!')  . 
         'Descriçao:' . formpatterninput(64 , 32 , $pattern , 'role name' , 'description' , '!');
-    echo formselectsql($anytmp , 'SELECT * FROM `unit`;' , 'unitid' , 0 , 'id' , 'acronym' , null , false);
+
+    $Query = "SELECT * FROM `unit`; " ; 
+    echo formselectsql($anytmp , $Query , 'unitid' , 0 , 'id' , 'acronym' , null , false);
     echo '<br>';
     foreach ($bfields as $key) {
         echo '  ' . $key . ': ';

@@ -11,30 +11,48 @@ echo '<div class = "row">' .
     '<hr>';
 
 echo formpost($thisform);
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
-echo formselectsql($anytmp , 
-              "SELECT * FROM unit WHERE isdept = 1 AND mark = 1 ORDER BY unit . name;" , 
-              'deptid' , 
-              $_POST['deptid'] , 
-              'id' , 
-              'acronym');
-echo formselectsql($anytmp , 
-              "SELECT prof . * FROM prof , unit , profkind WHERE prof . dept_id = unit . id AND prof . profkind_id = profkind . id AND profkind . acronym <> '-none-' AND unit . id = '$_POST[deptid]' AND unit . isdept = 1 AND unit . mark = 1 ORDER BY prof . name;" , 
-              'profid' , 
-              $_POST['profid'] , 
-              'id' , 
-              'name');
+
+$Query = 
+        "SELECT * " . 
+        "FROM semester " . 
+        "ORDER BY semester . name DESC ; " ; 
+echo formselectsql($anytmp , $Query , 'semid' , $_POST['semid'] , 'id' , 'name');
+
+$Query = 
+        "SELECT * " . 
+        "FROM unit " . 
+        "WHERE isdept = 1 " . 
+        "AND mark = 1 " . 
+        "ORDER BY unit . name ; " ; 
+echo formselectsql($anytmp , $Query , 'deptid' , $_POST['deptid'] , 'id' , 'acronym');
+              
+$Query = 
+        "SELECT prof . * " . 
+        "FROM prof , unit , profkind " . 
+        "WHERE prof . dept_id = unit . id " . 
+                "AND prof . profkind_id = profkind . id " . 
+                "AND profkind . acronym <> '-none-' " . 
+                "AND unit . id = '$_POST[deptid]' " . 
+                "AND unit . isdept = 1 " . 
+                "AND unit . mark = 1 " . 
+        "ORDER BY prof . name ; " ; 
+echo formselectsql($anytmp , $Query  , 'profid' , $_POST['profid'] , 'id' , 'name');
 echo  '<br>';
   
 echo formsceneryselect();
 echo '</form>';
+
    
-if ($_POST['profid']) {
+$Query = 
+        "SELECT * " . 
+        "FROM prof , unit " . 
+        "WHERE prof . id = '$_POST[profid]'  "  .
+        "AND prof . dept_id = '$_POST[deptid]' " .
+        "AND prof . dept_id = unit . id " .
+        "AND unit . isdept = 1 " .
+        "AND unit . mark = 1 ; " ; 
+
+if ( testpostsql( array('profid','deptid') , $Query) ) {
     echo '<p>';
      
     $inselected = inscenery_sessionlst('sceneryselected');

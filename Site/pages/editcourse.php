@@ -92,19 +92,20 @@ if($postedit & $can_coursedisciplines) {
     echo formsubmit('act' , 'Cancel');
     echo '</form><br>';
 } else {
-                
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM unit WHERE iscourse = 1 ORDER BY unit . name;" , 
-                  'courseid' , 
-                  $_POST['courseid'] , 
-                  'id' , 
-                  'acronym');
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM term ORDER BY term . name;" , 
-                  'termid' , 
-                  $_POST['termid'] , 
-                  'id' , 
-                  'name');
+       
+    $Query = 
+        "SELECT * " .
+        "FROM unit " .
+        "WHERE iscourse = 1 " .
+        "ORDER BY unit . name;" ; 
+    echo formselectsql($anytmp , $Query , 'courseid' , $_POST['courseid'] , 'id' , 'acronym');
+                  
+    $Query = 
+        "SELECT * " .
+        "FROM term " .
+        "ORDER BY term . name;" ;
+    echo formselectsql($anytmp , $Query , 'termid' , $_POST['termid'] , 'id' , 'name');
+                  
     echo $GBLspc['T'] . "Ordenado por:  "; 
     echo formselectsession('orderby' , 'orderby' , $_POST['orderby'] , false , true);
 }
@@ -183,10 +184,17 @@ if ($postedit & $can_coursedisciplines) {
     echo formhiddenval('orderby' , $_POST['orderby']);
     echo formhiddenval('act' , 'Reload');
 
-    $q = "SELECT * FROM `unit` ORDER BY `acronym`";
+    $q = 
+        "SELECT * " .
+        "FROM `unit` " .
+        "ORDER BY `acronym`";
     echo formselectsql($anytmp , $q , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
 
-    $q = "SELECT * FROM `discipline` WHERE `dept_id` =  '$_POST[unitid]'  ORDER BY `name`";
+    $q = 
+        "SELECT * " .
+        "FROM `discipline` " .
+        "WHERE `dept_id` =  '$_POST[unitid]'  " .
+        "ORDER BY `name`";
     $anyone = 0;
     echo formselectsql($anyone , $q , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
     

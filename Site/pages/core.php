@@ -697,6 +697,22 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
 }
 
 
+function testpostsql($postkeys , $Query=null) {
+    global $GBLmysqli;
+    foreach ($postkeys as $key) {
+            if (!(isset($_POST[$key]) && $_POST[$key])) { return false; }
+    }
+    if($Query) {
+            $trysql = $GBLmysqli->dbquery( $Query );
+            if ($trysql->num_rows > 0) {
+                return true;
+            }
+            return false;        
+    }
+    return true;
+}
+
+
 function spanformat($size , $color , $text , $bgcolor = null , $bold = null , $height = null) {
     return spanfmtbegin($size , $color , $bgcolor , $bold , $height) . $text . spanfmtend();
 }

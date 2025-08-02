@@ -13,22 +13,22 @@ echo '<div class = "row">' .
 
 echo formpost($thisform);
 
-echo formselectsql($anytmp , 
-              "SELECT * FROM semester ORDER BY semester . name DESC;" , 
-              'semid' , 
-              $_POST['semid'] , 
-              'id' , 
-              'name');
+$Query = 
+        "SELECT * " .
+        "FROM semester " .
+        "ORDER BY semester . name DESC;" ;
+echo formselectsql($anytmp , $Query , 'semid' , $_POST['semid'] , 'id' , 'name');
   
+$Query = 
+        "SELECT * " .
+        "FROM unit " .
+        "WHERE `iscourse` = '1' " .
+        "ORDER BY unit . acronym;" ; 
 echo  $GBLspc['T'] . 'Curso:'; 
-echo formselectsql($anytmp , 
-              "SELECT * FROM unit WHERE `iscourse` = '1' ORDER BY unit . acronym;" , 
-              'courseid' , 
-              $_POST['courseid'] , 
-              'id' , 
-              'acronym');
+echo formselectsql($anytmp , $Query , 'courseid' , $_POST['courseid'] , 'id' , 'acronym');
   
-$Query = "SELECT DISTINCT `disc` . `dept_id` , `unit` . `acronym` , `unit` . `name`  " .
+$Query = 
+        "SELECT DISTINCT `disc` . `dept_id` , `unit` . `acronym` , `unit` . `name`  " .
         "FROM `coursedisciplines` AS `grade` , `discipline` AS `disc` , `unit` " .
         "WHERE `grade` . `discipline_id` = `disc` . `id` " . 
                 "AND `disc` . `dept_id` = `unit` . `id` " . 
@@ -36,12 +36,7 @@ $Query = "SELECT DISTINCT `disc` . `dept_id` , `unit` . `acronym` , `unit` . `na
         "ORDER BY `unit` . `acronym` ; " ;
        
 echo $GBLspc['T'] . 'Dept.:';
-echo formselectsql($anytmp , 
-              $Query  , 
-              'deptid' , 
-              $_POST['deptid'] , 
-              'dept_id' , 
-              'acronym');
+echo formselectsql($anytmp , $Query  , 'deptid' , $_POST['deptid'] , 'dept_id' , 'acronym');
   
 echo  '<br>';
   
@@ -163,6 +158,7 @@ while ($termrow = $termsql->fetch_assoc()) {
     }
       
 }
+
 if ($emailbody) {
     $Query = 
         "SELECT * " .  

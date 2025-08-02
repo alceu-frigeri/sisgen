@@ -34,7 +34,7 @@ echo '<div class = "row">' .
 
 
 // TODO , TO BE REVIEWED !!! 
-// ERROR IN LOGIC !!!
+// possible ERROR IN LOGIC !!!
 
 
 $postedit = false;
@@ -148,25 +148,25 @@ if ($postedit) {
 } else {
     echo formpost($thisform);
 
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM semester ORDER BY name DESC;" , 
-                  'semid' , 
-                  $_POST['semid'] , 
-                  'id' , 
-                  'name');
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM unit  ORDER BY unit . mark DESC , unit . iscourse ASC , unit . acronym ASC;" , 
-                  'unitid' , 
-                  $_POST['unitid'] , 
-                  'id' , 
-                  'acronym');
-    echo formselectsql($anytmp , 
-                  "SELECT * FROM discipline WHERE discipline . dept_id =  '$_POST[unitid]'  ORDER BY name;" , 
-                  'discid' , 
-                  $_POST['discid'] , 
-                  'id' , 
-                  'code' , 
-                  'name');
+    $Query = 
+        "SELECT * " .
+        "FROM semester " .
+        "ORDER BY name DESC;" ; 
+    echo formselectsql($anytmp , $Query , 'semid' , $_POST['semid'] , 'id' , 'name');
+    
+    $Query = 
+        "SELECT * " .
+        "FROM unit  " .
+        "ORDER BY unit . mark DESC , unit . iscourse ASC , unit . acronym ASC;" ;
+    echo formselectsql($anytmp , $Query , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
+    
+    $Query = 
+        "SELECT * " .
+        "FROM discipline " .
+        "WHERE discipline . dept_id =  '$_POST[unitid]'  " .
+        "ORDER BY name;" ;
+    echo formselectsql($anytmp , $Query , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
+                  
     //echo formsceneryselect();
     [$SCinselected , $SCquery] = sceneryclasshack($_POST['profnicks']);
     //echo '<br>';
@@ -175,13 +175,15 @@ if ($postedit) {
     echo "Nome Profs? ";
     echo formselectsession('profnicks' , 'bool' , $_POST['profnicks'] , false , true);
 
+    $Query = 
+        "SELECT `course` . * " .
+        "FROM `unit` AS `course` , " .
+                "coursedisciplines AS `cdisc` " .
+        "WHERE `cdisc` . `discipline_id` =  '$_POST[discid]'  " .
+                "AND `cdisc` . `course_id` = `course` . `id` " .
+        "ORDER BY name;" ; 
     echo $GBLspc['D'] . "Realçar curso: ";
-    echo formselectsql($anytmp , 
-                  "SELECT `course` . * FROM `unit` AS `course` , coursedisciplines AS `cdisc` WHERE `cdisc` . `discipline_id` =  '$_POST[discid]'  AND `cdisc` . `course_id` = `course` . `id` ORDER BY name;" , 
-                  'courseHL' , 
-                  $_POST['courseHL'] , 
-                  'id' , 
-                  'name');
+    echo formselectsql($anytmp , $Query , 'courseHL' , $_POST['courseHL'] , 'id' , 'name');
   
     $Query = 
         "SELECT * " .
@@ -202,167 +204,173 @@ if ($postedit) {
     }
 
 }
-echo dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
-echo '<hr>';
 
-
-
-
-$q = 
-        "SELECT class . * " .
-        "FROM class , discipline " .
-        "WHERE class . discipline_id = discipline . id " .
-                "AND class . discipline_id =  '$_POST[discid]'  " .
-                "AND class . sem_id =  '$_POST[semid]'  " .
-                "AND discipline . dept_id =  '$_POST[unitid]'  " .
-                "AND class . agreg = '1' " .
-        "ORDER BY class . name; " ;
-
-$result = $GBLmysqli->dbquery($q);
-unset($_SESSION['agreg']);
-while ($sqlrow = $result->fetch_assoc()) {
-    $_SESSION['agreg'][$sqlrow['id']] = $sqlrow['name'];
-}  
+$Tquery = 
+        "SELECT * " .
+        "FROM discipline " . 
+        "WHERE id =  '$_POST[discid]'  " .
+                "AND dept_id =  '$_POST[unitid]'  ; " ;
+if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
+       
+        echo dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
+        echo '<hr>';
         
-if ($can_class) {
-    $q = 
-        "SELECT DISTINCT class . * " .
-        "FROM `class` , `discipline` " . 
-        "WHERE class . discipline_id = discipline . id " .
-                "AND class . discipline_id =  '$_POST[discid]'  " . 
-                "AND class . sem_id =  '$_POST[semid]'  " . 
-                "AND discipline . dept_id =  '$_POST[unitid]' " . 
-        "ORDER BY  `class` . `name` ; "  ;
-} else {
-    $q = 
-        "SELECT DISTINCT class . * " .
-        "FROM `class` , `discipline` " . 
-                $qscentbl . 
-        "WHERE class . discipline_id = discipline . id " . 
-                "AND class . discipline_id =  '$_POST[discid]'  " . 
-                "AND class . sem_id =  '$_POST[semid]'  " . 
-                "AND discipline . dept_id =  '$_POST[unitid]'  " . 
-                $qscensql . " ; " ;
-}
-$result = $GBLmysqli->dbquery($q);
-  
-while ($classrow = $result->fetch_assoc()) {
-    if ($postedit) {
-        echo hiddendivkey('class' , $classrow['id']);
-        if($classrow['id'] == $newclassid) {
-            echo hiddendivkey('class' , 'NEW');
+        $q = 
+                "SELECT class . * " .
+                "FROM class , discipline " .
+                "WHERE class . discipline_id = discipline . id " .
+                        "AND class . discipline_id =  '$_POST[discid]'  " .
+                        "AND class . sem_id =  '$_POST[semid]'  " .
+                        "AND discipline . dept_id =  '$_POST[unitid]'  " .
+                        "AND class . agreg = '1' " .
+                "ORDER BY class . name; " ;
+        
+        $result = $GBLmysqli->dbquery($q);
+        unset($_SESSION['agreg']);
+        while ($sqlrow = $result->fetch_assoc()) {
+            $_SESSION['agreg'][$sqlrow['id']] = $sqlrow['name'];
+        }  
+                
+        if ($can_class) {
+            $q = 
+                "SELECT DISTINCT class . * " .
+                "FROM `class` , `discipline` " . 
+                "WHERE class . discipline_id = discipline . id " .
+                        "AND class . discipline_id =  '$_POST[discid]'  " . 
+                        "AND class . sem_id =  '$_POST[semid]'  " . 
+                        "AND discipline . dept_id =  '$_POST[unitid]' " . 
+                "ORDER BY  `class` . `name` ; "  ;
+        } else {
+            $q = 
+                "SELECT DISTINCT class . * " .
+                "FROM `class` , `discipline` " . 
+                        $qscentbl . 
+                "WHERE class . discipline_id = discipline . id " . 
+                        "AND class . discipline_id =  '$_POST[discid]'  " . 
+                        "AND class . sem_id =  '$_POST[semid]'  " . 
+                        "AND discipline . dept_id =  '$_POST[unitid]'  " . 
+                        $qscensql . " ; " ;
         }
-        thisformpost('class' . $classrow['id'] . 'div');
-        echo formhiddenval('classid' , $classrow['id']);
-        echo formhiddenval('classname' , $classrow['name']);
-        if ( $classrow['id'] == $_POST['classid'] ) {
-        
-            if ($_POST['act'] == 'SubDisplay') {
-                    echo HLbegin();
+        $result = $GBLmysqli->dbquery($q);
+          
+        while ($classrow = $result->fetch_assoc()) {
+            if ($postedit) {
+                echo hiddendivkey('class' , $classrow['id']);
+                if($classrow['id'] == $newclassid) {
+                    echo hiddendivkey('class' , 'NEW');
+                }
+                thisformpost('class' . $classrow['id'] . 'div');
+                echo formhiddenval('classid' , $classrow['id']);
+                echo formhiddenval('classname' , $classrow['name']);
+                if ( $classrow['id'] == $_POST['classid'] ) {
+                
+                    if ($_POST['act'] == 'SubDisplay') {
+                            echo HLbegin();
+                            echo formsubmit('act' , 'Cancel');
+                            echo formsubmit('act' , 'Edit');
+                            formclassdisplay($classrow);
+                            echo HLend();
+                    } else {
+                            if($can_class) {
+                                formclassedit($classrow , $incanedit);
+                            } else {
+                                // TODO: verify if can edit scenery
+                                $qtestsql = 
+                                        "SELECT * " .
+                                        "FROM `sceneryclass` " .
+                                        "WHERE `sceneryclass` . `class_id` = '$classrow[id]' " . 
+                                        "AND `sceneryclass` . `scenery_id` IN ( $incanedit ) ; " ;
+                                $qtestresult = $GBLmysqli->dbquery($qtestsql);
+                                if ($qtestresult->num_rows) {
+                                    formclassedit($classrow , $incanedit , true);
+                                } else {
+                                    formclassdisplay($classrow , true);
+                                }
+                            }
+                            if ($class_edited || $vac_edited) {
+                            echo formsubmit('act' , 'Submit');
+                            echo formsubmit('act' , 'Cancel');
+                            }
+                    }
+                } else {    
                     echo formsubmit('act' , 'Cancel');
                     echo formsubmit('act' , 'Edit');
                     formclassdisplay($classrow);
-                    echo HLend();
-            } else {
-                    if($can_class) {
-                        formclassedit($classrow , $incanedit);
-                    } else {
-                        // TODO: verify if can edit scenery
-                        $qtestsql = 
-                                "SELECT * " .
-                                "FROM `sceneryclass` " .
-                                "WHERE `sceneryclass` . `class_id` = '$classrow[id]' " . 
-                                "AND `sceneryclass` . `scenery_id` IN ( $incanedit ) ; " ;
-                        $qtestresult = $GBLmysqli->dbquery($qtestsql);
-                        if ($qtestresult->num_rows) {
-                            formclassedit($classrow , $incanedit , true);
-                        } else {
-                            formclassdisplay($classrow , true);
-                        }
-                    }
-                    if ($class_edited || $vac_edited) {
-                    echo formsubmit('act' , 'Submit');
-                    echo formsubmit('act' , 'Cancel');
-                    }
-            }
-        } else {    
-            echo formsubmit('act' , 'Cancel');
-            echo formsubmit('act' , 'Edit');
-            formclassdisplay($classrow);
-        }
-        echo '</form>';
-      
-        if ($can_addclass) {
-            thisformpost('classNEWdiv');
-            echo '<p style="line-height:0px;"></p>';
-                                
-            echo spanfmtbegin('' , 'green' , null , true) . 
-                'Replicar esta Turma como:' . 
-                formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
-                formhiddenval('classid' , $classrow['id']) .
-                formhiddenval('orgclassname' , $classrow['name']) .
-                formselectsession('addclass' , 'bool' , 0) .
-                formsubmit('act' , 'Replicate Class') . 
-                '</form>' . 
-                spanfmtend();
-        } else {
-            if ($incanedit) {
-                thisformpost('classNEWdiv');
-                echo '<p style="line-height:0px;"></p>';
-                echo spanfmtbegin('' , 'green' , null , true) . 
+                }
+                echo '</form>';
+              
+                if ($can_addclass) {
+                    thisformpost('classNEWdiv');
+                    echo '<p style="line-height:0px;"></p>';
+                                        
+                    echo spanfmtbegin('' , 'green' , null , true) . 
                         'Replicar esta Turma como:' . 
                         formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
                         formhiddenval('classid' , $classrow['id']) .
                         formhiddenval('orgclassname' , $classrow['name']) .
-                        formselectsession('addscenery' , 'scen.acc.edit' , 0) .
                         formselectsession('addclass' , 'bool' , 0) .
-                        formsubmit('act' , 'Replicate Class in Scenery') . 
+                        formsubmit('act' , 'Replicate Class') . 
                         '</form>' . 
-                        spanfmtend();        
+                        spanfmtend();
+                } else {
+                    if ($incanedit) {
+                        thisformpost('classNEWdiv');
+                        echo '<p style="line-height:0px;"></p>';
+                        echo spanfmtbegin('' , 'green' , null , true) . 
+                                'Replicar esta Turma como:' . 
+                                formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                                formhiddenval('classid' , $classrow['id']) .
+                                formhiddenval('orgclassname' , $classrow['name']) .
+                                formselectsession('addscenery' , 'scen.acc.edit' , 0) .
+                                formselectsession('addclass' , 'bool' , 0) .
+                                formsubmit('act' , 'Replicate Class in Scenery') . 
+                                '</form>' . 
+                                spanfmtend();        
+                    }
+                }
+              
+            } else {
+                formclassdisplay($classrow);
+            }
+            echo '<hr>';
+        }
+        echo '</p>';
+        if ($hiddenprofdeptid) {
+            foreach ($hiddenprofdeptid as $profid => $hidprofdeptid ) { // '_blank'
+                echo hiddenprofform($_POST['semid'] , $hidprofdeptid , $profid);  
             }
         }
-      
-    } else {
-        formclassdisplay($classrow);
-    }
-    echo '<hr>';
-}
-echo '</p>';
-if ($hiddenprofdeptid) {
-    foreach ($hiddenprofdeptid as $profid => $hidprofdeptid ) { // '_blank'
-        echo hiddenprofform($_POST['semid'] , $hidprofdeptid , $profid);  
-    }
-}
-if ($hiddenroombuildingid) {
-    foreach ($hiddenroombuildingid as $roomid => $buildingid) {
-        echo hiddenroomform($_POST['semid'] , $buildingid , $roomid);
-    }
-}
-if ($postedit) {
-    if ($can_addclass) {
-        thisformpost('classNEWdiv');
-        echo spanfmtbegin('' , 'brown' , null , true) .  
-                'Adicionar Turma:' . 
-                formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
-                formselectsession('addclass' , 'bool' , 0) .
-                formsubmit('act' , 'Add Class') . 
-                '</form>' . 
-                spanfmtend();
-    } else {
-        if ($incanedit) {
-            thisformpost('classNEWdiv');
-            echo spanfmtbegin('' , 'brown' , null , true) . 
-                'Adicionar Turma:' . 
-                formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
-                formselectsession('addscenery' , 'scen.acc.edit' , 0) .
-                formselectsession('addclass' , 'bool' , 0) .
-                formsubmit('act' , 'Add Class in Scenery') . 
-                '</form>' . 
-                spanfmtend() ;        
+        if ($hiddenroombuildingid) {
+            foreach ($hiddenroombuildingid as $roomid => $buildingid) {
+                echo hiddenroomform($_POST['semid'] , $buildingid , $roomid);
+            }
         }
-    }
-}
+        if ($postedit) {
+            if ($can_addclass) {
+                thisformpost('classNEWdiv');
+                echo spanfmtbegin('' , 'brown' , null , true) .  
+                        'Adicionar Turma:' . 
+                        formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                        formselectsession('addclass' , 'bool' , 0) .
+                        formsubmit('act' , 'Add Class') . 
+                        '</form>' . 
+                        spanfmtend();
+            } else {
+                if ($incanedit) {
+                    thisformpost('classNEWdiv');
+                    echo spanfmtbegin('' , 'brown' , null , true) . 
+                        'Adicionar Turma:' . 
+                        formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                        formselectsession('addscenery' , 'scen.acc.edit' , 0) .
+                        formselectsession('addclass' , 'bool' , 0) .
+                        formsubmit('act' , 'Add Class in Scenery') . 
+                        '</form>' . 
+                        spanfmtend() ;        
+                }
+            }
+        }
 
+} 
 
  
 echo '</div>' ; 
