@@ -58,8 +58,8 @@ if ( testpostsql( array('semid','buildingid','roomid') , $Query ) ) {
                 "AND `room` . `building_id` = `building` . `id` " . 
                 "AND `room` . `id` = '$_POST[roomid]' ; " ;
 
-    $result = $GBLmysqli->dbquery( $Query );
-    $sqlrow = $result->fetch_assoc();
+    $Queryresult = $GBLmysqli->dbquery( $Query );
+    $sqlrow = $Queryresult->fetch_assoc();
     
     echo '<br>' . $sqlrow['buildingname'] . ' - ' . $sqlrow['name'] . ' : ' . $sqlrow['type'];
     if ($sqlrow['capacity']) {

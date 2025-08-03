@@ -7,13 +7,13 @@ $GBLmysqli->postsanitize();
 $thisform = $_SESSION['pagelnk']['edprof'];
 formretainvalues(array('deptid'));
 
-$can_prof = $_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['deptid']] & $_SESSION['role'][$_POST['deptid']]['can_prof']) ;
+$can_prof = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['deptid']] && $_SESSION['role'][$_POST['deptid']]['can_prof']) ;
   
         
 
 
 $postedit = false;
-if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert')) & $can_prof) {
+if ( (($_POST['act'] == 'Edit') || ($_POST['act'] == 'Submit') || ($_POST['act'] == 'Delete') || ($_POST['act'] == 'Insert')) && $can_prof) {
     $postedit = true;
 } else {
     $_POST['act'] = 'Cancel';
@@ -26,8 +26,8 @@ echo '<div class = "row">' .
 echo formpost($thisform);
   
 if (!($_SESSION['profkind'])) {
-    $result = $GBLmysqli->dbquery( "SELECT * FROM `profkind`; " );
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery( "SELECT * FROM `profkind`; " );
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $_SESSION['profkind'][$sqlrow['id']] = $sqlrow['acronym'];
     }
 }
@@ -92,7 +92,7 @@ $Query =
                 "AND `unit` . `mark` = '1' " . 
         "ORDER BY `profkind_id` , `name` ; " ;
 
-$result = $GBLmysqli->dbquery( $Query );
+$Queryresult = $GBLmysqli->dbquery( $Query );
 
 function profdisplay($sqlrow) {
       global $GBLspc;
@@ -103,7 +103,7 @@ function profdisplay($sqlrow) {
 
 $firstofmany = true;
 if ($postedit & $can_prof) {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
       echo formpost($thisform . targetdivkey('prof' , $sqlrow['id']));
     echo formhiddenval('deptid' , $_POST['deptid']);
     if ($_POST['profid'] == $sqlrow['id']) {
@@ -148,7 +148,7 @@ if ($postedit & $can_prof) {
     
 
 } else {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         if ($firstofmany) {
             if ($can_prof) {
                 echo $GBLspc['D'] .  formsubmit('act' , 'Edit') . '</form>';

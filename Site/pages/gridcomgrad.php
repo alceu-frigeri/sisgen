@@ -54,8 +54,8 @@ $Query =
         "FROM unit " .  
         "WHERE id = '$_POST[deptid]' ; ";
 
-$result = $GBLmysqli->dbquery($Query);
-$sqlrow = $result->fetch_assoc();
+$Queryresult = $GBLmysqli->dbquery($Query);
+$sqlrow = $Queryresult->fetch_assoc();
 
 $emailbody = '';
 $emailbodyhdr = '';
@@ -200,10 +200,10 @@ if ($emailbody) {
     echo spanfmtend();
 
     echo 'subject:' . formpatterninput(128 , 64 , '[a-zA-Z0-9\._- ]+' , 'subject:' , 'emailsubject' , 'Demandas COMGRAD/' . $courserow['acronym'] . ' para o semestre ' . $semrow['name'] . ' (' . $deptrow['acronym'] . ')') . '<br>';
-    echo 'body:<textarea name="emailtext" rows="10" cols="64"> Prezado(a) ' . $deptrow['contactname'] . " , \n Seguem abaixo as nossas necessidades de turmas/vagas para o Semestre " . 
+    echo 'body:<textarea name="emailtext" rows="10" cols="64">Prezado(a) ' . $deptrow['contactname'] . " , \n Seguem abaixo as nossas necessidades de turmas/vagas para o Semestre " . 
         $semrow['name'] . '.'  . 
         "\n\nColocamo-nos, desde já, a disposição para sanar quaisquer dúvidas."  . 
-        "\n\nAtenciosamente, \n". $courserow['contactname'] . "\nCOMGRAD/"  . $courserow['acronym']  . "\n". $courserow['name'] . "\n\n</textarea><br>";
+        "\n\nAtenciosamente, \n". $courserow['contactname'] . "\nCOMGRAD\n". $courserow['name'] . "\n\n</textarea><br>";
     echo spanfmtbegin('','darkred',null,true);
     echo 'Really Send it? '; 
     echo formselectsession('trulysend' , 'bool' , 0);

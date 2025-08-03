@@ -624,8 +624,8 @@ function addclassinscen ($classlog) {
                         "FROM coursedisciplines " .
                         "WHERE discipline_id =  '$_POST[discid]' ; " ;
                         
-                $result = $GBLmysqli->dbquery($Query);
-                while ($sqlrow = $result->fetch_assoc()) {
+                $Queryresult = $GBLmysqli->dbquery($Query);
+                while ($sqlrow = $Queryresult->fetch_assoc()) {
                     $Query = 
                         "INSERT INTO `vacancies` (`class_id` , `course_id`) " .
                         "VALUES ('$newclassid' , '$sqlrow[course_id]' ) ; " ; // defaults are zero . 
@@ -665,8 +665,8 @@ function addclass ($classlog) {
                         "FROM coursedisciplines " .
                         "WHERE discipline_id =  '$_POST[discid]' ; " ;
                         
-                $result = $GBLmysqli->dbquery($Query);
-                while ($sqlrow = $result->fetch_assoc()) {
+                $Queryresult = $GBLmysqli->dbquery($Query);
+                while ($sqlrow = $Queryresult->fetch_assoc()) {
                     $Query = 
                         "INSERT INTO `vacancies` (`class_id` , `course_id`) " .
                         "VALUES ('$newclassid' , '$sqlrow[course_id]') ; " ;

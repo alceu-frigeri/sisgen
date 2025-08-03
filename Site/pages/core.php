@@ -130,10 +130,10 @@ function regacc_create() {
     $today = date('Y-m-d');
 
     $Query = "SELECT email , password , activ FROM `account` WHERE `email` = '$_POST[emailA]' ; " ;
-    $result = $GBLmysqli->dbquery($Query) ;
+    $Queryresult = $GBLmysqli->dbquery($Query) ;
    
 
-    if ($sqlrow = $result->fetch_assoc()) {
+    if ($sqlrow = $Queryresult->fetch_assoc()) {
         if($sqlrow['activ']) {
             echo '<h3>email já cadastrado!</h3> Acabamos de lhe re-enviar um Email com a sua senha de acesso.<br>';
             mymail($sqlrow['email'] , 'Senha de Acesso' , "Prezado(a)\n Sua senha é: $sqlrow[password]");
@@ -143,14 +143,14 @@ function regacc_create() {
                 "${GBLbaseurl}?st=validate&h=$emailhash\n\n";
             mymail($sqlrow['email'] , 'Confirmação de Email' , $msg);
         }
-        $result->close();
+        $Queryresult->close();
     } else {
-        $result->close();
+        $Queryresult->close();
 
         $sql = 
                 "INSERT INTO `account` (`email` , `password` , `name` , `displayname` , `valhash`) " .
                 "VALUES ( '$_POST[emailA]' , '$_POST[passA]' , '$_POST[name]  $_POST[familyname]' , '$_POST[name]' , '$emailhash' ) ; " ;
-        $result = $GBLmysqli->dbquery($sql);
+        $Queryresult = $GBLmysqli->dbquery($sql);
 
         echo '<h4>Obrigado por criar uma conta.</h4><br>
 Você estará recebendo, em breve, um Email com instruções para ativar a sua conta.<br>';
@@ -175,14 +175,14 @@ function regacc_validate($gethash) {
         "SELECT * " . 
         "FROM `account` " . 
         "WHERE `account`.`valhash` = '$gethash' ; " ;
-    $result = $GBLmysqli->dbquery($sql);
-    if ($result->num_rows) {
+    $Queryresult = $GBLmysqli->dbquery($sql);
+    if ($Queryresult->num_rows) {
         echo 'Obrigado por confirmar seu Email<br>';
         $sql  = 
                 "UPDATE `sisgen`.`account` " .
                 "SET `activ` = '1' " .
                 "WHERE `account`.`valhash` = '$gethash' ; " ;
-        $result = $GBLmysqli->dbquery($sql);
+        $Queryresult = $GBLmysqli->dbquery($sql);
         echo 'Agora você já pode se logar no sistema !<br>';
     } else {
         echo '<b>' . spanformat('' , 'red' , 'Link Inválido ou Expirado') . '</b><br>';
@@ -198,10 +198,10 @@ function getacc_byemail($email) {
         "SELECT * " . 
         "FROM `account` " . 
         "WHERE account.email = '$email' ; " ;
-    if(!($result = $GBLmysqli->dbquery($Query))) {
+    if(!($Queryresult = $GBLmysqli->dbquery($Query))) {
         return NULL;
     }
-    return $result->fetch_assoc();
+    return $Queryresult->fetch_assoc();
 }
 
 
@@ -237,7 +237,7 @@ function duplicatecourse($courseid , $acronym , $code , $name , $comment) {
     $Query = 
         "INSERT INTO `unit` (`acronym` , `code` , `name` , `iscourse` , `isdept`) " . 
         "VALUES ('$acronym' , '$code' , '$name' , '1' , '1') ; " ;
-    $result = $GBLmysqli->dbquery($Query);
+    $Queryresult = $GBLmysqli->dbquery($Query);
     $newid = $GBLmysqli->insert_id;
   
     $Query = 
@@ -251,8 +251,8 @@ function duplicatecourse($courseid , $acronym , $code , $name , $comment) {
         "SELECT `id` " . 
         "FROM `status` " . 
         "WHERE `status` = 'dup' ; " ;
-    $result = $GBLmysqli->dbquery($Query);
-    $strow = $result->fetch_assoc();
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    $strow = $Queryresult->fetch_assoc();
   
     $Query = 
         "INSERT INTO `vacancies` (`course_id` , `class_id` , `askednum` , `askedreservnum` , `givennum` , `givenreservnum` , `comment` , `askedstatus_id` , `givenstatus_id`) " . 
@@ -274,8 +274,8 @@ function duplicatesem($currsemid , $newsemname) {
         "FROM semester " .
         "WHERE `name` = '$newsem' ; " ;
         
-    $result = $GBLmysqli->dbquery($Query);
-    if ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    if ($sqlrow = $Queryresult->fetch_assoc()) {
         echo "ERR: semestre já existente ! </br>";
     } else {
   
@@ -344,8 +344,8 @@ function checkweek($Query , $qscen = null , $courseid = null , $termid = null) {
     global $GBLmysqli;
     $flag = array();
 
-    $result = $GBLmysqli->dbquery($Query);
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $disccodes[$sqlrow['code']] = $sqlrow['code'];
         $disc[$sqlrow['code']] = $sqlrow['discname'];
 
@@ -440,8 +440,8 @@ function dbweekmatrix($Query , $qscen = null , $courseid = null , $termid = null
 
     $hiddenclasskeys = null;
     $hiddenprofdeptid = null;
-    $result = $GBLmysqli->dbquery($Query);
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $courseHLquery = $sqlrow['courseid'];
         $disccodes[$sqlrow['code']] = $sqlrow['code'];
         $disc[$sqlrow['code']] = $sqlrow['discname'];
@@ -613,8 +613,8 @@ function dbweekmatrix($Query , $qscen = null , $courseid = null , $termid = null
                     "WHERE `cd`.`course_id` = '$courseid' " .
                             "AND `cd`.`discipline_id` = '$discid[$d]' " .
                             "AND `cd`.`disciplinekind_id`= `kind`.`id` ; " ;
-                $result = $GBLmysqli->dbquery($Query);
-                $sqlrow = $result->fetch_assoc();
+                $Queryresult = $GBLmysqli->dbquery($Query);
+                $sqlrow = $Queryresult->fetch_assoc();
                 $kind = '<sub>'.spanformat('smaller' , '' , $sqlrow['code']).'</sub>';
             } else {
                 $kind = null;
@@ -631,8 +631,8 @@ function dbweekmatrix($Query , $qscen = null , $courseid = null , $termid = null
                             "AND `cd`.`course_id`= `course`.`id` " .
                             "AND `cd`.`term_id`= `term`.`id`  " .
                             "AND `cd`.`disciplinekind_id`= `kind`.`id` ; " ;
-                $result = $GBLmysqli->dbquery($Query);
-                while ($sqlrow = $result->fetch_assoc()) {
+                $Queryresult = $GBLmysqli->dbquery($Query);
+                while ($sqlrow = $Queryresult->fetch_assoc()) {
                     $hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] = hiddencoursekey($_POST['semid'] , $sqlrow['courseid'] , $sqlrow['termid']);
                     if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor = '#0000A0';} else {$bold = false;$tcolor = null;}
                     $kind .= hiddenformlnk($hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] , spanformat (null , $tcolor , ' ' . $sqlrow['acro'] . ' - ' . $sqlrow['tcode'] . spanformat('smaller' , null , '('.$sqlrow['kcode'] .')') . $GBLspc['T'] . ' ' , null , $bold));
@@ -866,8 +866,8 @@ function displaysqlitem($str , $sqltable , $sqlid , $sqlitem , $sqlitemB = null)
         "SELECT `$sqlitem`$b " .
         "FROM `$sqltable` " .
         "WHERE `id` = '$sqlid' ; " ;
-    $result = $GBLmysqli->dbquery($Query);
-    $sqlrow = $result->fetch_assoc();
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    $sqlrow = $Queryresult->fetch_assoc();
     if($sqlitemB) {
         return $str . $sqlrow[$sqlitem] . ' -- ' . $sqlrow[$sqlitemB] .'   ';
     } else {
@@ -1057,7 +1057,7 @@ function formselectsql(&$any , $Query , $selectname , $refval , $idkey , $valAke
     global $GBLmysqli;
     
     $_SESSION['org'][$selectname] = $refval;
-    $result = $GBLmysqli->dbquery($Query);
+    $Queryresult = $GBLmysqli->dbquery($Query);
     if ($onchange) {
         $rtntext = "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
         $rtntext .= "<option value='0'>---</option>";
@@ -1066,7 +1066,7 @@ function formselectsql(&$any , $Query , $selectname , $refval , $idkey , $valAke
         $rtntext .= "<option value='0'>---</option>";
     };
     $any = 0;
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $any = 1;
         if ($sqlrow[$idkey] == $refval) {
             $selected = ' selected="selected"';

@@ -9,20 +9,20 @@ $GBLVacIDs = array();
 $GBLSemIDs = array();
 
 $Query = "SELECT * FROM `discipline`;";
-$result = $GBLmysqli->dbquery($Query);
-while ($sqlrow = $result->fetch_assoc()) {
+$Queryresult = $GBLmysqli->dbquery($Query);
+while ($sqlrow = $Queryresult->fetch_assoc()) {
     $GBLDiscIDs[$sqlrow['code']] = $sqlrow['id'];
 }
 
 $Query = "SELECT * FROM `prof`;";
-$result = $GBLmysqli->dbquery($Query);
-while ($sqlrow = $result->fetch_assoc()) {
+$Queryresult = $GBLmysqli->dbquery($Query);
+while ($sqlrow = $Queryresult->fetch_assoc()) {
     $GBLProfIDs[$sqlrow['name']] = $sqlrow['id'];
 }
 
 $Query = "SELECT * FROM `semester`;";
-$result = $GBLmysqli->dbquery($Query);
-while ($sqlrow = $result->fetch_assoc()) {
+$Queryresult = $GBLmysqli->dbquery($Query);
+while ($sqlrow = $Queryresult->fetch_assoc()) {
     $GBLSemIDs[$sqlrow['name']] = $sqlrow['id'];
 }
 
@@ -206,7 +206,7 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
         $Query = 
             "INSERT INTO `classsegment` (`day` , `start` , `length` , `room_id` , `class_id` , `prof_id`) " .
             "VALUES ('$_SESSION[weekday][$ClassDay]' , '$ClassStart' , '$ClassDur' , '$RoomID' , '$ClassID' , '$ClassProfID' ) ; " ;  
-        $result = $GBLmysqli->dbquery($Query);
+        $Queryresult = $GBLmysqli->dbquery($Query);
         $GBLSegIDs[$ClassID][$ClassDay][$ClassStart] = $GBLmysqli->insert_id;
     }
 
@@ -258,8 +258,8 @@ function DBinsertreserv($grpAcro , $sem , $DiscCode , $DiscName , $Class , $Clas
                 "WHERE `discipline_id` = '$discID' " .
                         "AND `sem_id` = '$semID' " .
                         "AND `name` = '$Class' ; " ;
-        $result = $GBLmysqli->dbquery($Query);
-        $classrow = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $classrow = $Queryresult->fetch_assoc();
         if(!($classID = $classrow['id'])) {
             echo "<br>ERR !! Class: $Class not there ! skipping<br>";
             return;
@@ -303,8 +303,8 @@ function courseupdt($coursecode , $disccode , $kindcode , $termcode) {
         "WHERE `cd`.`discipline_id` = `disc`.`id` " .
                 "AND `cd`.`course_id` = '$_SESSION[unitbycode][$coursecode][id]' " .
                 "AND `disc`.`code` = '$disccode' ; " ;
-    $result = $GBLmysqli->dbquery($Query);
-    $cdrow = $result->fetch_assoc();
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    $cdrow = $Queryresult->fetch_assoc();
     if ($kindcode) {
         if ($termcode) {
             $Query = 
@@ -342,8 +342,8 @@ function disccourserem($disclist , $courseid) {
                 "SELECT `id` " .
                 "FROM `discipline` " .
                 "WHERE `code` = '$code' ; " ;
-        $result = $GBLmysqli->dbquery($Query);
-        $discrow = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $discrow = $Queryresult->fetch_assoc();
         
         $Query = 
                 "DELETE FROM `coursedisciplines` " .
@@ -400,20 +400,20 @@ function DBimportInitialData() {
         $Query = "UPDATE `semester` SET `readonly` = '1';";
         $GBLmysqli->dbquery($Query);
         $Query = "SELECT `id` FROM `building` WHERE `acronym` = 'Eletro';";
-        $result = $GBLmysqli->dbquery($Query);
-        $sqlrow = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $sqlrow = $Queryresult->fetch_assoc();
           
         $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Teo';";
-        $result = $GBLmysqli->dbquery($Query);
-        $roomT = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $roomT = $Queryresult->fetch_assoc();
           
         $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Lab';";
-        $result = $GBLmysqli->dbquery($Query);
-        $roomL = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $roomL = $Queryresult->fetch_assoc();
           
         $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Inf';";
-        $result = $GBLmysqli->dbquery($Query);
-        $roomI = $result->fetch_assoc();
+        $Queryresult = $GBLmysqli->dbquery($Query);
+        $roomI = $Queryresult->fetch_assoc();
 
         roomset($roomL['id'] , '20' , $sqlrow['id'] , '110');
         roomset($roomL['id'] , '18' , $sqlrow['id'] , '200');
@@ -524,9 +524,9 @@ function DBrestoreTables() {
                 "SELECT * " . 
                 "FROM `account` " . 
                 "WHERE `email` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
+            $Queryresult = $GBLmysqli->dbquery($Query);
           
-            if($result->fetch_assoc()){
+            if($Queryresult->fetch_assoc()){
                 $Query = 
                     "UPDATE `account` " . 
                     "SET `password` = '$line[2]' , " . 
@@ -558,8 +558,8 @@ function DBrestoreTables() {
             $unitsql = $GBLmysqli->dbquery($Query);
             $unitrow = $unitsql->fetch_assoc();
             $Query = "SELECT * FROM `role` WHERE `rolename` = '" . $line[1] . "';";
-            $result = $GBLmysqli->dbquery($Query);
-            if($result->fetch_assoc()){
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            if($Queryresult->fetch_assoc()){
                 $Query = 
                     "UPDATE `role` " . 
                     "SET `description` = '$line[2]' , " . 
@@ -600,24 +600,24 @@ function DBrestoreTables() {
                 "SELECT `account` . `id`  " . 
                 "FROM `account` " . 
                 "WHERE `email` = '$line[0]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            $accrow = $result->fetch_assoc();
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            $accrow = $Queryresult->fetch_assoc();
           
             $Query = 
                 "SELECT `role` . `id`  " . 
                 "FROM `role` " . 
                 "WHERE `rolename` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            $rolerow = $result->fetch_assoc();
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            $rolerow = $Queryresult->fetch_assoc();
           
             $Query = 
                 "SELECT * " . 
                 "FROM `accrole` " . 
                 "WHERE `account_id` = '$accrow[id]' " . 
                 "AND `role_id` = '$rolerow[id]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
+            $Queryresult = $GBLmysqli->dbquery($Query);
           
-            if(!$result->fetch_assoc()){
+            if(!$Queryresult->fetch_assoc()){
                 $Query = 
                     "INSERT INTO `accrole` (`account_id` , `role_id`) " . 
                     "VALUES ('$accrow[id]' , '$rolerow[id]' ) ; " ;
@@ -650,8 +650,8 @@ function DBrestoreTables() {
                 "SELECT * " . 
                 "FROM `scenery` " . 
                 "WHERE `name` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            if(!$result->fetch_assoc()) {          
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            if(!$Queryresult->fetch_assoc()) {          
                 $Query = 
                     "INSERT INTO `scenery` (`name` , `desc`) " . 
                     "VALUES  ('$line[1]' , '$line[2]' ) ; " ;
@@ -668,23 +668,23 @@ function DBrestoreTables() {
                 "SELECT `scenery` . `id`  " . 
                 "FROM `scenery` " . 
                 "WHERE `name` = '$line[0]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            $scenrow = $result->fetch_assoc();
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            $scenrow = $Queryresult->fetch_assoc();
           
             $Query = 
                 "SELECT `role` . `id`  " . 
                 "FROM `role` " . 
                 "WHERE `rolename` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            $rolerow = $result->fetch_assoc();
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            $rolerow = $Queryresult->fetch_assoc();
           
             $Query = 
                 "SELECT * " . 
                 "FROM `sceneryrole` " . 
                 "WHERE `scenery_id` = '$scenrow[id]' " . 
                 "AND `role_id` = '$rolerow[id]' ; " ;
-            $result = $GBLmysqli->dbquery($Query);
-            if(!$result->fetch_assoc()){
+            $Queryresult = $GBLmysqli->dbquery($Query);
+            if(!$Queryresult->fetch_assoc()){
                 $Query = 
                     "INSERT INTO `sceneryrole` (`scenery_id` , `role_id`) " . 
                     "VALUES ('$scenrow[id]' , '$rolerow[id]' ) ; " ;

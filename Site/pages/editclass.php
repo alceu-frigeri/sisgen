@@ -16,16 +16,16 @@ $vac_edited = false;
 //vardebug($_SESSION['pagelnk'],'page link');
 
 $Query = "SELECT readonly FROM semester WHERE id =  '$_POST[semid]' ;";
-$result = $GBLmysqli->dbquery($Query);
-$sqlrow = $result->fetch_assoc();
+$Queryresult = $GBLmysqli->dbquery($Query);
+$sqlrow = $Queryresult->fetch_assoc();
 $readonly = $sqlrow['readonly'];
 $hiddenprofdeptid = null;
 $hiddenroombuildingid = null;
 
-$can_class = ($_SESSION['role'][$_POST['unitid']]['can_class'] | $_SESSION['role']['isadmin']) & !$readonly;
-$can_addclass = ($_SESSION['role'][$_POST['unitid']]['can_addclass'] | $_SESSION['role']['isadmin']) & !$readonly;
+$can_class = ($_SESSION['role'][$_POST['unitid']]['can_class'] || $_SESSION['role']['isadmin']) && !$readonly;
+$can_addclass = ($_SESSION['role'][$_POST['unitid']]['can_addclass'] || $_SESSION['role']['isadmin']) && !$readonly;
   
-$can_something = $can_class || $can_addclass || $_SESSION['usercanscen']  ;
+$can_something = ($can_class || $can_addclass || $_SESSION['usercanscen']) && !$readonly ;
 
 
 echo '<div class = "row">' .
@@ -34,18 +34,17 @@ echo '<div class = "row">' .
 
 
 // TODO , TO BE REVIEWED !!! 
-// possible ERROR IN LOGIC !!!
 
 
 $postedit = false;
-//  if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') ) & $can_class ) {
-if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') )  ) {
+
+if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') )  && $can_something ) {
     $postedit = true;
 } else {
     if ((($_POST['act'] == 'Add Class') | ($_POST['act'] == 'Replicate Class') ) & $can_addclass) {
         $postedit = true;
     } else {
-        if ((($_POST['act'] == 'Add Class in Scenery') | ($_POST['act'] == 'Replicate Class in Scenery') ) ) {
+        if ((($_POST['act'] == 'Add Class in Scenery') | ($_POST['act'] == 'Replicate Class in Scenery') ) && $can_something ) {
             $postedit = true;
         } else {
             $_POST['act'] = 'Cancel';
@@ -167,9 +166,7 @@ if ($postedit) {
         "ORDER BY name;" ;
     echo formselectsql($anytmp , $Query , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
                   
-    //echo formsceneryselect();
     [$SCinselected , $SCquery] = sceneryclasshack($_POST['profnicks']);
-    //echo '<br>';
 
     
     echo "Nome Profs? ";
@@ -190,10 +187,9 @@ if ($postedit) {
         "FROM `discipline` " .
         "WHERE `dept_id` = '$_POST[unitid]' " .
                 "AND `id` = '$_POST[discid]' ; " ;
-    $result = $GBLmysqli->dbquery($Query);
-
+// 
     if (!$readonly) {
-        if ($_POST['semid'] && $_POST['unitid'] && ($result->num_rows > 0) && $can_something ) {
+        if (testpostsql( array('semid' , 'unitid' ) , $Query) && $can_something) {
             echo  $GBLspc['D'] . formsubmit('act' , 'Edit') . '</form>';
         } else {
             echo  '</form>';
@@ -225,10 +221,10 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         "AND class . agreg = '1' " .
                 "ORDER BY class . name; " ;
         
-        $result = $GBLmysqli->dbquery($Query);
+        $Queryresult = $GBLmysqli->dbquery($Query);
         
         unset($_SESSION['agreg']);
-        while ($sqlrow = $result->fetch_assoc()) {
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['agreg'][$sqlrow['id']] = $sqlrow['name'];
         }  
                 
@@ -252,9 +248,9 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         "AND discipline . dept_id =  '$_POST[unitid]'  " . 
                         $qscensql . " ; " ;
         }
-        $result = $GBLmysqli->dbquery($Query);
+        $Queryresult = $GBLmysqli->dbquery($Query);
           
-        while ($classrow = $result->fetch_assoc()) {
+        while ($classrow = $Queryresult->fetch_assoc()) {
             if ($postedit) {
                 echo hiddendivkey('class' , $classrow['id']);
                 if($classrow['id'] == $newclassid) {
@@ -336,16 +332,19 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
             echo '<hr>';
         }
         echo '</p>';
+        
         if ($hiddenprofdeptid) {
             foreach ($hiddenprofdeptid as $profid => $hidprofdeptid ) { // '_blank'
                 echo hiddenprofform($_POST['semid'] , $hidprofdeptid , $profid);  
             }
         }
+        
         if ($hiddenroombuildingid) {
             foreach ($hiddenroombuildingid as $roomid => $buildingid) {
                 echo hiddenroomform($_POST['semid'] , $buildingid , $roomid);
             }
         }
+        
         if ($postedit) {
             if ($can_addclass) {
                 thisformpost('classNEWdiv');

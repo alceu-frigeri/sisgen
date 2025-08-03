@@ -23,7 +23,7 @@ class DBclass extends mysqli {
     public function dbquery($Query , $logOK = null) {
         global $GBLspc;
 
-        if ($result = $this->query($Query)) {
+        if ($Queryresult = $this->query($Query)) {
             if ($logOK) {
                 $this->eventlog($logOK);
             }
@@ -34,16 +34,16 @@ class DBclass extends mysqli {
             $logOK['action'] = $this->real_escape_string($logOK['action']);
             $this->eventlog(array('level'=>'DBERROR' ,   'action'=> $logOK['action'] . '(dbquery)', 'str' => $err, 'xtra' => 'dbconnect.php'));
         }
-        return $result;
+        return $Queryresult;
     }
 
     public function trydbquery($Query , $logOK = null) {
-        if ($result = $this->query($Query)) {
+        if ($Queryresult = $this->query($Query)) {
             if ($logOK) {
                 $this->eventlog($logOK);
             }
         }
-        return $result;
+        return $Queryresult;
     }
 
 
@@ -100,9 +100,9 @@ class DBclass extends mysqli {
                         " '$logdata[dataorg]'  , " . 
                         " '$logdata[datanew]'  ) ; " ;
         
-        $result = $this->dbquery( $Query );
-        if(!$result) {
-            $str = "<br>LOG execute failed: ( $result->errno ) $result->error "; 
+        $Queryresult = $this->dbquery( $Query );
+        if(!$Queryresult) {
+            $str = "<br>LOG execute failed: ( $Queryresult->errno ) $Queryresult->error "; 
             echo $str;
             writeLogFile("$str \n $logline \n"); // last resort !!!    
         }    
@@ -117,13 +117,13 @@ class DBclass extends mysqli {
             "SELECT * " . 
             "FROM `account` " . 
             "WHERE `email` = '" . $email . "';";
-        $result = $this->dbquery( $Query );
+        $Queryresult = $this->dbquery( $Query );
     
-        if (($sqlrow = $result->fetch_assoc())) {
+        if (($sqlrow = $Queryresult->fetch_assoc())) {
             if (($passwd == $sqlrow['password'] && $sqlrow['activ'])) {
                 $newhash = md5("$email - $microstamp");
                 $this->set_sessionvalues($sqlrow , $newhash);
-                $result->close();
+                $Queryresult->close();
                 $Query = 
                     "UPDATE  `account` " . 
                     "SET `sessionhash` = '$newhash' " . 
@@ -133,7 +133,7 @@ class DBclass extends mysqli {
                 return TRUE;
             }
         }
-        $result->close();
+        $Queryresult->close();
         return FALSE;
     }
 
@@ -145,8 +145,8 @@ class DBclass extends mysqli {
             "FROM `account` " . 
             "WHERE `sessionhash` = '$_SESSION[sessionhash]' " . 
                     "AND `id` = '$_SESSION[userid]' ; " ;
-        $result = $this->dbquery( $Query );
-        if (($sqlrow = $result->fetch_assoc())) {
+        $Queryresult = $this->dbquery( $Query );
+        if (($sqlrow = $Queryresult->fetch_assoc())) {
             $now = time() ; 
             $diff = $now - $_SESSION['last_hashcheck'] ; 
             if ($diff > $GBLtimeout) {
@@ -161,7 +161,7 @@ class DBclass extends mysqli {
             $log = array('level'=>'WARNING' , 'action'=>'session check' , 'str'=>'hashcheck failed !' , 'xtra'=>'core.php');
             $this->eventlog($log) ;
         }
-        $result->close();
+        $Queryresult->close();
         return FALSE;
     }
 
@@ -172,28 +172,28 @@ class DBclass extends mysqli {
             "FROM `account` " . 
             "WHERE `sessionhash` = '$_SESSION[sessionhash]' " . 
             "AND `password` = '${passwd}' ; " ;
-        $result = $this->dbquery( $Query );
-        if (($sqlrow = $result->fetch_assoc())) {
+        $Queryresult = $this->dbquery( $Query );
+        if (($sqlrow = $Queryresult->fetch_assoc())) {
             return TRUE;
         } else {
             $log = array('level'=>'WARNING' , 'action'=>'passwd check' , 'str'=>'hash/passwd check failed !' , 'xtra'=>'core.php');
             $this->eventlog($log) ;
         }
-        $result->close();
+        $Queryresult->close();
         return FALSE;
     }
 
 
 
     public function dbvaluesloop($Query , $sessionkeyA , $sqlkeyA , $sqlvalA , $sessionkeyB = null , $sqlkeyB = null , $sqlvalB = null) {
-        $result = $this->dbquery($Query);
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery($Query);
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION[$sessionkeyA][$sqlrow[$sqlkeyA]] = $sqlrow[$sqlvalA];
             if ($sqlkeyB) {
                 $_SESSION[$sessionkeyB][$sqlrow[$sqlkeyB]] = $sqlrow[$sqlvalB];
             }
         }
-        $result->close();
+        $Queryresult->close();
     }
 
 
@@ -245,12 +245,12 @@ class DBclass extends mysqli {
                     "AND role . id = accr . role_id " . 
                     "AND account . id = accr . account_id " . 
                     "AND account . id = '$_SESSION[userid]' ; " ;
-        $result = $this->dbquery( $Query );
+        $Queryresult = $this->dbquery( $Query );
         $boolkeys  = array('can_edit' , 'can_dupsem' , 'can_vacancies' , 'can_class' , 'can_addclass' , 'can_disciplines' , 'can_coursedisciplines' , 'can_prof' , 'can_viewlog' , 'can_scenery' , 'can_room');
         $txtkeys = array('rolename' , 'description');
         $_SESSION['usercanedit'] = '0';
         $_SESSION['usercanscen'] = '0';
-        while ($sqlrow = $result->fetch_assoc()) {
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['role']['isadmin'] |= $sqlrow['isadmin'];
             $_SESSION['usercanedit'] |= $sqlrow['can_edit'];
             $_SESSION['usercanscen'] |= $sqlrow['can_scenery'];
@@ -281,7 +281,7 @@ class DBclass extends mysqli {
             }
             
         }
-        $result->close();
+        $Queryresult->close();
 
     }
   
@@ -296,8 +296,8 @@ class DBclass extends mysqli {
             "FROM `scenery` " . 
             "WHERE '1' " . 
             "ORDER BY `name`;";
-        $result = $this->dbquery( $Query );
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery( $Query );
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['scen.desc'][$sqlrow['id']] = $sqlrow['desc'] ; 
             if ($_SESSION['role']['isadmin']) {
                 $_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ; 
@@ -314,7 +314,7 @@ class DBclass extends mysqli {
                 $_SESSION['scen.all'][$sqlrow['id']] = $sqlrow['name'] ; // all 
             }
         }
-        $result->close();
+        $Queryresult->close();
 
         $Query = 
             "SELECT DISTINCT scenery . * , " .
@@ -327,8 +327,8 @@ class DBclass extends mysqli {
                     "AND  `accrole` . `account_id` = '$_SESSION[userid]'  " .
             "ORDER BY `name` ; " ; 
 
-        $result = $this->dbquery( $Query );
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery( $Query );
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['scen.acc.edit'][$sqlrow['id']] = $sqlrow['name'] ; // all users can add/remove classes to/from => that's for editclass
             $_SESSION['scen.acc.view'][$sqlrow['id']] = $sqlrow['name'] ;
 
@@ -339,7 +339,7 @@ class DBclass extends mysqli {
                 //$_SESSION['scen.byroles'][$sqlrow['role_id']][$sqlrow['id']] = $sqlrow['name'];
             }
         }
-        $result->close();
+        $Queryresult->close();
 
 
         $Query = 
@@ -348,8 +348,8 @@ class DBclass extends mysqli {
             "WHERE `role` . `can_scenery` = '1' " . 
                     "AND `role` . `isadmin` = '0' " . 
             "ORDER BY `description` ; " ;
-        $result = $this->dbquery( $Query );
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery( $Query );
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['scen.editroles'][$sqlrow['id']] = $sqlrow['description'];
               
             $Query =  
@@ -364,7 +364,7 @@ class DBclass extends mysqli {
                 $_SESSION['scen.byroles'][$sqlrow['id']][$sceneryrow['id']] = $sceneryrow['name'];
             }                  
         }
-        $result->close();
+        $Queryresult->close();
 
         $Query = 
             "SELECT DISTINCT r . * " . 
@@ -374,8 +374,8 @@ class DBclass extends mysqli {
                     "AND `role` . `unit_id` = `r` . `unit_id` " . 
                     "AND `r` . `can_scenery` = '1' " .
                     "AND `r` . `isadmin` = '0' ; "    ;
-        $result = $this->dbquery( $Query );
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery( $Query );
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['sceneryroles'][$sqlrow['id']] = $sqlrow['description'];
         }
     }
@@ -383,14 +383,14 @@ class DBclass extends mysqli {
   
   
     public function dbvaluesloopX($Query , $keyA , $sqlkeyA , $keyB = null , $sqlkeyB = null) {
-        $result = $this->dbquery($Query);
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery($Query);
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION[$keyA][$sqlrow[$sqlkeyA]] = $sqlrow;
             if ($keyB) {
                 $_SESSION[$keyB][$sqlrow[$sqlkeyB]] = $sqlrow;
             }
         }
-        $result->close();
+        $Queryresult->close();
     }
   
     public function set_sessionXtravalues() {
@@ -404,8 +404,8 @@ class DBclass extends mysqli {
         $this->dbvaluesloopX($Query , 'termbycode' , 'code');
 
         $Query = "SELECT *  FROM building;" ; 
-        $result = $this->dbquery( $Query );
-        while ($sqlrow = $result->fetch_assoc()) {
+        $Queryresult = $this->dbquery( $Query );
+        while ($sqlrow = $Queryresult->fetch_assoc()) {
             $_SESSION['buildingbyacronym'][$sqlrow['acronym']] = $sqlrow;
       
             $Query = 
@@ -419,15 +419,15 @@ class DBclass extends mysqli {
             }
             $roomquery->close();
         }
-        $result->close();
+        $Queryresult->close();
     
     }
 
     public function scenclass_test() {
         $Query = 
             "SELECT * FROM `sceneryclass`;";
-        $result = $this->dbquery( $Query );
-        return ($result->num_rows);     
+        $Queryresult = $this->dbquery( $Query );
+        return ($Queryresult->num_rows);     
     }
 
 

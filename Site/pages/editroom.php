@@ -11,7 +11,7 @@ $can_room = $_SESSION['role']['isadmin'] || ($_SESSION['role']['building'][$_POS
 
 
 $postedit = false;
-if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit')) & $can_room) {
+if ( (($_POST['act'] == 'Edit') || ($_POST['act'] == 'Submit')) && $can_room) {
     $postedit = true;
 } else {
     $_POST['act'] = 'Cancel';
@@ -24,8 +24,8 @@ echo '<div class = "row">' .
 echo formpost($thisform);
   
 if (!($_SESSION['roomtype'])) {
-    $result = $GBLmysqli->dbquery( "SELECT * FROM `roomtype` ; " );
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery( "SELECT * FROM `roomtype` ; " );
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $_SESSION['roomtype'][$sqlrow['id']] = $sqlrow['name'];
     }
 }
@@ -101,10 +101,10 @@ $Query =
     "WHERE `building_id` = '$_POST[buildingid]' " .
     "ORDER BY `name` ; " ;
 
-$result = $GBLmysqli->dbquery( $Query );
+$Queryresult = $GBLmysqli->dbquery( $Query );
 
 if ($postedit & $can_room) {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         echo formpost($thisform);
         echo formhiddenval('buildingid' , $_POST['buildingid']);
         if ($_POST['roomid'] == $sqlrow['id']) {
@@ -132,7 +132,7 @@ if ($postedit & $can_room) {
 
 } else {
     $firstofmany = true;
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         if ($firstofmany) {
             $firstofmany = false;
             if ($can_room) {

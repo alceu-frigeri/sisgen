@@ -6,7 +6,7 @@
     <meta name="description" content="SISGEN - Sistema de Apoio à Gerência de Turmas e Encargos">
     <meta name="author" content="">
     
-    <link rel="shortcut icon" href="./images/icon_logo.ico">
+    <link rel="shortcut icon" href="images/UFRGS-favicon.ico">
 
     <title>SISGEN - Sistema de Apoio a Gerência de Encargos</title>
 

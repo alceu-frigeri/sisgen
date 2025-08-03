@@ -10,8 +10,8 @@ $Query =
     "SELECT * " . 
     "FROM `role` " . 
     "ORDER BY `rolename` ; " ;
-$result = $GBLmysqli->dbquery($Query);
-while ($sqlrow = $result->fetch_assoc()) {
+$Queryresult = $GBLmysqli->dbquery($Query);
+while ($sqlrow = $Queryresult->fetch_assoc()) {
     $_SESSION['roleslist'][$sqlrow['id']] = $sqlrow['rolename']  . '  /  ' . $sqlrow['description'];
 }
 

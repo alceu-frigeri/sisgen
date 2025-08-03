@@ -7,7 +7,7 @@ $thisform = $_SESSION['pagelnk']['eddisc'];
 formretainvalues(array('unitid' , 'orderby'));
   
   
-$can_discipline = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] & $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
+$can_discipline = $_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['unitid']] && $_SESSION['role'][$_POST['unitid']]['can_disciplines']);
 
 $postedit = false;
 if ( (($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert')) & $can_discipline) {
@@ -116,10 +116,10 @@ $Query =
     "WHERE `dept_id` =  '$_POST[unitid]'  " .
     "ORDER BY $ordby ; " ;
 
-$result = $GBLmysqli->dbquery( $Query );
+$Queryresult = $GBLmysqli->dbquery( $Query );
 
 if ($postedit & $can_discipline) {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $discdeptcode = substr($sqlrow['code'] , 0 , 5);
         echo formpost($thisform . targetdivkey('disc' , $sqlrow['id']));
         echo formhiddenval('unitid' , $_POST['unitid']);
@@ -180,7 +180,7 @@ if ($postedit & $can_discipline) {
     
 
 } else {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         if ($firstofmany) {
             $firstofmany = false;
             if ($can_discipline) {

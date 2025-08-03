@@ -11,7 +11,7 @@ foreach ($_SESSION['role.scen'] as $roleid => $rolecanscen) {
 }
   
 $postedit = false;
-if ( (($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert')) & $can_scenery) {
+if ( (($_POST['act'] == 'Submit') || ($_POST['act'] == 'Delete') || ($_POST['act'] == 'Insert')) && $can_scenery) {
     $postedit = true;
 } else {
     $_POST['act'] = 'Cancel';

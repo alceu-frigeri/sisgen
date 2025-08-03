@@ -42,9 +42,9 @@ if ($_SESSION['role']['isadmin']) {
         "WHERE `iscourse` = '1' " .
         "ORDER BY `acronym` ; " ;
 
-    $result = $GBLmysqli->dbquery( $Query );
+    $Queryresult = $GBLmysqli->dbquery( $Query );
     $any = 0;
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $any = 1;
         echo formpost($thisform);
         echo formhiddenval('courseid' , $sqlrow['id']);

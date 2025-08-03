@@ -7,11 +7,11 @@ $thisform = $_SESSION['pagelnk']['edcourse'];
 formretainvalues(array('courseid' , 'termid' , 'orderby'));
   
 
-$can_coursedisciplines = ($_SESSION['role']['isadmin'] | ($_SESSION['role'][$_POST['courseid']] & $_SESSION['role'][$_POST['courseid']]['can_coursedisciplines']));
+$can_coursedisciplines = ($_SESSION['role']['isadmin'] || ($_SESSION['role'][$_POST['courseid']] && $_SESSION['role'][$_POST['courseid']]['can_coursedisciplines']));
   
   
 $postedit = false;
-if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') | ($_POST['act'] == 'Delete') | ($_POST['act'] == 'Insert') | ($_POST['act'] == 'Reload')) & $can_coursedisciplines) {
+if ((($_POST['act'] == 'Edit') || ($_POST['act'] == 'Submit') || ($_POST['act'] == 'Delete') || ($_POST['act'] == 'Insert') || ($_POST['act'] == 'Reload')) && $can_coursedisciplines) {
     $postedit = true;
 } else {
     $_POST['act'] = 'Cancel';
@@ -25,15 +25,15 @@ echo formpost($thisform);
   
 if(!($_SESSION['disckind'])) {
     $Query = "SELECT * FROM `disciplinekind`";
-    $result = $GBLmysqli->dbquery($Query);
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $_SESSION['disckind'][$sqlrow['id']] = $sqlrow['code'];
     }
 }
 if(!($_SESSION['term'])) {
     $Query = "SELECT * FROM `term`";
-    $result = $GBLmysqli->dbquery($Query);
-    while ($sqlrow = $result->fetch_assoc()) {
+    $Queryresult = $GBLmysqli->dbquery($Query);
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         $_SESSION['term'][$sqlrow['id']] = $sqlrow['code'];
     }
 }
@@ -140,11 +140,11 @@ $Query =
                 "AND `term` . `id` =  '$_POST[termid]'  " . 
         "ORDER BY $ordby ; " ;
         
-$result = $GBLmysqli->dbquery( $Query );
+$Queryresult = $GBLmysqli->dbquery( $Query );
 
 $firstofmany = true;
 if ($postedit & $can_coursedisciplines) {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
       echo formpost($thisform);
     echo formhiddenval('courseid' , $_POST['courseid']);
     echo formhiddenval('termid' , $_POST['termid']);
@@ -209,7 +209,7 @@ if ($postedit & $can_coursedisciplines) {
     
 
 } else {
-    while ($sqlrow = $result->fetch_assoc()) {
+    while ($sqlrow = $Queryresult->fetch_assoc()) {
         if ($firstofmany) {
                 $firstofmany = false;
                 if($can_coursedisciplines) {

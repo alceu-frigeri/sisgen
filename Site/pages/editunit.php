@@ -8,7 +8,7 @@ $thisform = $_SESSION['pagelnk']['edunit'];
 $can_edit = $_SESSION['role']['isadmin'] || ($_SESSION['usercanedit']);
 
 $postedit = false;
-if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit')) & $can_edit) {
+if ((($_POST['act'] == 'Edit') || ($_POST['act'] == 'Submit')) && $can_edit) {
     $postedit = true;
 } else {
     $_POST['act'] = 'Cancel';
@@ -59,7 +59,7 @@ function unitdisplay($sqlrow,$submit='') {
 }
 
 // course, term
-$result = $GBLmysqli->dbquery( "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `name` ASC;" );
+$Queryresult = $GBLmysqli->dbquery( "SELECT * FROM   `unit`  ORDER BY `iscourse` DESC, `name` ASC;" );
   
 if ($postedit & $can_edit) {
     echo formsubmit('act' , 'Cancel') . '</form><br>';
@@ -72,7 +72,7 @@ if ($postedit & $can_edit) {
 
 
 echo '<table>';
-while ($sqlrow = $result->fetch_assoc()) {
+while ($sqlrow = $Queryresult->fetch_assoc()) {
     if ($postedit & $can_edit) {
         echo formpost($thisform . targetdivkey('unit' , $sqlrow['id']));
         $unitkey = 'unit' . $sqlrow['id'] ; 
