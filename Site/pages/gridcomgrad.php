@@ -190,16 +190,25 @@ if ($emailbody) {
     echo formhiddenval('courseid' , $_POST['courseid']);
     echo formhiddenval('deptid' , $_POST['deptid']);
     echo '<hr>';
+    
+    echo spanfmtbegin('','darkblue',null,true);
     echo $GBLspc['D'] . 'from:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'from:' , 'emailfrom' , $courserow['contactemail']) . '<br>';
+    echo spanfmtend();
+
+    echo spanfmtbegin('','darkred',null,true);
     echo $GBLspc['Q'] . 'to:' . formpatterninput(64 , 16 , '[a-zA-Z0-9\._-]+@[a-zA-Z0-9\._-]+' , 'to:' , 'emailto' , $deptrow['contactemail']) . '<br>';
+    echo spanfmtend();
+
     echo 'subject:' . formpatterninput(128 , 64 , '[a-zA-Z0-9\._- ]+' , 'subject:' , 'emailsubject' , 'Demandas COMGRAD/' . $courserow['acronym'] . ' para o semestre ' . $semrow['name'] . ' (' . $deptrow['acronym'] . ')') . '<br>';
     echo 'body:<textarea name="emailtext" rows="10" cols="64"> Prezado(a) ' . $deptrow['contactname'] . " , \n Seguem abaixo as nossas necessidades de turmas/vagas para o Semestre " . 
         $semrow['name'] . '.'  . 
         "\n\nColocamo-nos, desde já, a disposição para sanar quaisquer dúvidas."  . 
         "\n\nAtenciosamente, \n". $courserow['contactname'] . "\nCOMGRAD/"  . $courserow['acronym']  . "\n". $courserow['name'] . "\n\n</textarea><br>";
-    echo 'Really Send it:'; 
+    echo spanfmtbegin('','darkred',null,true);
+    echo 'Really Send it? '; 
     echo formselectsession('trulysend' , 'bool' , 0);
     echo formsubmit('act' , 'Send Email');
+    echo spanfmtend();
     echo '</form>';
     echo '<p><hr>' . $emailbodyhdr . $emailbody; 
     //$scapedbody = htmlspecialchars($emailbody);

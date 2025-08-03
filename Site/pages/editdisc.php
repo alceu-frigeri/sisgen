@@ -26,6 +26,7 @@ case 'Insert':
     $_POST['discid'] =  $GBLmysqli->insert_id;
     $_POST['act'] = 'Submit';
     break;
+
 case 'Submit':
     $disckey = 'disc' .$_POST['discid'] ;
     $compfields = array('discsubcode' , 'discLcred' , 'discTcred' , 'discname' , 'disccomment' ) ;
@@ -50,6 +51,7 @@ case 'Submit':
     } 
     //$_POST['discid'] = null;
     break;
+
 case 'Delete':
     if ($_POST['discdelete']) {
         $Query = 
@@ -141,8 +143,8 @@ if ($postedit & $can_discipline) {
                     $GBLspc['D'] . 'L: '  . 
                     formpatterninput(1 , 1 , '[0-8]' , 'single digit' , $disckey . 'discLcred' , $sqlrow['Lcred'])  . 
                     $GBLspc['D'] . ' '  . 
-                    formpatterninput(120 , 64 , $GBLdiscpattern , 'Nome da disciplina' , $disckey . 'discname' , $sqlrow['name'])  . 
-                    '<br>' . $GBLspc['D'] . ' Obs . :' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , $disckey . 'disccomment' , $sqlrow['comment']);
+                    formpatterninput(120 , 64 , $GBLpattern['disc'] , 'Nome da disciplina' , $disckey . 'discname' , $sqlrow['name'])  . 
+                    '<br>' . $GBLspc['D'] . ' Obs . :' . formpatterninput(48 , 16 , $GBLpattern['comment'] , 'Comentário qq' , $disckey . 'disccomment' , $sqlrow['comment']);
                 echo formsubmit('act' , 'Submit');
                 echo '</form>';
                 echo HLend();
@@ -170,8 +172,8 @@ if ($postedit & $can_discipline) {
         $GBLspc['D'] . 'L: '  . 
         formpatterninput(1 , 1 , '[0-8]' , 'single digit' , 'discLcred' , 0)  . 
         $GBLspc['D'] . ' '  . 
-        formpatterninput(120 , 64 , $GBLdiscpattern , 'Nome da disciplina' , 'discname' , '!')  . 
-        $GBLspc['D'] . ' Obs.:' . formpatterninput(48 , 16 , $GBLcommentpattern , 'Comentário qq' , 'disccomment' , $sqlrow['comment'])  . 
+        formpatterninput(120 , 64 , $GBLpattern['disc'] , 'Nome da disciplina' , 'discname' , '!')  . 
+        $GBLspc['D'] . ' Obs.:' . formpatterninput(48 , 16 , $GBLpattern['comment'] , 'Comentário qq' , 'disccomment' , $sqlrow['comment'])  . 
         '  ' . $GBLspc['T'] . ' '  . 
         formsubmit('act' , 'Insert')  . 
         '</form>';

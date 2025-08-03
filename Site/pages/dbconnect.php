@@ -20,16 +20,16 @@ class DBclass extends mysqli {
     }
 
 
-    public function dbquery($q , $logOK = null) {
+    public function dbquery($Query , $logOK = null) {
         global $GBLspc;
 
-        if ($result = $this->query($q)) {
+        if ($result = $this->query($Query)) {
             if ($logOK) {
                 $this->eventlog($logOK);
             }
         } else {
-            $err = 'Query <' . $q . '> failed: (' . $this->errno . ') ' . $this->error;
-            echo '<br><b>Query' . $GBLspc['D'] . '</b>' . spanformat('smaller' , '', htmlspecialchars($q , ENT_QUOTES))  . '<b>' . $GBLspc['T'] . 'FAILED' . spanformat('' , 'red',  htmlspecialchars($this->error , ENT_QUOTES)) . '</b></p>';
+            $err = 'Query <' . $Query . '> failed: (' . $this->errno . ') ' . $this->error;
+            echo '<br><b>Query' . $GBLspc['D'] . '</b>' . spanformat('smaller' , '', htmlspecialchars($Query , ENT_QUOTES))  . '<b>' . $GBLspc['T'] . 'FAILED' . spanformat('' , 'red',  htmlspecialchars($this->error , ENT_QUOTES)) . '</b></p>';
             $err = $this->real_escape_string($err);
             $logOK['action'] = $this->real_escape_string($logOK['action']);
             $this->eventlog(array('level'=>'DBERROR' ,   'action'=> $logOK['action'] . '(dbquery)', 'str' => $err, 'xtra' => 'dbconnect.php'));
@@ -37,8 +37,8 @@ class DBclass extends mysqli {
         return $result;
     }
 
-    public function trydbquery($q , $logOK = null) {
-        if ($result = $this->query($q)) {
+    public function trydbquery($Query , $logOK = null) {
+        if ($result = $this->query($Query)) {
             if ($logOK) {
                 $this->eventlog($logOK);
             }
@@ -185,8 +185,8 @@ class DBclass extends mysqli {
 
 
 
-    public function dbvaluesloop($q , $sessionkeyA , $sqlkeyA , $sqlvalA , $sessionkeyB = null , $sqlkeyB = null , $sqlvalB = null) {
-        $result = $this->dbquery($q);
+    public function dbvaluesloop($Query , $sessionkeyA , $sqlkeyA , $sqlvalA , $sessionkeyB = null , $sqlkeyB = null , $sqlvalB = null) {
+        $result = $this->dbquery($Query);
         while ($sqlrow = $result->fetch_assoc()) {
             $_SESSION[$sessionkeyA][$sqlrow[$sqlkeyA]] = $sqlrow[$sqlvalA];
             if ($sqlkeyB) {
@@ -211,11 +211,11 @@ class DBclass extends mysqli {
     
         $this->set_scenerysessionvalues();
 
-        $q = "select * from weekdays;";
-        $this->dbvaluesloop($q , 'weekday' , 'abrv' , 'id' , 'weekday' , 'id' , 'abrv');
+        $Query = "select * from weekdays;";
+        $this->dbvaluesloop($Query , 'weekday' , 'abrv' , 'id' , 'weekday' , 'id' , 'abrv');
     
-        $q = "SELECT *  FROM `loglevel`;";
-        $this->dbvaluesloop($q , 'log' , 'level' , 'id');
+        $Query = "SELECT *  FROM `loglevel`;";
+        $this->dbvaluesloop($Query , 'log' , 'level' , 'id');
     
         $_SESSION['bool'][0] = 'Não';
         $_SESSION['bool'][1] = 'Sim';
@@ -382,8 +382,8 @@ class DBclass extends mysqli {
   
   
   
-    public function dbvaluesloopX($q , $keyA , $sqlkeyA , $keyB = null , $sqlkeyB = null) {
-        $result = $this->dbquery($q);
+    public function dbvaluesloopX($Query , $keyA , $sqlkeyA , $keyB = null , $sqlkeyB = null) {
+        $result = $this->dbquery($Query);
         while ($sqlrow = $result->fetch_assoc()) {
             $_SESSION[$keyA][$sqlrow[$sqlkeyA]] = $sqlrow;
             if ($keyB) {

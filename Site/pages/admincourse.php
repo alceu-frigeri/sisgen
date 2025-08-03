@@ -52,7 +52,7 @@ if ($_SESSION['role']['isadmin']) {
             echo HLbegin();
             echo formpatterninput(10 , 3 , '[A-Za-z\.]+' , 'acronym' , 'acronym' , $sqlrow['acronym'])  . 
                 formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'code' , $sqlrow['code'])  . 
-                formpatterninput(32 , 16 , $GBLnamepattern , 'nome' , 'name' , $sqlrow['name']);
+                formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'name' , $sqlrow['name']);
             echo formsubmit('act' , 'Submit');
             echo spanfmtbegin('','red',null,true);
             echo $GBLspc['T'] . 'Deletar:';
@@ -66,12 +66,19 @@ if ($_SESSION['role']['isadmin']) {
             echo formhiddenval('oldcourseacro' , $sqlrow['acronym']);
             echo formpatterninput(10 , 3 , '[A-Z]+' , 'acronym' , 'newacronym' , '!')  . 
                 formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'newcode' , '!')  . 
-                formpatterninput(32 , 16 , $GBLnamepattern , 'nome' , 'newname' , '!');
+                formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'newname' , '!');
             echo formsubmit('act' , 'Duplicate as');
             echo "</form>";
         } else {
-            echo formsubmit('act' , 'Edit');
-            echo $sqlrow['acronym'].  $GBLspc['D']  . $sqlrow['code'] .  $GBLspc['D']  . $sqlrow['name'] . "<br>";
+            if ($_POST['courseid'] == $sqlrow['id']) {
+                echo HLbegin();
+                echo formsubmit('act' , 'Edit');
+                echo $sqlrow['acronym'].  $GBLspc['D']  . $sqlrow['code'] .  $GBLspc['D']  . $sqlrow['name'] . "<br>";
+                echo HLend();
+            } else {
+                echo formsubmit('act' , 'Edit');
+                echo $sqlrow['acronym'].  $GBLspc['D']  . $sqlrow['code'] .  $GBLspc['D']  . $sqlrow['name'] . "<br>";
+            }
             echo "</form>";
         }
     }

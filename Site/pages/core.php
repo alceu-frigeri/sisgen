@@ -21,14 +21,21 @@ $sisgenfullsetup = false; // this disable the "initial data imports"
 $sisgenDBsetupHacks = false; // this disable whatever "DB import hack"
 $sisgenimportCSV = true; //'new' simple way, direct from CSV file...
 
-
+//Mn8*.Mn8*.
 // some handy/aux values
 $GBLcommentcolor = 'teal';
+
 $GBLcommentpattern = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ :\*\(\)\.\-\+]+';
 $GBLdiscpattern = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \(\)\-]+';
 $GBLnamepattern = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \'\-\.@_]+';
 $GBLpasswdpattern = '(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
 $GBLclasspattern = '[A-Z][A-Za-z0-9\*\-\+@]*';
+
+$GBLpattern['comment'] = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ :\*\(\)\.\-\+]+';
+$GBLpattern['disc'] = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \(\)\-]+';
+$GBLpattern['name'] = '[a-zA-Z0-9à-äè-ëì-ïò-öù-üÀ-ÄÈ-ËÌ-ÏÒ-ÖÙ-ÜçÇ \'\-\.@_]+';
+$GBLpattern['passwd'] = '(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$';
+$GBLpattern['class'] = '[A-Z][A-Za-z0-9\*\-\+@]*';
 
 // $pattern = '[a-zA-Z0-9 :\+\-\.\(\)]+';
 
@@ -149,10 +156,10 @@ function regacc_create() {
 Você estará recebendo, em breve, um Email com instruções para ativar a sua conta.<br>';
 
         $msg = "Obrigado por criar uma conta. \nPor favor, acesse o link abaixo para ativar a mesma\n\n".
-            "${GBLbaseurl}?st=validate&h=$emailhash\n\nAtt. sisgen";
+            "${GBLbaseurl}?st=validate&h=$emailhash\n";
         mymail($_POST['emailA'] , 'Confirmação de Email' , $msg);
         
-        $msg  = "P/Registro:\n\nConta registrada: $email\n";
+        $msg  = "P/Registro:\n\nConta registrada: \n   $_POST[name]  $_POST[familyname]\n   $_POST[emailA]\n";
         mymail('alceu.frigeri@ufrgs.br' , 'Conta Nova - sisgen' , $msg);
 
     } 
@@ -262,20 +269,20 @@ function duplicatesem($currsemid , $newsemname) {
   
     $newsem = $GBLmysqli->real_escape_string($newsemname);
   
-    $q = 
+    $Query = 
         "SELECT * " .
         "FROM semester " .
         "WHERE `name` = '$newsem' ; " ;
         
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     if ($sqlrow = $result->fetch_assoc()) {
         echo "ERR: semestre já existente ! </br>";
     } else {
   
-        $q = 
+        $Query = 
             "INSERT INTO `semester` (`name`) " .
             "VALUES ('$newsem') ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         $newsemid = $GBLmysqli->insert_id;
 
 
@@ -333,31 +340,31 @@ function duplicatesem($currsemid , $newsemname) {
 ///// other 'help' functions
 
 
-function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
+function checkweek($Query , $qscen = null , $courseid = null , $termid = null) {
     global $GBLmysqli;
     $flag = array();
 
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     while ($sqlrow = $result->fetch_assoc()) {
         $disccodes[$sqlrow['code']] = $sqlrow['code'];
         $disc[$sqlrow['code']] = $sqlrow['discname'];
 
         if (!$vac[$sqlrow['code'] . ' - ' . $sqlrow['name']]) {
             if($courseid) {
-                $q = 
+                $Query = 
                     "SELECT `askednum` AS `totalA` , " .
                             "`askedreservnum`  AS `totalB` " .
                     "FROM `vacancies` " .
                     "WHERE `class_id` = '$sqlrow[classid]' " .
                     "AND `course_id` = '$courseid' ; " ;
             } else {
-                $q = 
+                $Query = 
                     "SELECT SUM(givennum) AS `totalA` , " .
                             "SUM(givenreservnum) AS `totalB` " .
                     "FROM `vacancies` " .
                     "WHERE `class_id` = '$sqlrow[classid]' ; " ;
             }
-            $vacresult = $GBLmysqli->dbquery($q);
+            $vacresult = $GBLmysqli->dbquery($Query);
             $vacrow = $vacresult->fetch_assoc();
             $vac[$sqlrow['code'] . ' - ' . $sqlrow['name']] = $vacrow['totalA'] + $vacrow['totalB'];
         }
@@ -373,7 +380,7 @@ function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
     }
   
     if($termid) {
-        $q = 
+        $Query = 
             "SELECT `discipline`.`code` " .
             "FROM `discipline` , `coursedisciplines` , `disciplinekind` " .
             "WHERE `coursedisciplines`.`course_id` = '$courseid' " .
@@ -381,7 +388,7 @@ function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
                     "AND `coursedisciplines`.`disciplinekind_id` = `disciplinekind`.`id` " .
                     "AND `coursedisciplines`.`discipline_id` = `discipline`.`id` " .
                     "AND (`disciplinekind`.`code` = 'OB' OR `disciplinekind`.`code` = 'AL') ; " ;
-        $termsql = $GBLmysqli->dbquery($q);
+        $termsql = $GBLmysqli->dbquery($Query);
         while ($termrow = $termsql->fetch_assoc()) {
             if(!$discflag[$termrow['code']]) {$flag['ob'] = 1;};
         }
@@ -407,7 +414,7 @@ function checkweek($q , $qscen = null , $courseid = null , $termid = null) {
 ////
 ////
 
-function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $edit = true , $matrixonly = false , $courseHL = null) {
+function dbweekmatrix($Query , $qscen = null , $courseid = null , $termid = null , $edit = true , $matrixonly = false , $courseHL = null) {
     global $GBLmysqli;
     global $GBLspc;
     
@@ -433,7 +440,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
 
     $hiddenclasskeys = null;
     $hiddenprofdeptid = null;
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     while ($sqlrow = $result->fetch_assoc()) {
         $courseHLquery = $sqlrow['courseid'];
         $disccodes[$sqlrow['code']] = $sqlrow['code'];
@@ -468,30 +475,30 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
 
         if (!$vac[$classindex]) {
             if($courseid) {
-                $q = 
+                $Query = 
                     "SELECT `askednum` AS `totalA` , " .
                             "`askedreservnum`  AS `totalB` " .
                     "FROM `vacancies` " .
                     "WHERE `class_id` = '$sqlrow[classid]' " .
                     "AND `course_id` = '$courseid' ; " ;
             } else {
-                $q = 
+                $Query = 
                     "SELECT SUM(givennum) AS `totalA` , " .
                             "SUM(givenreservnum) AS `totalB` " .
                     "FROM `vacancies` " .
                     "WHERE `class_id` = '$sqlrow[classid]' ; " ;
             }
-            $vacresult = $GBLmysqli->dbquery($q);
+            $vacresult = $GBLmysqli->dbquery($Query);
             $vacrow = $vacresult->fetch_assoc();
             $vac[$classindex] = $vacrow['totalA'] + $vacrow['totalB'];  ;  
         }
         if(!$vacHL[$classindex] && $courseHL) {
-            $q = 
+            $Query = 
                 "SELECT (`askednum` + `askedreservnum` + `givennum` + `givenreservnum`) AS `total` " .
                 "FROM `vacancies` " .
                 "WHERE `class_id` = '$sqlrow[classid]' " .
                         "AND `course_id` = '$courseHL' ; " ;
-            $vacresult = $GBLmysqli->dbquery($q);
+            $vacresult = $GBLmysqli->dbquery($Query);
             $vacrow = $vacresult->fetch_assoc();
             $vacHL[$classindex] = $vacrow['total'];  
         }
@@ -599,19 +606,19 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
         $hiddencoursekeys = null;
         foreach ($disccodes as $d) {
             if($courseid){
-                $q = 
+                $Query = 
                     "SELECT `kind`.`code` " .
                     "FROM `disciplinekind` AS `kind` , " .
                             "`coursedisciplines` AS `cd` " .
                     "WHERE `cd`.`course_id` = '$courseid' " .
                             "AND `cd`.`discipline_id` = '$discid[$d]' " .
                             "AND `cd`.`disciplinekind_id`= `kind`.`id` ; " ;
-                $result = $GBLmysqli->dbquery($q);
+                $result = $GBLmysqli->dbquery($Query);
                 $sqlrow = $result->fetch_assoc();
                 $kind = '<sub>'.spanformat('smaller' , '' , $sqlrow['code']).'</sub>';
             } else {
                 $kind = null;
-                $q = 
+                $Query = 
                     "SELECT `kind`.`code` AS kcode , " .
                             "`course`.`acronym` AS acro, " .
                             "`course`.`id` AS courseid , " .
@@ -624,7 +631,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
                             "AND `cd`.`course_id`= `course`.`id` " .
                             "AND `cd`.`term_id`= `term`.`id`  " .
                             "AND `cd`.`disciplinekind_id`= `kind`.`id` ; " ;
-                $result = $GBLmysqli->dbquery($q);
+                $result = $GBLmysqli->dbquery($Query);
                 while ($sqlrow = $result->fetch_assoc()) {
                     $hiddencoursekeys[$sqlrow['courseid']][$sqlrow['termid']] = hiddencoursekey($_POST['semid'] , $sqlrow['courseid'] , $sqlrow['termid']);
                     if (($sqlrow['kcode'] == 'OB') || ($sqlrow['kcode'] == 'AL')) {$bold = true;$tcolor = '#0000A0';} else {$bold = false;$tcolor = null;}
@@ -657,7 +664,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
             }
         }
         if($termid) {
-            $q = 
+            $Query = 
                 "SELECT `disc`.`code` , " .
                         "`disc`.`name` , " .
                         "`disc`.`id` AS `discid` , " .
@@ -673,7 +680,7 @@ function dbweekmatrix($q , $qscen = null , $courseid = null , $termid = null , $
                         "AND `cd`.`disciplinekind_id` = `kind`.`id` " .
                         "AND `cd`.`discipline_id` = `disc`.`id`; " ;
             //        "AND (`kind`.`code` = 'OB' OR `kind`.`code` = 'AL');";
-            $termsql = $GBLmysqli->dbquery($q);
+            $termsql = $GBLmysqli->dbquery($Query);
             $title = '<h5><b>Disciplina(s) não ofertada(s)</b></h5>';
             while ($termrow = $termsql->fetch_assoc()) {
                 if(!$discflag[$termrow['code']]) {
@@ -855,11 +862,11 @@ function formsubmit($field , $val) {
 function displaysqlitem($str , $sqltable , $sqlid , $sqlitem , $sqlitemB = null) {
     global $GBLmysqli;
     if($sqlitemB) {$b = ' , `'.$sqlitemB.'`';} else {$b = '';};
-    $q = 
+    $Query = 
         "SELECT `$sqlitem`$b " .
         "FROM `$sqltable` " .
         "WHERE `id` = '$sqlid' ; " ;
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     $sqlrow = $result->fetch_assoc();
     if($sqlitemB) {
         return $str . $sqlrow[$sqlitem] . ' -- ' . $sqlrow[$sqlitemB] .'   ';
@@ -1046,11 +1053,11 @@ function formselectsession($selectname , $sessionkey , $refval , $nulloption = f
 }
 
 
-function formselectsql(&$any , $q , $selectname , $refval , $idkey , $valAkey , $valBkey = null , $onchange = true) {
+function formselectsql(&$any , $Query , $selectname , $refval , $idkey , $valAkey , $valBkey = null , $onchange = true) {
     global $GBLmysqli;
     
     $_SESSION['org'][$selectname] = $refval;
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     if ($onchange) {
         $rtntext = "<select name='".$selectname."' onchange='this.form.submit(".$submit.")'>";
         $rtntext .= "<option value='0'>---</option>";

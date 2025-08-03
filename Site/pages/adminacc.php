@@ -7,9 +7,9 @@ $GBLmysqli->postsanitize();
 
 unset($_SESSION['rolelist']);
 $Query = 
-        "SELECT * " . 
-        "FROM `role` " . 
-        "ORDER BY `rolename` ; " ;
+    "SELECT * " . 
+    "FROM `role` " . 
+    "ORDER BY `rolename` ; " ;
 $result = $GBLmysqli->dbquery($Query);
 while ($sqlrow = $result->fetch_assoc()) {
     $_SESSION['roleslist'][$sqlrow['id']] = $sqlrow['rolename']  . '  /  ' . $sqlrow['description'];
@@ -24,9 +24,9 @@ if($_SESSION['role']['isadmin']) {
             $pass = ' ' ;
         }
         $Query = 
-                "UPDATE `account` " .
-                "SET `activ` = '$_POST[activ]' $pass " .
-                "WHERE `id` = '$_POST[usrid]' ; ";
+            "UPDATE `account` " .
+            "SET `activ` = '$_POST[activ]' $pass " .
+            "WHERE `id` = '$_POST[usrid]' ; ";
         $GBLmysqli->dbquery( $Query );
         
         break;
@@ -60,8 +60,8 @@ if($_SESSION['role']['isadmin']) {
         break;
     case 'Add Role':
         $Query = 
-                "INSERT INTO `accrole` (`account_id` , `role_id`) " .
-                "VALUES ( '$_POST[usrid]'  ,  '$_POST[newroleid]' ) ; " ;
+            "INSERT INTO `accrole` (`account_id` , `role_id`) " .
+            "VALUES ( '$_POST[usrid]'  ,  '$_POST[newroleid]' ) ; " ;
         $GBLmysqli->dbquery( $Query );
         $_POST['accroleid'] = null;
         break;    
@@ -83,73 +83,76 @@ if($_SESSION['role']['isadmin']) {
         "SELECT * " .
         "FROM `account` " .
         "ORDER BY `name` ; " ;
-  $sqlusers = $GBLmysqli->dbquery( $Query );
-  while ($usrrow = $sqlusers->fetch_assoc()) {
+    $sqlusers = $GBLmysqli->dbquery( $Query );
+    while ($usrrow = $sqlusers->fetch_assoc()) {
         echo hiddendivkey('acc' , $usrrow['id']);
 
-    echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
-    echo formhiddenval('usrid' , $usrrow['id']);
-    if ($usrrow['id'] == $_POST['usrid']) {
-      echo HLbegin();
-    }
-    echo spanformat('' , 'darkblue' , 'User: <b>' . $usrrow['displayname'] . ' / ' . $usrrow['name']  . ' ( ' . $usrrow['email'] . ' )</b>');
-    echo $GBLspc['D'] . ' Reset passwd?';
-    echo formselectsession('resetpasswd' , 'bool' , 0);
-    echo 'chgpasswd:';
-  if ($usrrow['chgpasswd']) {
+        echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
+        echo formhiddenval('usrid' , $usrrow['id']);
+        if ($usrrow['id'] == $_POST['usrid']) {
+            echo HLbegin();
+            $HLend = HLend();
+        } else {
+            $HLend = ' ' ;
+        }
+        echo spanformat('' , 'darkblue' , 'User: <b>' . $usrrow['displayname'] . ' / ' . $usrrow['name']  . ' ( ' . $usrrow['email'] . ' )</b>');
+        echo spanfmtbegin('','darkgreen',null,true);
+        echo $GBLspc['D'] . ' Reset passwd?';
+        echo formselectsession('resetpasswd' , 'bool' , 0);
+        echo spanfmtend();
+        echo 'chgpasswd:';
+        if ($usrrow['chgpasswd']) {
             echo spanformat('' , 'red' , ':T ');
         } else {
             echo spanformat('' , 'blue' , ':F ');
         }
-    echo $GBLspc['D'] . ' Activ?';
-    echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
-    echo formsubmit('act' , 'Submit') . '<br>';
-    echo spanfmtbegin('' , 'red' , null , true);
-    echo  $GBLspc['D'] . 'Delete?' ;
-    echo formselectsession('userdelete' , 'bool' , 0);
-    echo formsubmit('act' , 'Delete User');
-    echo spanfmtend();
-    echo '</form>'. '<br>';
+        echo $GBLspc['D'] . ' Activ?';
+        echo formselectsession('activ' , 'bool' , $usrrow['activ']);  
+        echo formsubmit('act' , 'Submit') . '<br>';
+        echo spanfmtbegin('' , 'red' , null , true);
+        echo  $GBLspc['D'] . 'Delete?' ;
+        echo formselectsession('userdelete' , 'bool' , 0);
+        echo formsubmit('act' , 'Delete User');
+        echo spanfmtend();
+        echo '</form>'. '<br>';
         
         $Query = 
-                "SELECT `role` . * , " . 
-                        "`accrole` . `id` AS `accroleid` " .
-                "FROM `accrole` , `role` " .
-                "WHERE `accrole` . `role_id` = `role` . `id` " . 
-                        "AND `accrole` . `account_id` = '$usrrow[id]' " .
-                "ORDER BY `role` . `rolename` ; " ;
-  $sqlrole = $GBLmysqli->dbquery( $Query );
+            "SELECT `role` . * , " . 
+                    "`accrole` . `id` AS `accroleid` " .
+            "FROM `accrole` , `role` " .
+            "WHERE `accrole` . `role_id` = `role` . `id` " . 
+                    "AND `accrole` . `account_id` = '$usrrow[id]' " .
+            "ORDER BY `role` . `rolename` ; " ;
+        $sqlrole = $GBLmysqli->dbquery( $Query );
   
-  while ($rolerow = $sqlrole->fetch_assoc()) {
+        while ($rolerow = $sqlrole->fetch_assoc()) {
             echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
-      echo formhiddenval('accroleid' , $rolerow['accroleid']);
-      echo formhiddenval('usrid' , $usrrow['id']);
-      if ($rolerow['accroleid'] == $_POST['accroleid']) {
-        echo formselectsession('newroleid' , 'roleslist' , $rolerow['id']);
-        echo formsubmit('act' , 'Change Role');
-      } else {
-        echo formsubmit('act' , 'Edit Role');
-        echo $GBLspc['D'] . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
-        echo spanfmtbegin('' , 'red' );
-        echo $GBLspc['D'] . 'Delete?';
-        echo formselectsession('roledelete' , 'bool' , 0);
-        echo formsubmit('act' , 'Delete Role')  . '<br>';
-        echo spanfmtend();
-      }
-      echo '</form>';
-    }
+            echo formhiddenval('accroleid' , $rolerow['accroleid']);
+            echo formhiddenval('usrid' , $usrrow['id']);
+            if ($rolerow['accroleid'] == $_POST['accroleid']) {
+                echo formselectsession('newroleid' , 'roleslist' , $rolerow['id']);
+                echo formsubmit('act' , 'Change Role');
+            } else {
+                echo formsubmit('act' , 'Edit Role');
+                echo $GBLspc['D'] . ' ' . $rolerow['rolename'] . ' / ' . $rolerow['description'];
+                echo spanfmtbegin('' , 'red' );
+                echo $GBLspc['D'] . 'Delete?';
+                echo formselectsession('roledelete' , 'bool' , 0);
+                echo formsubmit('act' , 'Delete Role')  . '<br>';
+                echo spanfmtend();
+            }
+            echo '</form>';
+        }
         echo formpost($thisform . targetdivkey('acc' , $usrrow['id']));
-    echo formhiddenval('usrid' , $usrrow['id']);
+        echo formhiddenval('usrid' , $usrrow['id']);
         echo '<br>';
-    echo formselectsession('newroleid' , 'roleslist' , 15);
-    echo  formsubmit('act' , 'Add Role');
-    echo '</form>';  
-    if ($usrrow['id'] == $_POST['usrid']) {
-      echo HLend();
-    }
+        echo formselectsession('newroleid' , 'roleslist' , 15);
+        echo  formsubmit('act' , 'Add Role');
+        echo '</form>';  
+        echo $HLend;
   
     
-  }
+    }
 }
   
 echo '</div>' ;

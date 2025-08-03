@@ -8,20 +8,20 @@ $GBLSegIDs = array();
 $GBLVacIDs = array();
 $GBLSemIDs = array();
 
-$q = "SELECT * FROM `discipline`;";
-$result = $GBLmysqli->dbquery($q);
+$Query = "SELECT * FROM `discipline`;";
+$result = $GBLmysqli->dbquery($Query);
 while ($sqlrow = $result->fetch_assoc()) {
     $GBLDiscIDs[$sqlrow['code']] = $sqlrow['id'];
 }
 
-$q = "SELECT * FROM `prof`;";
-$result = $GBLmysqli->dbquery($q);
+$Query = "SELECT * FROM `prof`;";
+$result = $GBLmysqli->dbquery($Query);
 while ($sqlrow = $result->fetch_assoc()) {
     $GBLProfIDs[$sqlrow['name']] = $sqlrow['id'];
 }
 
-$q = "SELECT * FROM `semester`;";
-$result = $GBLmysqli->dbquery($q);
+$Query = "SELECT * FROM `semester`;";
+$result = $GBLmysqli->dbquery($Query);
 while ($sqlrow = $result->fetch_assoc()) {
     $GBLSemIDs[$sqlrow['name']] = $sqlrow['id'];
 }
@@ -29,11 +29,11 @@ while ($sqlrow = $result->fetch_assoc()) {
 function fixvacancies(){
     global $GBLmysqli;
     
-    $q = "INSERT INTO `vacancies` (`class_id` , `course_id`) " .
+    $Query = "INSERT INTO `vacancies` (`class_id` , `course_id`) " .
         "SELECT `class`.`id` , `cdisc`.`course_id` FROM `coursedisciplines` AS `cdisc` , `class` " . 
         "where `cdisc`.`discipline_id` = `class`.`discipline_id` AND " .
         "NOT EXISTS (SELECT * FROM `vacancies` AS `vac` WHERE `vac`.`class_id` = `class`.`id` AND `vac`.`course_id` = `cdisc`.`course_id`); ";
-    $GBLmysqli->dbquery($q);
+    $GBLmysqli->dbquery($Query);
 }
 
 
@@ -47,20 +47,20 @@ function ftablerestore($fname , $table) {
         foreach ($line as &$val) {
             $val = $GBLmysqli->real_escape_string($val);
         }
-        $q = 
+        $Query = 
             "REPLACE INTO `$table` " .
             "VALUES ('" . implode("','" , $line) . "') ; " ;
-        //echo $q.'<br>';
-        $GBLmysqli->dbquery($q);      
+        //echo $Query.'<br>';
+        $GBLmysqli->dbquery($Query);      
     }
     fclose($fhandler);    
 }
 
-function ftableexport($fname , $q) {
+function ftableexport($fname , $Query) {
     global $GBLmysqli;
     
     $fhandler = fopen('csv/'.$fname , 'w');
-    $sqlresult = $GBLmysqli->dbquery($q);
+    $sqlresult = $GBLmysqli->dbquery($Query);
     while ($sqlrow = $sqlresult->fetch_assoc()) {
         fputcsv($fhandler , $sqlrow , ',' , '"' , '"');
     }
@@ -85,10 +85,10 @@ function DBinsertgrade($Course , $Term , $DiscCode , $DiscName , $DiscCred , $Di
   
     if(!($discid = $GBLDiscIDs[$DiscCode])) {
         if ($_SESSION['unitbycode'][$DiscDeptCode]) {
-            $q = 
+            $Query = 
                 "INSERT INTO `discipline` (`dept_id` , `code` , `name` , `Lcred` , `Tcred`) " .
                 "VALUES ( '$_SESSION[unitbycode][$DiscDeptCode][id]' , '$DiscCode' , '$DiscName' , '0' , '$DiscCred' ) ; " ;
-            $GBLmysqli->dbquery($q);
+            $GBLmysqli->dbquery($Query);
             $discid = $GBLDiscIDs[$DiscCode] = $GBLmysqli->insert_id;
         } else {
             // TODO : ERR
@@ -97,10 +97,10 @@ function DBinsertgrade($Course , $Term , $DiscCode , $DiscName , $DiscCred , $Di
     }
     
     // discipline already 'exists'... hopefuly lacking an association
-    $q = 
+    $Query = 
         "INSERT INTO `coursedisciplines` (`course_id` , `term_id` , `discipline_id` , `disciplinekind_id`) " .
         "VALUES ('$_SESSION[unitbycode][$Course][id]' , '$_SESSION[termbycode][$Term][id]' , '$discid' , '$_SESSION[disckindbycode][$DiscKind][id]') ; " ;
-    $GBLmysqli->dbquery($q);
+    $GBLmysqli->dbquery($Query);
 }
 
 
@@ -126,10 +126,10 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
     //  vardebug($_SESSION['sem']);
     //  vardebug($_SESSION['termbycode']);
     if (!($GBLSemIDs[$sem])) {
-        $q = 
+        $Query = 
             "INSERT INTO `semester` (`name` , `imported`) " .
             "VALUES ('$sem' , '1') ; " ; 
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         $GBLSemIDs[$sem] = $GBLmysqli->insert_id;
     }
     $semID = $GBLSemIDs[$sem];
@@ -142,10 +142,10 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
         $BuildingID = $_SESSION['buildingbyacronym'][$Building]['id'];
         if (!($_SESSION['buildingbyacronym'][$Building]['roombyacronym'][$Room])) {
             // room not  there yet...
-            $q = 
+            $Query = 
                 "INSERT INTO room (`acronym` , `name` , `building_id`) " .
                 "VALUES ('$Room' , 'Sala $Room' , '$BuildingID') ; " ;
-            $GBLmysqli->dbquery($q);
+            $GBLmysqli->dbquery($Query);
             $_SESSION['buildingbyacronym'][$Building]['roombyacronym'][$Room] = $GBLmysqli->insert_id;
         }
         $RoomID = $_SESSION['buildingbyacronym'][$Building]['roombyacronym'][$Room];
@@ -164,28 +164,28 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
         $ClassProfnickname = $ClassProf;
     }
     if (!($ClassProfID = $GBLProfIDs[$ClassProf])) {
-        $q = 
+        $Query = 
             "INSERT INTO `prof` (`nickname` , `name` , `dept_id` , `profkind_id`) " .
             "VALUES ('$ClassProfnickname' , '$ClassProf' , '$_SESSION[unitbycode][$DiscDeptCode][id]' , '1') ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         $ClassProfID = $GBLProfIDs[$ClassProf] = $GBLmysqli->insert_id;
     } 
   
     if (!($DiscID = $GBLDiscIDs[$DiscCode])) {
-        $q = 
+        $Query = 
             "INSERT INTO `discipline` (`dept_id` , `code` , `name` , `Lcred` , `Tcred`) " .
             "VALUES ( '$_SESSION[unitbycode][$DiscDeptCode][id]' , '$DiscCode' , '$DiscName' , '0' , '$DiscCred' ) ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         $DiscID = $GBLDiscIDs[$DiscCode] = $GBLmysqli->insert_id;
     }
 
   
     /// find out if class already 'inserted'
     if (!($ClassID = $GBLClassIDs[$semID][$DiscID][$Class])) {
-        $q = 
+        $Query = 
             "INSERT INTO `class` (`name` , `sem_id` , `discipline_id`) " .
             "VALUES ('$Class' , '$semID' , '$DiscID' ) ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         $ClassID = $GBLClassIDs[$semID][$DiscID][$Class] = $GBLmysqli->insert_id;  
     }
   
@@ -194,19 +194,19 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
     if(($_SESSION['unitbyacronym'][$grpAcro]['iscourse'])) {
     
         if(!($GBLVacIDs[$ClassID][$grpID])) {
-            $q = 
+            $Query = 
                 "INSERT INTO `vacancies` (`class_id` , `course_id` , `askednum` , `givennum` , `usednum`) " .
                 "VALUES ( '$ClassID' , '$grpID' , '$ClassVac' , '$ClassVac' , '$ClassUsed' ) ; " ;
-            $GBLmysqli->dbquery($q);
+            $GBLmysqli->dbquery($Query);
             $GBLVacIDs[$ClassID][$grpID] = $GBLmysqli->insert_id;
         }
     }
   
     if(!($GBLSegIDs[$ClassID][$ClassDay][$ClassStart])) {
-        $q = 
+        $Query = 
             "INSERT INTO `classsegment` (`day` , `start` , `length` , `room_id` , `class_id` , `prof_id`) " .
             "VALUES ('$_SESSION[weekday][$ClassDay]' , '$ClassStart' , '$ClassDur' , '$RoomID' , '$ClassID' , '$ClassProfID' ) ; " ;  
-        $result = $GBLmysqli->dbquery($q);
+        $result = $GBLmysqli->dbquery($Query);
         $GBLSegIDs[$ClassID][$ClassDay][$ClassStart] = $GBLmysqli->insert_id;
     }
 
@@ -215,8 +215,8 @@ function DBinsertdept($grpAcro , $sem , $DiscCode , $DiscName , $DiscCred , $Cla
   
 function roomset($roomtypeid , $roomcap , $buildingid , $roomacronym) {
     global $GBLmysqli;
-    $q = "UPDATE `room` SET `roomtype_id` = '".$roomtypeid."' , `capacity` = '".$roomcap."' WHERE `building_id` = '".$buildingid."' AND `acronym` = '".$roomacronym."' ";
-    $GBLmysqli->dbquery($q);
+    $Query = "UPDATE `room` SET `roomtype_id` = '".$roomtypeid."' , `capacity` = '".$roomcap."' WHERE `building_id` = '".$buildingid."' AND `acronym` = '".$roomacronym."' ";
+    $GBLmysqli->dbquery($Query);
 }
 
 
@@ -296,35 +296,35 @@ function courseupdt($coursecode , $disccode , $kindcode , $termcode) {
     $dbcntC +=1;
     echo "Ccnt:$dbcntC (".$disccode.")$GBLspc[T]\n";
 
-    $q = 
+    $Query = 
         "SELECT `cd`.`id` " .
         "FROM `coursedisciplines` AS `cd` , " .
                 "`discipline` AS `disc` " .
         "WHERE `cd`.`discipline_id` = `disc`.`id` " .
                 "AND `cd`.`course_id` = '$_SESSION[unitbycode][$coursecode][id]' " .
                 "AND `disc`.`code` = '$disccode' ; " ;
-    $result = $GBLmysqli->dbquery($q);
+    $result = $GBLmysqli->dbquery($Query);
     $cdrow = $result->fetch_assoc();
     if ($kindcode) {
         if ($termcode) {
-            $q = 
+            $Query = 
                 "UPDATE `coursedisciplines` " .
                 "SET `term_id` = '$_SESSION[termbycode][$termcode][id]' , " .
                 "`disciplinekind_id` = '$_SESSION[disckindbycode][$kindcode][id]' " .
                 "WHERE `id` = '$cdrow[id]' ; " ;
         } else {
-            $q = 
+            $Query = 
                 "UPDATE `coursedisciplines` " .
                 "SET  `disciplinekind_id` = '$_SESSION[disckindbycode][$kindcode][id]' " .
                 "WHERE `id` = '$cdrow[id]' ; " ;
         }
     } else {
-        $q = 
+        $Query = 
                 "UPDATE `coursedisciplines` " .
                 "SET `term_id` = '$_SESSION[termbycode][$termcode][id]' " .
                 "WHERE `id` = '$cdrow[id]' ; " ;
     }
-    $GBLmysqli->dbquery($q);
+    $GBLmysqli->dbquery($Query);
 }
 
 $dbcntD = 0;
@@ -338,20 +338,20 @@ function disccourserem($disclist , $courseid) {
     foreach ($disclist as $code) {
         $dbcntD +=1;
         echo "Dcnt:$dbcntD (".$code.")$GBLspc[T]\n";
-        $q = 
+        $Query = 
                 "SELECT `id` " .
                 "FROM `discipline` " .
                 "WHERE `code` = '$code' ; " ;
-        $result = $GBLmysqli->dbquery($q);
+        $result = $GBLmysqli->dbquery($Query);
         $discrow = $result->fetch_assoc();
         
-        $q = 
+        $Query = 
                 "DELETE FROM `coursedisciplines` " .
                 "WHERE `course_id` = '$courseid' " .
                 "AND `discipline_id` = '$discrow[id]' ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
         
-        $q = 
+        $Query = 
                 "DELETE FROM `vacancies` " .
                 "WHERE `vacancies`.`course_id` = '$courseid' " .
                 "AND `vacancies`.`class_id` IN ( " .
@@ -360,7 +360,7 @@ function disccourserem($disclist , $courseid) {
                                 "WHERE `class`.`discipline_id` = `disc`.`id` " .
                                         "AND `disc`.`id` = '$discrow[id]' " .
                         ") ; " ;
-        $GBLmysqli->dbquery($q);
+        $GBLmysqli->dbquery($Query);
     
     }
 }
@@ -397,22 +397,22 @@ function DBimportInitialData() {
         echo '<p>';
 
         echo '<h3>Fixing Rooms Info</h3>';
-        $q = "UPDATE `semester` SET `readonly` = '1';";
-        $GBLmysqli->dbquery($q);
-        $q = "SELECT `id` FROM `building` WHERE `acronym` = 'Eletro';";
-        $result = $GBLmysqli->dbquery($q);
+        $Query = "UPDATE `semester` SET `readonly` = '1';";
+        $GBLmysqli->dbquery($Query);
+        $Query = "SELECT `id` FROM `building` WHERE `acronym` = 'Eletro';";
+        $result = $GBLmysqli->dbquery($Query);
         $sqlrow = $result->fetch_assoc();
           
-        $q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Teo';";
-        $result = $GBLmysqli->dbquery($q);
+        $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Teo';";
+        $result = $GBLmysqli->dbquery($Query);
         $roomT = $result->fetch_assoc();
           
-        $q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Lab';";
-        $result = $GBLmysqli->dbquery($q);
+        $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Lab';";
+        $result = $GBLmysqli->dbquery($Query);
         $roomL = $result->fetch_assoc();
           
-        $q = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Inf';";
-        $result = $GBLmysqli->dbquery($q);
+        $Query = "SELECT `id` FROM `roomtype` WHERE `acronym` = 'Inf';";
+        $result = $GBLmysqli->dbquery($Query);
         $roomI = $result->fetch_assoc();
 
         roomset($roomL['id'] , '20' , $sqlrow['id'] , '110');
@@ -554,11 +554,11 @@ function DBrestoreTables() {
             foreach ($line as &$val) {
                 $val = $GBLmysqli->real_escape_string($val);
             }
-            $q = "SELECT * FROM `unit` WHERE `acronym` = '" . $line[16] . "';";
-            $unitsql = $GBLmysqli->dbquery($q);
+            $Query = "SELECT * FROM `unit` WHERE `acronym` = '" . $line[16] . "';";
+            $unitsql = $GBLmysqli->dbquery($Query);
             $unitrow = $unitsql->fetch_assoc();
-            $q = "SELECT * FROM `role` WHERE `rolename` = '" . $line[1] . "';";
-            $result = $GBLmysqli->dbquery($q);
+            $Query = "SELECT * FROM `role` WHERE `rolename` = '" . $line[1] . "';";
+            $result = $GBLmysqli->dbquery($Query);
             if($result->fetch_assoc()){
                 $Query = 
                     "UPDATE `role` " . 
@@ -596,32 +596,32 @@ function DBrestoreTables() {
             echo 'accroles.csv file not found...<br>';
         };
         while ($line = fgetcsv($file , 512 , ',' , '"','"')) {
-            $q = 
+            $Query = 
                 "SELECT `account` . `id`  " . 
                 "FROM `account` " . 
                 "WHERE `email` = '$line[0]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             $accrow = $result->fetch_assoc();
           
-            $q = 
+            $Query = 
                 "SELECT `role` . `id`  " . 
                 "FROM `role` " . 
                 "WHERE `rolename` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             $rolerow = $result->fetch_assoc();
           
-            $q = 
+            $Query = 
                 "SELECT * " . 
                 "FROM `accrole` " . 
                 "WHERE `account_id` = '$accrow[id]' " . 
                 "AND `role_id` = '$rolerow[id]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
           
             if(!$result->fetch_assoc()){
-                $q = 
+                $Query = 
                     "INSERT INTO `accrole` (`account_id` , `role_id`) " . 
                     "VALUES ('$accrow[id]' , '$rolerow[id]' ) ; " ;
-                $GBLmysqli->dbquery($q);
+                $GBLmysqli->dbquery($Query);
             }
         }
         fclose($file);
@@ -631,13 +631,13 @@ function DBrestoreTables() {
             echo 'units.csv file not found...<br>';
         };
         while ($line = fgetcsv($file , 512 , ',' , '"' , '"')) {
-            $q = 
+            $Query = 
                 "UPDATE `unit` " . 
                 "SET `contactname` = '" . $GBLmysqli->real_escape_string($line[4]) . "', " . 
                         "`contactemail` = '" . $GBLmysqli->real_escape_string($line[5]) . "', " . 
                         "`contactphone` = '" . $GBLmysqli->real_escape_string($line[6]) . "'  " . 
                 "WHERE `id` = '" . $line[0] . "';";
-            $GBLmysqli->dbquery($q);
+            $GBLmysqli->dbquery($Query);
         }          
         fclose($file);
 
@@ -646,16 +646,16 @@ function DBrestoreTables() {
             echo 'scenery.csv file not found...<br>';
         };
         while ($line = fgetcsv($file , 512 , ',' , '"' , '"')) {
-            $q = 
+            $Query = 
                 "SELECT * " . 
                 "FROM `scenery` " . 
                 "WHERE `name` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             if(!$result->fetch_assoc()) {          
-                $q = 
+                $Query = 
                     "INSERT INTO `scenery` (`name` , `desc`) " . 
                     "VALUES  ('$line[1]' , '$line[2]' ) ; " ;
-                $GBLmysqli->dbquery($q);
+                $GBLmysqli->dbquery($Query);
             }
         }          
         fclose($file);
@@ -664,31 +664,31 @@ function DBrestoreTables() {
             echo 'sceneryroles.csv file not found...<br>';
         };
         while ($line = fgetcsv($file , 512 , ',' , '"' , '"')) {
-            $q = 
+            $Query = 
                 "SELECT `scenery` . `id`  " . 
                 "FROM `scenery` " . 
                 "WHERE `name` = '$line[0]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             $scenrow = $result->fetch_assoc();
           
-            $q = 
+            $Query = 
                 "SELECT `role` . `id`  " . 
                 "FROM `role` " . 
                 "WHERE `rolename` = '$line[1]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             $rolerow = $result->fetch_assoc();
           
-            $q = 
+            $Query = 
                 "SELECT * " . 
                 "FROM `sceneryrole` " . 
                 "WHERE `scenery_id` = '$scenrow[id]' " . 
                 "AND `role_id` = '$rolerow[id]' ; " ;
-            $result = $GBLmysqli->dbquery($q);
+            $result = $GBLmysqli->dbquery($Query);
             if(!$result->fetch_assoc()){
-                $q = 
+                $Query = 
                     "INSERT INTO `sceneryrole` (`scenery_id` , `role_id`) " . 
                     "VALUES ('$scenrow[id]' , '$rolerow[id]' ) ; " ;
-                $GBLmysqli->dbquery($q);
+                $GBLmysqli->dbquery($Query);
             }
         }          
         fclose($file);

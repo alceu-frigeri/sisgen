@@ -84,8 +84,8 @@ if ( testpostsql(array('deptid' , 'semid') , $Query) ) {
                     echo spanformat('' , 'darkorange' , ' (agregadora)');
                 } else {
                     if($classrow['partof']) {
-                        $q = "SELECT `name` FROM `class` WHERE `id` = '$classrow[partof]' ;";
-                        $partsql = $GBLmysqli->dbquery($q);
+                        $Query = "SELECT `name` FROM `class` WHERE `id` = '$classrow[partof]' ;";
+                        $partsql = $GBLmysqli->dbquery($Query);
                         $partrow = $partsql->fetch_assoc();
                         echo spanformat('' , 'darkorange' , ' (agregada à ' . $partrow['name'] . ')');
                     }

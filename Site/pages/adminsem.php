@@ -61,14 +61,19 @@ if($_SESSION['role']['isadmin']) {
             echo formpatterninput(10 , 5 , '[0-9a-zA-Z \-]+' , 'novo semestre' , 'newsem' , '!');
             echo formsubmit('act' , 'Duplicate as');
         } else {
-            if ($_POST['semid'] == $semrow['id']) { echo HLbegin();}
+            if ($_POST['semid'] == $semrow['id']) { 
+                echo HLbegin();
+                $HLend = HLend();
+            } else {
+                $HLend = ' ';
+            }
             echo formsubmit('act' , 'Edit') . $semrow['name'] . $GBLspc['Q'];
             if ($semrow['readonly']) {
                 echo '(readonly)';
             } else {
                 echo '(read/write)';
             }    
-            if ($_POST['semid'] == $semrow['id']) { echo HLend();}
+            echo $HLend;
         }
         echo '</form>';
     }

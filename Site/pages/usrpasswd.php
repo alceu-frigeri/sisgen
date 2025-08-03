@@ -17,14 +17,14 @@
 <tr>
 <td style='text-align:right; width:30%'>
     Nova Senha:</td><td style='text-align:left'>
-  <input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
+  <input type='password' name='passA' id='passA' size='30' pattern='<?php echo $GBLpattern['passwd'] ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
   <span id='passAdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr>
 <tr>
 <td style='text-align:right; width:30%'>
     Nova Senha (Confirmação):</td><td style='text-align:left'>
-  <input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpasswdpattern ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
+  <input type='password' name='passB' id='passB' size='30' pattern='<?php echo $GBLpattern['passwd'] ?>' title='Senha:Maiúscula+Minúsculas+Número/Simbolo, mínimo 8' required <?php echo $passcheck; ?> />
   <span id='passBdiff' style='color:white'>(diff.)</span></td>
 </tr>
 <tr><td></td>

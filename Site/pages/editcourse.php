@@ -24,15 +24,15 @@ echo '<div class = "row">' .
 echo formpost($thisform);
   
 if(!($_SESSION['disckind'])) {
-    $q = "SELECT * FROM `disciplinekind`";
-    $result = $GBLmysqli->dbquery($q);
+    $Query = "SELECT * FROM `disciplinekind`";
+    $result = $GBLmysqli->dbquery($Query);
     while ($sqlrow = $result->fetch_assoc()) {
         $_SESSION['disckind'][$sqlrow['id']] = $sqlrow['code'];
     }
 }
 if(!($_SESSION['term'])) {
-    $q = "SELECT * FROM `term`";
-    $result = $GBLmysqli->dbquery($q);
+    $Query = "SELECT * FROM `term`";
+    $result = $GBLmysqli->dbquery($Query);
     while ($sqlrow = $result->fetch_assoc()) {
         $_SESSION['term'][$sqlrow['id']] = $sqlrow['code'];
     }
@@ -52,6 +52,7 @@ case 'Insert':
         $_POST['act'] = 'Submit';
     }
     break;
+
 case 'Submit':
     if ($can_coursedisciplines) {
         $disckey = 'disc' . $_POST['coursediscid'] ;
@@ -71,12 +72,13 @@ case 'Submit':
         //$_POST['coursediscid'] = null;
     }
     break;
+
 case 'Delete':
     if ($can_coursedisciplines & $_POST['discdelete']) {
-        $q = "DELETE FROM `coursedisciplines` WHERE `id` =  '$_POST[coursediscid]' ;";
-        $GBLmysqli->dbquery($q);
-        $q = "DELETE FROM `vacancies` WHERE `vacancies` . `course_id` =  '$_POST[courseid]'  AND `vacancies` . `class_id` IN (SELECT `class` . `id` FROM `class` , `discipline` AS `disc` WHERE `class` . `discipline_id` = `disc` . `id` AND `disc` . `id` =  '$_POST[coursediscid]' );";
-        $GBLmysqli->dbquery($q);
+        $Query = "DELETE FROM `coursedisciplines` WHERE `id` =  '$_POST[coursediscid]' ;";
+        $GBLmysqli->dbquery($Query);
+        $Query = "DELETE FROM `vacancies` WHERE `vacancies` . `course_id` =  '$_POST[courseid]'  AND `vacancies` . `class_id` IN (SELECT `class` . `id` FROM `class` , `discipline` AS `disc` WHERE `class` . `discipline_id` = `disc` . `id` AND `disc` . `id` =  '$_POST[coursediscid]' );";
+        $GBLmysqli->dbquery($Query);
     }
     break;
 }
@@ -184,19 +186,19 @@ if ($postedit & $can_coursedisciplines) {
     echo formhiddenval('orderby' , $_POST['orderby']);
     echo formhiddenval('act' , 'Reload');
 
-    $q = 
+    $Query = 
         "SELECT * " .
         "FROM `unit` " .
         "ORDER BY `acronym`";
-    echo formselectsql($anytmp , $q , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
+    echo formselectsql($anytmp , $Query , 'unitid' , $_POST['unitid'] , 'id' , 'acronym');
 
-    $q = 
+    $Query = 
         "SELECT * " .
         "FROM `discipline` " .
         "WHERE `dept_id` =  '$_POST[unitid]'  " .
         "ORDER BY `name`";
     $anyone = 0;
-    echo formselectsql($anyone , $q , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
+    echo formselectsql($anyone , $Query , 'discid' , $_POST['discid'] , 'id' , 'code' , 'name');
     
     echo formselectsession('newdisckind' , 'disckind' , 1);
 

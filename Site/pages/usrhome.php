@@ -36,6 +36,7 @@ function usrdata() {
       case 'Mudar Senha':
         include 'usrpasswd.php';
         break;
+
       case 'Atualizar Senha':
         $GBLmysqli->postsanitize();
         $passwd = $_POST['passORG'];
@@ -62,15 +63,17 @@ function usrdata() {
           usrdata();
         }
         break;
+
       case 'Editar Dados':
         echo formpost($thisform);
         echo '<table>';
-        echo '<tr><td>Nome: </td><td>' . formpatterninput(16 , 16 , $GBLnamepattern , 'Nome Abreviado' , 'usrdisplayname' , $_SESSION['userdisplayname']) . '</td></tr>';
-        echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128 , 48 , $GBLnamepattern , 'Nome Completo' , 'usrname' , $_SESSION['username']) . '</td></tr>';
+        echo '<tr><td>Nome: </td><td>' . formpatterninput(16 , 16 , $GBLpattern['name'] , 'Nome Abreviado' , 'usrdisplayname' , $_SESSION['userdisplayname']) . '</td></tr>';
+        echo '<tr><td>Nome Completo: </td><td>' . formpatterninput(128 , 48 , $GBLpattern['name'] , 'Nome Completo' , 'usrname' , $_SESSION['username']) . '</td></tr>';
         echo '<tr><td></td><td>'  . formsubmit('act' , 'Atualizar Dados') . '</td></tr>';
         echo '</table>';
         echo '</form>';
           break;
+
       case 'Atualizar Dados':
         $GBLmysqli->postsanitize();
         

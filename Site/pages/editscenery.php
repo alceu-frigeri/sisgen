@@ -130,8 +130,8 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
                         echo HLbegin();
                         $scenkey = 'scen' . $sceneryrow['id'] ;
                         echo formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('sceneryid' , $sceneryrow['id']);
-                        echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
-                            'Descrição:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , $scenkey.'scenerydesc' , $sceneryrow['desc']);
+                        echo 'Nome:' . formpatterninput(32 , 8 , $GBLpattern['name'] , 'scenery name' , $scenkey.'sceneryname' , $sceneryrow['name'])  . 
+                            'Descrição:' . formpatterninput(64 , 32 , $GBLpattern['comment'] , 'scenery description' , $scenkey.'scenerydesc' , $sceneryrow['desc']);
                         echo 'hide scenery? ';
                         echo formselectsession($scenkey.'sceneryhide' , 'bool' , $sceneryrow['hide']);
                         echo '<br>' . formsubmit('act' , 'Submit');
@@ -159,8 +159,8 @@ while ($rolerow = $sqlroles->fetch_assoc()) {
     if ($_SESSION['role.scen'][$rolerow['id']]['can_scenery'] | $_SESSION['role']['isadmin']) {                
         echo formpost($thisform . targetdivkey('role' , $rolerow['id']));
         echo formhiddenval('roleid' , $rolerow['id']);        
-        echo 'Nome:' . formpatterninput(32 , 8 , $GBLnamepattern , 'scenery name' , 'sceneryname' , '!')  . 
-            'Descriçao:' . formpatterninput(64 , 32 , $GBLcommentpattern , 'scenery description' , 'scenerydesc' , '!');
+        echo 'Nome:' . formpatterninput(32 , 8 , $GBLpattern['name'] , 'scenery name' , 'sceneryname' , '!')  . 
+            'Descriçao:' . formpatterninput(64 , 32 , $GBLpattern['comment'] , 'scenery description' , 'scenerydesc' , '!');
         echo '  hidden? ';
         echo formselectsession('sceneryhide' , 'bool' , 0);
         echo '<br> Add scenery? ';

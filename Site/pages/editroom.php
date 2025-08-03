@@ -34,6 +34,7 @@ if (!($_SESSION['roomtype'])) {
 switch($_POST['act']) {
 case 'Insert':
     break;
+    
 case 'Delete':
     if ($_POST['roomdelete']) {
         $Query = 
@@ -42,6 +43,7 @@ case 'Delete':
         $GBLmysqli->dbquery( $Query );
     }
     break;
+
 case 'Submit':
     $roomkey = 'room' . $_POST['roomid'] ; 
     $compfields = array('roomtype' , 'capacity');

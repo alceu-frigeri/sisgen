@@ -15,8 +15,8 @@ $vac_edited = false;
         
 //vardebug($_SESSION['pagelnk'],'page link');
 
-$q = "SELECT readonly FROM semester WHERE id =  '$_POST[semid]' ;";
-$result = $GBLmysqli->dbquery($q);
+$Query = "SELECT readonly FROM semester WHERE id =  '$_POST[semid]' ;";
+$result = $GBLmysqli->dbquery($Query);
 $sqlrow = $result->fetch_assoc();
 $readonly = $sqlrow['readonly'];
 $hiddenprofdeptid = null;
@@ -55,10 +55,10 @@ if ((($_POST['act'] == 'Edit') | ($_POST['act'] == 'Submit') )  ) {
 
   
 
-//$GBLclasspattern = '[A-Z][A-Za-z0-9\*]*';
+//$GBLpattern['class'] = '[A-Z][A-Za-z0-9\*]*';
 
 $GBLvackind = array();
-$q = 
+$Query = 
         "SELECT `kind` . `code` , " .
                 "`cd` . `course_id` , " .
                 "`term` . `code` AS `trm` , " .
@@ -70,7 +70,7 @@ $q =
                 "AND `cd` . `disciplinekind_id` = `kind` . `id` " .
                 "AND `cd` . `term_id` = `term` . `id` ; " ;
 
-$kindsql = $GBLmysqli->dbquery($q);
+$kindsql = $GBLmysqli->dbquery($Query);
 while($kindrow = $kindsql->fetch_assoc()) {
     if ($kindrow['code'] == 'OB') {
         $kba = '<b>';
@@ -215,7 +215,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
         echo dbweekmatrix($SCquery , $SCinselected , null , null , false , true , $_POST['courseHL']);
         echo '<hr>';
         
-        $q = 
+        $Query = 
                 "SELECT class . * " .
                 "FROM class , discipline " .
                 "WHERE class . discipline_id = discipline . id " .
@@ -225,14 +225,15 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         "AND class . agreg = '1' " .
                 "ORDER BY class . name; " ;
         
-        $result = $GBLmysqli->dbquery($q);
+        $result = $GBLmysqli->dbquery($Query);
+        
         unset($_SESSION['agreg']);
         while ($sqlrow = $result->fetch_assoc()) {
             $_SESSION['agreg'][$sqlrow['id']] = $sqlrow['name'];
         }  
                 
         if ($can_class) {
-            $q = 
+            $Query = 
                 "SELECT DISTINCT class . * " .
                 "FROM `class` , `discipline` " . 
                 "WHERE class . discipline_id = discipline . id " .
@@ -241,7 +242,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         "AND discipline . dept_id =  '$_POST[unitid]' " . 
                 "ORDER BY  `class` . `name` ; "  ;
         } else {
-            $q = 
+            $Query = 
                 "SELECT DISTINCT class . * " .
                 "FROM `class` , `discipline` " . 
                         $qscentbl . 
@@ -251,7 +252,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         "AND discipline . dept_id =  '$_POST[unitid]'  " . 
                         $qscensql . " ; " ;
         }
-        $result = $GBLmysqli->dbquery($q);
+        $result = $GBLmysqli->dbquery($Query);
           
         while ($classrow = $result->fetch_assoc()) {
             if ($postedit) {
@@ -305,7 +306,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                                         
                     echo spanfmtbegin('' , 'green' , null , true) . 
                         'Replicar esta Turma como:' . 
-                        formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                        formpatterninput(3 , 1 , $GBLpattern['class'] , 'Nova Turma' , 'newclassname' , '!') .
                         formhiddenval('classid' , $classrow['id']) .
                         formhiddenval('orgclassname' , $classrow['name']) .
                         formselectsession('addclass' , 'bool' , 0) .
@@ -318,7 +319,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                         echo '<p style="line-height:0px;"></p>';
                         echo spanfmtbegin('' , 'green' , null , true) . 
                                 'Replicar esta Turma como:' . 
-                                formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                                formpatterninput(3 , 1 , $GBLpattern['class'] , 'Nova Turma' , 'newclassname' , '!') .
                                 formhiddenval('classid' , $classrow['id']) .
                                 formhiddenval('orgclassname' , $classrow['name']) .
                                 formselectsession('addscenery' , 'scen.acc.edit' , 0) .
@@ -350,7 +351,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                 thisformpost('classNEWdiv');
                 echo spanfmtbegin('' , 'brown' , null , true) .  
                         'Adicionar Turma:' . 
-                        formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                        formpatterninput(3 , 1 , $GBLpattern['class'] , 'Nova Turma' , 'newclassname' , '!') .
                         formselectsession('addclass' , 'bool' , 0) .
                         formsubmit('act' , 'Add Class') . 
                         '</form>' . 
@@ -360,7 +361,7 @@ if(testpostsql( array('semid' , 'unitid' , 'discid') , $Tquery)) {
                     thisformpost('classNEWdiv');
                     echo spanfmtbegin('' , 'brown' , null , true) . 
                         'Adicionar Turma:' . 
-                        formpatterninput(3 , 1 , $GBLclasspattern , 'Nova Turma' , 'newclassname' , '!') .
+                        formpatterninput(3 , 1 , $GBLpattern['class'] , 'Nova Turma' , 'newclassname' , '!') .
                         formselectsession('addscenery' , 'scen.acc.edit' , 0) .
                         formselectsession('addclass' , 'bool' , 0) .
                         formsubmit('act' , 'Add Class in Scenery') . 

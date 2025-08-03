@@ -58,7 +58,7 @@ if ( testpostsql( array('semid','termid','courseid') ) ) {
     if($_POST['reqonly']) {
         $qextra = "AND ( `coursedisciplines` . `disciplinekind_id` = '1' OR `coursedisciplines` . `disciplinekind_id` = '3' ) ";
     } else {
-        $qextra = '';
+        $qextra = ' ';
     }
 
     if($_POST['profnicks']) {

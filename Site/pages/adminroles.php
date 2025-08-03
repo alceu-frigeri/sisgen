@@ -28,6 +28,7 @@ if ($_SESSION['role']['isadmin']) {
             $_POST['roleid'] = null;
         }
         break;
+
     case 'Submit':
         $rolekey = 'role' . $_POST['roleid'] ;
         $compfields = array('rolename' , 'description' , 'unitid');
@@ -58,15 +59,11 @@ if ($_SESSION['role']['isadmin']) {
             $Query .= " , `can_$key` = '$auxpostkey' ";
         }
         $Query .= "WHERE `id` =  '$_POST[roleid]' ; " ;
-//        vardebug($rolekey,'role key');
-  //      vardebug($_POST,'post');
-     //   vardebug($compfields,'comp fields');
-     //   vardebug($keypost,'key post');
-      //  vardebug($Query, 'query');
+
         $GBLmysqli->dbquery($Query);
         }
-        //$_POST['roleid'] = null;
         break;
+
     case 'Add Role':
         if ($_POST['addrole']) {
             $Query = 
@@ -104,6 +101,7 @@ if ($_SESSION['role']['isadmin']) {
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
+
     case 'Change Scenery':
         if(fieldscompare('' , array('newsceneryid'))){
             $Query = 
@@ -116,6 +114,7 @@ if ($_SESSION['role']['isadmin']) {
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
+
     case 'Add Scenery':
         $Query = 
             "INSERT INTO `sceneryrole` (`role_id` , `scenery_id`) " .
@@ -125,6 +124,7 @@ if ($_SESSION['role']['isadmin']) {
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
+
     case 'Add Building':
         $Query = 
             "INSERT INTO `buildingrole` (`role_id` , `building_id`) " .
@@ -134,6 +134,7 @@ if ($_SESSION['role']['isadmin']) {
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
+
     case 'Remove Building':
         if ($_POST['buildingdelete']) {
             $Query = 
@@ -145,7 +146,6 @@ if ($_SESSION['role']['isadmin']) {
         //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
-
 
     }
 }
@@ -234,10 +234,10 @@ if($_SESSION['role']['isadmin']) {
       
         $Query = 
             "SELECT `scenery` . * , " .
-            "`sceneryrole` . `id` AS `sceneryroleid` " .
+                "`sceneryrole` . `id` AS `sceneryroleid` " .
             "FROM `sceneryrole` , `scenery` " .
             "WHERE `sceneryrole` . `scenery_id` = `scenery` . `id` " .
-            "AND `sceneryrole` . `role_id` = '$rolerow[id]' ; " ;
+                "AND `sceneryrole` . `role_id` = '$rolerow[id]' ; " ;
         $sqlscenery = $GBLmysqli->dbquery($Query);
         while ($sceneryrow = $sqlscenery->fetch_assoc()) {
             echo formpost($thisform . '#role' . $rolerow['id'] . 'div');
@@ -248,7 +248,7 @@ if($_SESSION['role']['isadmin']) {
                 echo formsubmit('act' , 'Change Scenery');
             } else {
                 echo formsubmit('act' , 'Edit Scenery');
-                echo $GBLspc['D'] . ' ' . $sceneryrow['name'] . ' / ' . $sceneryrow['desc'];
+                echo $GBLspc['D'] . $sceneryrow['name'] . ' / ' . $sceneryrow['desc'];
                 echo $GBLspc['D'] . 'Remove?';
                 echo formselectsession('scenerydelete' , 'bool' , 0);
                 echo formsubmit('act' , 'Remove Scenery')  . '<br>';
@@ -264,19 +264,19 @@ if($_SESSION['role']['isadmin']) {
 
         $Query = 
             "SELECT `building` . * , " .
-            "`buildingrole` . `id` AS `buildingroleid` " .
+                "`buildingrole` . `id` AS `buildingroleid` " .
             "FROM `buildingrole` , `building` " .
             "WHERE `buildingrole` . `building_id` = `building` . `id` " .
-            "AND `buildingrole` . `role_id` = '$rolerow[id]' ; " ;
+                "AND `buildingrole` . `role_id` = '$rolerow[id]' ; " ;
         $sqlbuilding = $GBLmysqli->dbquery($Query);
         while ($buildingrow = $sqlbuilding->fetch_assoc()) {
             echo formpost($thisform . '#role' . $rolerow['id'] . 'div');
             echo formhiddenval('roleid' , $rolerow['id']);
             echo formhiddenval('buildingroleid' , $buildingrow['buildingroleid']);
-                echo $GBLspc['D'] . ' ' . $buildingrow['acronym'] . ' / ' . $buildingrow['name'];
-                echo $GBLspc['D'] . 'Remove?';
-                echo formselectsession('buildingdelete' , 'bool' , 0);
-                echo formsubmit('act' , 'Remove Building')  . '<br>';
+            echo $GBLspc['D'] . ' ' . $buildingrow['acronym'] . ' / ' . $buildingrow['name'];
+            echo $GBLspc['D'] . 'Remove?';
+            echo formselectsession('buildingdelete' , 'bool' , 0);
+            echo formsubmit('act' , 'Remove Building')  . '<br>';
             echo '</form>';
         }
         echo formpost($thisform . '#role' . $rolerow['id'] . 'div');

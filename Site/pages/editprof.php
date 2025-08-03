@@ -117,8 +117,8 @@ if ($postedit & $can_prof) {
       echo HLbegin();
       echo formhiddenval('profid' , $sqlrow['id']);
       echo formselectsession($profkey . 'profkind' , 'profkind' , $sqlrow['profkind_id']);
-            echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , $profkey .  'profname' , $sqlrow['name']);
-      echo '<br>' . $GBLspc['Q'] .  formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
+            echo formpatterninput(120 , 64 , $GBLpattern['name'] , 'Nome completo' , $profkey .  'profname' , $sqlrow['name']);
+      echo '<br>' . $GBLspc['Q'] .  formpatterninput(64 , 32 , $GBLpattern['name'] , 'Nome abreviado' , $profkey .  'profnickname' , $sqlrow['nickname']);
       echo formsubmit('act' , 'Submit');
       echo '</form>';
       echo HLend();
@@ -141,8 +141,8 @@ if ($postedit & $can_prof) {
     echo formpost($thisform);
     echo formhiddenval('deptid' , $_POST['deptid']);
     echo formselectsession('profkind' , 'profkind' , 1);
-    echo formpatterninput(120 , 64 , $GBLnamepattern , 'Nome completo' , 'profname' , '-');
-    echo $GBLspc['D'] . ' ' . formpatterninput(64 , 32 , $GBLnamepattern , 'Nome abreviado' , 'profnickname' , '-');
+    echo formpatterninput(120 , 64 , $GBLpattern['name'] , 'Nome completo' , 'profname' , '-');
+    echo $GBLspc['D'] . ' ' . formpatterninput(64 , 32 , $GBLpattern['name'] , 'Nome abreviado' , 'profnickname' , '-');
     echo formsubmit('act' , 'Insert') ;
     echo '</form>';
     

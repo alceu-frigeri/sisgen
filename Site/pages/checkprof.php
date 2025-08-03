@@ -29,7 +29,6 @@ echo  '<br>';
   
 echo formsceneryselect();  
 echo '</form>';
-
   
 $inselected = inscenery_sessionlst('sceneryselected');
 list($qscentbl , $qscensql) = scenery_sql($inselected);

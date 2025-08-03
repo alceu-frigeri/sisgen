@@ -80,8 +80,6 @@ while ($termrow = $termsql->fetch_assoc()) {
     if($flag['ob']) {
         echo spanformat('','',$GBLspc['Q'] . 'Disciplina ob/al não ofertada<br>',null,true);
     }
-
-    //     echo dbweekmatrix(  implode( ' ' , $Query)  , $inselected , $_POST['courseid']);
 }
 
 echo '</div>' ;
