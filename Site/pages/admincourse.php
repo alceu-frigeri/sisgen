@@ -22,6 +22,7 @@ if ($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery( $Query );
         }
         break;
+        
     case 'Delete':
         if ($_POST['coursedelete']) {
             $Query = 
@@ -30,6 +31,7 @@ if ($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery( $Query );
         }
         break;
+        
     case 'Duplicate as':
         duplicatecourse($_POST['courseid'] , $_POST['newacronym'] , $_POST['newcode'] , $_POST['newname'] , 'dup. from ' . $_POST['oldcourseacro']);
         break;
@@ -49,10 +51,11 @@ if ($_SESSION['role']['isadmin']) {
         echo formpost($thisform);
         echo formhiddenval('courseid' , $sqlrow['id']);
         if(($_POST['courseid'] == $sqlrow['id']) & (($_POST['act'] == 'Edit'))) {
+        
             echo HLbegin();
             echo formpatterninput(10 , 3 , '[A-Za-z\.]+' , 'acronym' , 'acronym' , $sqlrow['acronym'])  . 
-                formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'code' , $sqlrow['code'])  . 
-                formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'name' , $sqlrow['name']);
+            formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'code' , $sqlrow['code'])  . 
+            formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'name' , $sqlrow['name']);
             echo formsubmit('act' , 'Submit');
             echo spanfmtbegin('','red',null,true);
             echo $GBLspc['T'] . 'Deletar:';
@@ -61,14 +64,16 @@ if ($_SESSION['role']['isadmin']) {
             echo spanfmtend();
             echo '</form>';
             echo HLend();
+            
             echo formpost($thisform);
             echo formhiddenval('courseid' , $sqlrow['id']);
             echo formhiddenval('oldcourseacro' , $sqlrow['acronym']);
             echo formpatterninput(10 , 3 , '[A-Z]+' , 'acronym' , 'newacronym' , '!')  . 
-                formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'newcode' , '!')  . 
-                formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'newname' , '!');
+            formpatterninput(5 , 5 , '[A-Z][A-Z][A-Z][0-9][0-9]' , 'code, e.g. CCA99' , 'newcode' , '!')  . 
+            formpatterninput(32 , 16 , $GBLpattern['name'] , 'nome' , 'newname' , '!');
             echo formsubmit('act' , 'Duplicate as');
             echo "</form>";
+            
         } else {
             if ($_POST['courseid'] == $sqlrow['id']) {
                 echo HLbegin();

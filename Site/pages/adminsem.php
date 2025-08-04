@@ -22,6 +22,7 @@ if($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery( $Query );
         }
         break;
+        
     case 'Delete':
         if($_POST['act'] == 'Delete') {
             if ($_POST['delete']) {
@@ -32,6 +33,7 @@ if($_SESSION['role']['isadmin']) {
             }
         }
         break;
+        
     case 'Duplicate as':
         duplicatesem($_POST['semid'] , $_POST['newsem']);
         break;

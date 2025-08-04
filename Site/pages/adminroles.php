@@ -45,22 +45,21 @@ if ($_SESSION['role']['isadmin']) {
                 $keypost['can' . $key] = $_POST[$rolekey . 'can' . $key] ;
         }
         if (fieldscompare($rolekey , $compfields)) {
-         //echo 'some changes <br/>';
-        $Query = 
-            "UPDATE `role` " .
-            "SET `rolename` =  '$keypost[rolename]' , " .
-            "`description` =  '$keypost[description]'  , " .
-            "`unit_id` =  '$keypost[unitid]'  " ;
-        foreach ($bfields as $key) {
-            $Query  .=  " , `$key` = '$keypost[$key]' " ;
-        }
-        foreach ($canfields as $key) {
-            $auxpostkey = $keypost['can' . $key] ; 
-            $Query .= " , `can_$key` = '$auxpostkey' ";
-        }
-        $Query .= "WHERE `id` =  '$_POST[roleid]' ; " ;
-
-        $GBLmysqli->dbquery($Query);
+                $Query = 
+                    "UPDATE `role` " .
+                    "SET `rolename` =  '$keypost[rolename]' , " .
+                    "`description` =  '$keypost[description]'  , " .
+                    "`unit_id` =  '$keypost[unitid]'  " ;
+                foreach ($bfields as $key) {
+                    $Query  .=  " , `$key` = '$keypost[$key]' " ;
+                }
+                foreach ($canfields as $key) {
+                    $auxpostkey = $keypost['can' . $key] ; 
+                    $Query .= " , `can_$key` = '$auxpostkey' ";
+                }
+                $Query .= "WHERE `id` =  '$_POST[roleid]' ; " ;
+        
+                $GBLmysqli->dbquery($Query);
         }
         break;
 
@@ -98,7 +97,6 @@ if ($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery($Query);
         }
         $_POST['sceneryroleid'] = null;
-        //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
 
@@ -111,7 +109,6 @@ if ($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery($Query);
         }
         $_POST['sceneryroleid'] = null;
-        //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
 
@@ -121,7 +118,6 @@ if ($_SESSION['role']['isadmin']) {
             "VALUES ( '$_POST[roleid]'  ,  '$_POST[newsceneryid]' ) ; " ;
         $GBLmysqli->dbquery($Query);
         $_POST['sceneryroleid'] = null;
-        //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
 
@@ -131,7 +127,6 @@ if ($_SESSION['role']['isadmin']) {
             "VALUES ( '$_POST[roleid]'  ,  '$_POST[newbuildingid]' ) ; " ;
         $GBLmysqli->dbquery($Query);
         $_POST['buildingroleid'] = null;
-        //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
 
@@ -143,7 +138,6 @@ if ($_SESSION['role']['isadmin']) {
             $GBLmysqli->dbquery($Query);
         }
         $_POST['buildingroleid'] = null;
-        //$_POST['roleid'] = null;
         $_POST['act'] = 'Submit';
         break;
 
@@ -198,7 +192,6 @@ if($_SESSION['role']['isadmin']) {
             echo '<br>' . formpost($thisform . targetdivkey('role' , $rolerow['id'])) . formhiddenval('roleid' , $rolerow['id']);
             echo HLbegin();
             $rolekey = 'role' . $rolerow['id'] ;
-            //echo '<table style = "background-color:#E0FFE0;color:#8000B0;"><tr><td>';
             echo 'Nome:' . formpatterninput(32 , 8 , $pattern , 'role name' , $rolekey . 'rolename' , $rolerow['rolename'])  . 
                 'Descriçao:' . formpatterninput(64 , 32 , $pattern , 'role name' , $rolekey . 'description' , $rolerow['description']);
 
@@ -225,7 +218,6 @@ if($_SESSION['role']['isadmin']) {
             echo spanfmtend();
             echo '</form><br>';      
             echo HLend();
-            //echo '</td></tr></table>';
             }
         } else {
             admroledisplay($bfields,$canfields,$rolerow);
@@ -285,8 +277,6 @@ if($_SESSION['role']['isadmin']) {
         echo formsubmit('act' , 'Add Building');
         echo '</form><p><p>';
 
-
-
     }
   
     
@@ -310,9 +300,6 @@ if($_SESSION['role']['isadmin']) {
     echo formselectsession('addrole' , 'bool' , 0);
     echo  formsubmit('act' , 'Add Role');
     echo '</form><br>';      
-  
-  
-  
 }
   
 echo '</div>' ;

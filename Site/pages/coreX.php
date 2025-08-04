@@ -371,7 +371,10 @@ function disccourserem($disclist , $courseid) {
 //
 
 function DBimportInitialData() {
-    if($_POST['importdata'] & $sisgenfullsetup) {
+    global $GBLsisgenfullsetup;
+    global $GBLmysqli;
+    
+    if($_POST['importdata'] & $GBLsisgenfullsetup) {
         echo '<h3>Importing Initial Data</h3>';
         echo 'going over it...<br>';
         
@@ -510,6 +513,9 @@ function DBexportTables() {
 }
 
 function DBrestoreTables() {
+    global $GBLspc;
+    global $GBLmysqli;
+    
     if($_POST['restoretables']) {
         echo '<h3>Restoring acc/unit tables</h3>';
         
@@ -698,7 +704,9 @@ function DBrestoreTables() {
 }
 
 function DBcourseAdjust() {
-    if($_POST['courseadjust'] & $sisgenDBsetupHacks){
+    global $GBLsisgenDBsetupHacks;
+    
+    if($_POST['courseadjust'] & $GBLsisgenDBsetupHacks){
 
         echo 'Adjusting CCA<br>';
         $courseid = $_SESSION['unitbycode']['CCA99']['id'];

@@ -115,7 +115,7 @@ if(isset($_SESSION['sessionhash']) && !$_SESSION['userchgpasswd']){
                       )
                 );
         }
-        if ($sisgensetup) {
+        if ($GBLsisgensetup) {
             $menu['admin']['children']['dbset'] = 
                 array('page'=> 'admindb.php', 'label' => 'DB data' ,
                       'id' => 'admdb' );

@@ -16,10 +16,10 @@ $GBLtimeout = 2400 ; //if last check was 'that long ago', auto-logout
 $GBLgracetime = 800; //if last check was over that (and less than timeout), auto-renew
 
 // 
-$sisgensetup = true; //to enable/disable 'initial' import/fix pages (admin)
-$sisgenfullsetup = false; // this disable the "initial data imports"
-$sisgenDBsetupHacks = false; // this disable whatever "DB import hack"
-$sisgenimportCSV = true; //'new' simple way, direct from CSV file...
+$GBLsisgensetup = true; //to enable/disable 'initial' import/fix pages (admin)
+$GBLsisgenfullsetup = false; // this disable the "initial data imports"
+$GBLsisgenDBsetupHacks = false; // this disable whatever "DB import hack"
+$GBLsisgenimportCSV = true; //'new' simple way, direct from CSV file...
 
 //Mn8*.Mn8*.
 // some handy/aux values

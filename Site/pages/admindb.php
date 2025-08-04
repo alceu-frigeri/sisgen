@@ -10,10 +10,10 @@ $thisform = $_SESSION['pagelnk']['admdb'];
 include 'coreX.php';
 
 echo '<div class = "row">' .
-    '<h2>Initial Data setup/import </h2>' .
+    '<h2>DB setup/import/export </h2>' .
     '<hr>' ; 
 
-if($_SESSION['role']['isadmin'] & $sisgensetup) {
+if($_SESSION['role']['isadmin'] & $GBLsisgensetup) {
     switch($_POST['act']) {
     case 'Import Initial Data':
         DBimportInitialData();
@@ -54,7 +54,7 @@ if($_SESSION['role']['isadmin'] & $sisgensetup) {
         break;
     }
     
-    if ($sisgenfullsetup) {
+    if ($GBLsisgenfullsetup) {
         echo formpost($thisform);
         echo formselectsession('importdata' , 'bool' , 0);
         echo formsubmit('act' , 'Import Initial Data') . '</form><p>';
@@ -68,13 +68,13 @@ if($_SESSION['role']['isadmin'] & $sisgensetup) {
     echo formselectsession('exporttables' , 'bool' , 0);
     echo formsubmit('act' , 'Export acc/unit tables') . '</form><p>';
 
-    if ($sisgenfullsetup) {
+    if ($GBLsisgenfullsetup) {
         echo formpost($thisform);
         echo formselectsession('restoretables' , 'bool' , 0);
         echo formsubmit('act' , 'Restore acc/unit tables') . '</form><p>';  
     }
 
-    if ($sisgenDBsetupHacks) {
+    if ($GBLsisgenDBsetupHacks) {
         echo formpost($thisform);
         echo formselectsession('courseadjust' , 'bool' , 0);
         echo formsubmit('act' , 'Courses Adjust') . '</form><p>';  
@@ -88,6 +88,8 @@ if($_SESSION['role']['isadmin'] & $sisgensetup) {
     echo formselectsession('termreservdata' , 'bool' , 0);
     echo formsubmit('act' , 'Import Term Reserv Data') . '</form><p>';
 
+// has yet to be implemented.
+/*
     echo formpost($thisform);
     echo formselectsession('expreservdata' , 'bool' , 0);
     echo formselectsql($anytmp,  "SELECT * FROM `semester`  ORDER BY `name` DESC;"   , 'semid' , $_POST['semid'] , 'id' , 'name');
@@ -97,6 +99,8 @@ if($_SESSION['role']['isadmin'] & $sisgensetup) {
     echo formselectsession('impreservdata' , 'bool' , 0);
     echo formselectsql($anytmp,  "SELECT * FROM `semester` WHERE `readonly` = '0' ORDER BY `name` DESC;"   , 'semid' , $_POST['semid'] , 'id' , 'name');
     echo formsubmit('act' , 'Import Reserv Data') . '</form><p>';
+*/
+
 
     echo formpost($thisform);
     echo formselectsession('coursedata' , 'bool' , 0);
